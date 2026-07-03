@@ -1,0 +1,416 @@
+/* Newspaper theme overrides */
+
+html[data-theme="newspaper"] {
+  --bg: #fdfaf3;           /* Warm paper white */
+  --bg-alt: #f5f1e8;       /* Slightly darker paper */
+  --fg: #1a1a17;           /* Off-black ink */
+  --fg-soft: #2d2d2a;
+  --muted: #6b6357;
+  --line: #d9d1c1;         /* Faint paper folds/lines */
+  --line-alt: #cdc3b1;
+  --accent: #000000;
+  --focus-ring: #1a1a17;
+  color-scheme: light;
+
+  /* Classic Print Font */
+  font-family: 'Noto Serif JP', Georgia, 'Times New Roman', serif;
+}
+
+/* Base Typography adjustments for Print feel */
+html[data-theme="newspaper"] body {
+  line-height: 1.6;
+}
+
+html[data-theme="newspaper"] p {
+  text-align: justify;
+  hyphens: auto;
+}
+
+/* Ensure body text uses the newspaper serif across components */
+html[data-theme="newspaper"] body,
+html[data-theme="newspaper"] .content,
+html[data-theme="newspaper"] .panel,
+html[data-theme="newspaper"] .interest-panel,
+html[data-theme="newspaper"] .link-list,
+html[data-theme="newspaper"] .org-text,
+html[data-theme="newspaper"] .np-info {
+  font-family: 'Noto Serif JP', Georgia, 'Times New Roman', serif !important;
+  color: var(--fg) !important;
+}
+
+html[data-theme="newspaper"] .mono {
+  font-family: var(--mono);
+  font-size: 0.85em;
+  opacity: 0.9;
+}
+
+/* Headings - Bold and authoritative like a broadsheet */
+html[data-theme="newspaper"] h1,
+html[data-theme="newspaper"] h2,
+html[data-theme="newspaper"] h3,
+html[data-theme="newspaper"] h4 {
+  font-family: 'Noto Serif JP', Georgia, 'Times New Roman', serif;
+  font-weight: 800;
+  color: #000;
+  letter-spacing: -0.01em;
+}
+
+html[data-theme="newspaper"] .primary-name {
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  text-transform: none;
+  border-bottom: 3.5px solid #000;
+  display: inline-block;
+  margin-bottom: 0.6rem;
+  line-height: 1;
+}
+
+html[data-theme="newspaper"] h3.section-title {
+  text-transform: none;
+  padding-bottom: 0.3rem !important;
+  border-bottom: 2px solid #000 !important;
+  letter-spacing: 0.05em;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+/* Panel styling - less like digital boxes, more like paper sections */
+html[data-theme="newspaper"] .panel {
+  background: var(--bg);
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 1.5rem 0 !important;
+  border-top: none !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="newspaper"] .panel:not(:last-child) {
+    margin-bottom: 2.5rem;
+}
+
+/* Organization Cards & Accordions - FIX FOR BLACK BOXES */
+html[data-theme="newspaper"] .org-card,
+html[data-theme="newspaper"] .expand-section {
+  background: var(--bg-alt) !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="newspaper"] .org-card::before {
+  display: none !important; /* Hide digital gradients */
+}
+
+/* Organization avatars should be monochrome to mimic printed logos */
+html[data-theme="newspaper"] .org-avatar {
+  filter: grayscale(1) contrast(1.15) brightness(0.95) !important;
+  mix-blend-mode: multiply;
+  border: 2px solid #000 !important;
+  background: #fff !important;
+}
+
+html[data-theme="newspaper"] .expand-summary {
+    color: #000 !important;
+  font-family: 'Noto Serif JP', Georgia, 'Times New Roman', serif;
+    font-weight: 700;
+}
+
+html[data-theme="newspaper"] .expand-summary:hover {
+  background: rgba(0,0,0,0.05) !important;
+}
+
+html[data-theme="newspaper"] .expand-body-inner {
+  border-top: none !important;
+    background: #fff;
+}
+
+html[data-theme="newspaper"] .expand-item dt {
+    font-weight: 700;
+    color: #000;
+}
+
+/* Links - clean and simple */
+html[data-theme="newspaper"] a {
+  color: var(--fg);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition: opacity 0.2s;
+}
+
+html[data-theme="newspaper"] a:hover {
+  opacity: 0.7;
+  color: var(--fg);
+}
+
+/* Reset specific link patterns */
+html[data-theme="newspaper"] a.line-link,
+html[data-theme="newspaper"] a.email-link,
+html[data-theme="newspaper"] .interest-tab,
+html[data-theme="newspaper"] .btn-plain {
+  text-decoration: none !important;
+}
+
+html[data-theme="newspaper"] a.line-link:hover,
+html[data-theme="newspaper"] a.line-link:focus {
+  background: rgba(0,0,0,0.05) !important;
+  color: #000 !important;
+  opacity: 1 !important;
+}
+
+/* Overrides for line-link internal text on hover */
+html[data-theme="newspaper"] a.line-link:hover .text,
+html[data-theme="newspaper"] a.line-link:hover .subtext {
+  color: #000 !important;
+}
+
+/* Buttons and Tabs - Broadside Print Look */
+html[data-theme="newspaper"] .interest-tab,
+html[data-theme="newspaper"] .btn-plain,
+html[data-theme="newspaper"] .toggle-btn {
+  background: #fff !important;
+  color: #000 !important;
+  border: 1.5px solid #000 !important;
+  border-radius: 0 !important;
+  font-family: 'Noto Serif JP', Georgia, 'Times New Roman', serif;
+  text-transform: uppercase;
+  font-weight: 800;
+  letter-spacing: 1px;
+  box-shadow: 3px 3px 0 rgba(0,0,0,0.1);
+}
+
+html[data-theme="newspaper"] .interest-tab.is-active,
+html[data-theme="newspaper"] .interest-tab:hover,
+html[data-theme="newspaper"] .btn-plain:hover {
+  background: #000 !important;
+  color: #fff !important;
+  transform: translate(-1px, -1px) !important;
+  box-shadow: 4px 4px 0 rgba(0,0,0,0.2) !important;
+}
+
+html[data-theme="newspaper"] .toggle-btn[aria-checked="true"] {
+  background: #111 !important;
+  border-color: #000 !important;
+}
+
+html[data-theme="newspaper"] .toggle-btn[aria-checked="false"] {
+  background: #fff !important;
+}
+
+html[data-theme="newspaper"] .toggle-thumb {
+  background: #6f6f6f;
+}
+
+html[data-theme="newspaper"] .toggle-btn[aria-checked="true"] .toggle-thumb {
+  background: #d8d8d8;
+}
+
+html[data-theme="newspaper"] .toggle-btn[aria-checked="false"] .toggle-thumb {
+  background: #6f6f6f;
+}
+
+/* Settings elements */
+html[data-theme="newspaper"] .settings-panel {
+  background: #fff;
+  border: 2px solid #000;
+  border-radius: 0;
+  box-shadow: 10px 10px 0 rgba(0,0,0,0.15);
+}
+
+html[data-theme="newspaper"] .theme-select {
+  background: #fff;
+  border: 1.5px solid #000;
+  border-radius: 0;
+  font-family: 'Noto Serif JP', Georgia, 'Times New Roman', serif;
+  font-weight: 700;
+}
+
+/* Settings FAB */
+html[data-theme="newspaper"] .settings-btn {
+  background: #000 !important;
+  color: #fff !important;
+  border: none !important;
+  box-shadow: 4px 4px 0 rgba(0,0,0,0.2) !important;
+  border-radius: 0 !important;
+}
+
+/* Now Playing specific look */
+html[data-theme="newspaper"] #now-playing::before {
+  display: none !important; /* Hide the color background gradient */
+}
+
+html[data-theme="newspaper"] .np-widget {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+}
+
+html[data-theme="newspaper"] .np-inner {
+  padding: 0.15rem 0;
+}
+
+html[data-theme="newspaper"] .np-header {
+  border-bottom: none !important;
+  padding-bottom: 0 !important;
+  margin-bottom: 1rem !important;
+}
+
+html[data-theme="newspaper"] .np-meta {
+  border-top: none !important;
+  padding-top: 0 !important;
+  margin-top: 0.55rem !important;
+}
+
+html[data-theme="newspaper"] .np-meta-sep {
+  display: none !important;
+}
+
+html[data-theme="newspaper"] .np-art-link {
+  border-color: #000 !important;
+  background-color: #fff !important;
+}
+
+html[data-theme="newspaper"] .np-status .np-live-dot {
+  background: #7b7b7b !important;
+}
+
+html[data-theme="newspaper"] .np-status .np-error-dot {
+  background: #8b8b8b !important;
+}
+
+html[data-theme="newspaper"] .np-meta,
+html[data-theme="newspaper"] .np-since,
+html[data-theme="newspaper"] .np-playcount,
+html[data-theme="newspaper"] .np-artist-meta,
+html[data-theme="newspaper"] .np-artist-meta a,
+html[data-theme="newspaper"] .np-meta-item,
+html[data-theme="newspaper"] .np-meta-item a {
+  font-family: 'Noto Serif JP', Georgia, 'Times New Roman', serif !important;
+  color: var(--fg) !important;
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+
+html[data-theme="newspaper"] .np-meta-item i {
+  color: #5f5f5f !important;
+}
+
+html[data-theme="newspaper"] .np-artist-meta a,
+html[data-theme="newspaper"] .np-meta-item a {
+  text-decoration-color: #7a7a7a;
+}
+
+html[data-theme="newspaper"] .np-artist-meta a:hover,
+html[data-theme="newspaper"] .np-artist-meta a:focus,
+html[data-theme="newspaper"] .np-meta-item a:hover,
+html[data-theme="newspaper"] .np-meta-item a:focus {
+  text-decoration-color: #000;
+}
+
+html[data-theme="newspaper"] .np-art {
+  filter: grayscale(1) contrast(1.2) sepia(0.2);
+  border: 1.5px solid #000;
+  padding: 2px;
+  background: #fff;
+}
+
+/* Fullscreen Now Playing Viewer Fixes */
+html[data-theme="newspaper"] .np-fullscreen-viewer {
+  background: rgba(0,0,0,0.95);
+}
+
+html[data-theme="newspaper"] .np-fs-status,
+html[data-theme="newspaper"] .np-fs-track,
+html[data-theme="newspaper"] .np-fs-artist,
+html[data-theme="newspaper"] .np-fs-album {
+  color: #fff !important;
+}
+
+/* Album viewer controls should keep strong contrast in newspaper mode */
+html[data-theme="newspaper"] .np-iv-external {
+  background: rgba(0, 0, 0, 0.5) !important;
+  color: #fff !important;
+  border: none !important;
+  width: 2.5rem !important;
+  height: 2.5rem !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 1rem !important;
+  top: 0.75rem !important;
+  right: 3.75rem !important;
+  line-height: 1 !important;
+  padding: 0 !important;
+  text-decoration: none !important;
+  box-sizing: border-box;
+}
+
+html[data-theme="newspaper"] .np-iv-external:hover,
+html[data-theme="newspaper"] .np-iv-external:focus {
+  background: rgba(0, 0, 0, 0.8) !important;
+  color: #fff !important;
+  text-decoration: none !important;
+}
+
+html[data-theme="newspaper"] .np-iv-external i {
+  color: inherit !important;
+  line-height: 1 !important;
+  font-size: 1rem !important;
+}
+
+/* Masthead (Header) */
+html[data-theme="newspaper"] .site-header {
+  border: 1px solid var(--line);
+  padding-bottom: 2.5rem;
+  margin-bottom: 2.5rem;
+}
+
+html[data-theme="newspaper"] .avatar {
+  /* personal avatar: monochrome (printed-ink look) */
+  filter: grayscale(1) contrast(1.15) brightness(0.95) !important;
+  mix-blend-mode: multiply;
+  border: 2px solid #000 !important;
+  padding: 4px;
+  background: #fff !important;
+  border-radius: 0 !important;
+}
+
+/* Footers */
+html[data-theme="newspaper"] .site-footer {
+  border: 1px solid var(--line);
+  padding-top: 2rem;
+  margin-top: 2.5rem;
+}
+
+/* Small caps for metadata */
+html[data-theme="newspaper"] .small {
+  text-transform: uppercase;
+  font-weight: 800;
+  color: #000;
+  letter-spacing: 0.05em;
+}
+
+/* Ensure selection is readable */
+html[data-theme="newspaper"] ::selection { background: #000; color: #fff; }
+
+/* Visible page scrollbar in newspaper mode */
+html[data-theme="newspaper"] {
+  scrollbar-color: #000 #f1eadf;
+  scrollbar-width: auto;
+}
+
+html[data-theme="newspaper"] ::-webkit-scrollbar {
+  width: 14px;
+  background: #f1eadf;
+}
+
+html[data-theme="newspaper"] ::-webkit-scrollbar-thumb {
+  background: #000;
+  border: 3px solid #f1eadf;
+}
+
+html[data-theme="newspaper"] ::-webkit-scrollbar-thumb:hover {
+  background: #1a1a1a;
+}
+
+

@@ -1,0 +1,48 @@
+/**
+ * Button and interaction element styles
+ */
+
+.btn-plain {
+  background: none;
+  border: 1px solid var(--line-alt);
+  color: var(--fg);
+  font-family: var(--sans);
+  padding: 0.55rem 0.9rem;
+  font-size: 0.7rem;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition), border-color var(--transition), transform var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border-radius: 4px;
+}
+
+.btn-plain:hover, .btn-plain:focus {
+  background: #111;
+  border-color: var(--fg);
+  outline: none;
+}
+
+.btn-plain:active {
+  transform: translateY(1px);
+}
+
+.btn-arrow .arrow {
+  transition: transform var(--transition);
+  display: inline-block;
+  font-size: 0.85rem;
+}
+
+.btn-arrow:hover .arrow, .btn-arrow:focus .arrow {
+  transform: translateX(4px);
+}
+
+.btn-plain.small {
+  padding: 0.4rem 0.7rem;
+}
+
+/* Light mode */
+html[data-theme="light"] .btn-plain:hover,
+html[data-theme="light"] .btn-plain:focus { background: #e0e0e0; }

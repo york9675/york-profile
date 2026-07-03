@@ -1,0 +1,113 @@
+/**
+ * Interest/About section styles
+ */
+
+.about-summary {
+  margin-bottom: 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.interest-block {
+  border-top: 1px solid var(--line);
+  padding-top: 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.interest-title {
+  margin: 0;
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.interest-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.interest-tab {
+  background: #101010;
+  border: 1px solid var(--line);
+  color: var(--fg);
+  padding: 0.55rem 0.95rem;
+  font-size: 0.78rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: border-color var(--transition), color var(--transition), background var(--transition), transform var(--transition);
+}
+
+.interest-tab:hover,
+.interest-tab:focus {
+  border-color: var(--fg);
+  background: #111;
+}
+
+.interest-tab.is-active {
+  background: #151515;
+  border-color: var(--fg);
+  transform: translateY(-1px);
+}
+
+.interest-panels {
+  position: relative;
+  overflow-y: auto;
+  max-height: 26rem;
+  scrollbar-width: none;
+  padding-right: 1px;
+}
+
+@media (min-width: 860px) {
+  .interest-panels {
+    max-height: none;
+  }
+}
+
+.interest-panels::-webkit-scrollbar {
+  display: none;
+}
+
+.interest-panel {
+  display: none;
+  gap: 0.9rem;
+  flex-direction: column;
+  animation: interestFade 260ms cubic-bezier(.4, 0, .2, 1) both;
+}
+
+.interest-panel.is-active {
+  display: flex;
+}
+
+.interest-panel p {
+  text-align: left;
+}
+
+@keyframes interestFade {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Light mode overrides */
+html[data-theme="light"] .interest-tab { background: #e2e2e2; }
+html[data-theme="light"] .interest-tab:hover,
+html[data-theme="light"] .interest-tab:focus { background: #d8d8d8; }
+html[data-theme="light"] .interest-tab.is-active { background: #d4d4d4; }
+
+@media (max-width: 640px) {
+  .interest-tabs {
+    gap: 0.5rem;
+  }
+}

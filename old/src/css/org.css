@@ -1,0 +1,93 @@
+/**
+ * Organization cards and studio section styles
+ */
+
+.org-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+}
+
+.org-card {
+  display: flex;
+  gap: 1.2rem;
+  align-items: flex-start;
+  background: #101010;
+  border: 1px solid var(--line);
+  padding: 1rem 1rem 1.1rem;
+  border-radius: 6px;
+  position: relative;
+  overflow: hidden;
+}
+
+.org-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 15%, rgba(255,255,255,0.04), transparent 60%),
+    linear-gradient(125deg, rgba(255,255,255,0.03), transparent 70%);
+  pointer-events: none;
+}
+
+.org-avatar {
+  width: 128px;
+  height: 128px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 1px solid var(--line-alt);
+  background: #111;
+  flex-shrink: 0;
+}
+
+.org-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.org-name {
+  margin: 0 0 0.1rem;
+  font-size: 1.15rem;
+  letter-spacing: 0.8px;
+}
+
+.org-role {
+  margin: 0;
+  font-size: 0.7rem;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.org-desc {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--fg-soft);
+  margin: 0;
+}
+
+.org-actions {
+  margin-top: 0.4rem;
+}
+
+/* Light mode */
+html[data-theme="light"] .org-card { background: #e2e2e2; }
+html[data-theme="light"] .org-card::before {
+  background:
+    radial-gradient(circle at 20% 15%, rgba(0,0,0,0.025), transparent 60%),
+    linear-gradient(125deg, rgba(0,0,0,0.015), transparent 70%);
+}
+
+@media (max-width: 760px) {
+  .org-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .org-avatar {
+    width: 100%;
+    height: auto;
+    max-width: 320px;
+  }
+}

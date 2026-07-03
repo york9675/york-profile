@@ -1,0 +1,131 @@
+/**
+ * Global styles and design tokens
+ */
+
+:root {
+  /* Colors */
+  --bg: #000;
+  --bg-alt: #0d0d0d;
+  --fg: #ffffff;
+  --fg-soft: #dcdcdc;
+  --muted: #888888;
+  --line: #1c1c1c;
+  --line-alt: #262626;
+  --accent: #ffffff;
+  --focus-ring: #ffffff;
+  --danger: #ff5555;
+
+  /* Typography */
+  --mono: "SFMono-Regular", ui-monospace, "JetBrains Mono", "Fira Code", Menlo, Consolas, monospace;
+  --sans: system-ui, -apple-system, "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  /* Animations */
+  --transition: 140ms cubic-bezier(.4,.0,.2,1);
+
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.55;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Utilities */
+.mono { font-family: var(--mono); }
+.small { font-size: 0.75rem; letter-spacing: 0.5px; text-transform: uppercase; }
+.muted { color: var(--muted); }
+
+/* Typography */
+h1, h2, h3, h4 {
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  margin: 0 0 0.7rem;
+  line-height: 1.2;
+}
+
+h1 { font-size: clamp(2.2rem, 5vw, 3rem); }
+h2 { font-size: clamp(1.1rem, 2vw, 1.35rem); font-weight: 500; color: var(--muted); }
+h3.section-title {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  border-bottom: 1px solid var(--line-alt);
+  padding-bottom: 0.6rem;
+  margin-top: 0;
+  margin-bottom: 1.4rem;
+  font-weight: 600;
+}
+h4 {
+  font-size: 1.05rem;
+  letter-spacing: 0.6px;
+}
+
+p {
+  margin: 0 0 1rem;
+}
+
+a {
+  color: var(--fg);
+  text-decoration: none;
+  position: relative;
+  transition: color var(--transition);
+}
+
+a:focus {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+a:hover {
+  color: var(--fg-soft);
+}
+
+/* Accessibility */
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 3px;
+}
+
+::selection {
+  background: #ffffff;
+  color: #000;
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+  width: 11px;
+  background: #060606;
+}
+::-webkit-scrollbar-thumb {
+  background: #181818;
+  border: 2px solid #060606;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #222;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

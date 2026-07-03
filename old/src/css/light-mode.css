@@ -1,0 +1,30 @@
+/**
+ * Light mode theme overrides
+ */
+
+html[data-theme="light"] {
+  --bg: #f4f4f4;
+  --bg-alt: #ebebeb;
+  --fg: #111111;
+  --fg-soft: #333333;
+  --muted: #666666;
+  --line: #d4d4d4;
+  --line-alt: #c8c8c8;
+  --accent: #000;
+  --focus-ring: #000;
+  color-scheme: light;
+}
+
+/* Panels */
+html[data-theme="light"] .panel:not(:last-child) {
+  background: var(--bg-alt);
+  border-color: var(--line-alt);
+}
+
+/* Scrollbars */
+html[data-theme="light"] ::-webkit-scrollbar { background: #e8e8e8; }
+html[data-theme="light"] ::-webkit-scrollbar-thumb {
+  background: #c4c4c4;
+  border-color: #e8e8e8;
+}
+html[data-theme="light"] ::-webkit-scrollbar-thumb:hover { background: #aaa; }
