@@ -1,7 +1,5 @@
 ---
 import { appInfo } from '../data/app';
-
-const appEnv = import.meta.env.PROD ? 'Production' : 'Development';
 ---
 
 <div class="settings-fab">
@@ -81,26 +79,35 @@ const appEnv = import.meta.env.PROD ? 'Production' : 'Development';
         <option value="newspaper">Newspaper (BETA)</option>
       </select>
     </div>
-    <div class="settings-app-info" aria-label="App information">
-      <dl>
-        <div>
-          <dt>Version</dt>
-          <dd>{appInfo.version}</dd>
-        </div>
-        <div>
-          <dt>Environment</dt>
-          <dd>{appEnv}</dd>
-        </div>
-        <div>
-          <dt>Framework</dt>
-          <dd>{appInfo.framework}</dd>
-        </div>
-        <div>
-          <dt>Source</dt>
-          <dd><a href="https://github.com/york9675/york-profile" target="_blank" rel="noopener noreferrer">york9675/york-profile</a></dd>
-        </div>
-      </dl>
-    </div>
+    <details class="settings-disclosure">
+      <summary class="settings-row settings-summary">
+        <span class="settings-label">
+          <i class="fas fa-circle-info" aria-hidden="true"></i>
+          About
+        </span>
+        <i class="fas fa-chevron-down settings-summary-icon" aria-hidden="true"></i>
+      </summary>
+      <div class="settings-app-info" aria-label="App information">
+        <dl>
+          <div>
+            <dt>Version</dt>
+            <dd>{appInfo.version}</dd>
+          </div>
+          <div>
+            <dt>Framework</dt>
+            <dd><a href="https://astro.build" target="_blank" rel="noopener noreferrer">Astro</a> v{appInfo.astroVersion}</dd>
+          </div>
+          <div>
+            <dt>Environment</dt>
+            <dd>{appInfo.appEnv}</dd>
+          </div>
+          <div>
+            <dt>Source</dt>
+            <dd><a href="https://github.com/york9675/york-profile" target="_blank" rel="noopener noreferrer">york9675/york-profile</a></dd>
+          </div>
+        </dl>
+      </div>
+    </details>
   </div>
   <button type="button" class="settings-btn" id="settings-btn" title="Settings" aria-label="Open settings" aria-expanded="false" aria-controls="settings-panel">
     <i class="fas fa-sliders-h" aria-hidden="true"></i>

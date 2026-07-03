@@ -11,6 +11,7 @@ export const profile = {
 } as const;
 
 export const appInfo = {
-  framework: `Astro ${packageJson.dependencies.astro.replace(/^[^\d]*/, '')}`,
-  version: packageJson.version
+  version: packageJson.version,
+  astroVersion: packageJson.dependencies.astro.replace(/^[^\d]*/, ''),
+  appEnv: import.meta.env.MODE
 } as const;

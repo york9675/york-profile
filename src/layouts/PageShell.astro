@@ -1,6 +1,7 @@
 ---
 import { inject } from '@vercel/analytics';
 import SpeedInsights from '@vercel/speed-insights/astro';
+import { appInfo } from '../data/app';
 
 interface Props {
   title: string;
@@ -9,10 +10,11 @@ interface Props {
 }
 
 const { title, description, lang = 'en' } = Astro.props;
-const isDev = import.meta.env.DEV;
+
+// Configuration for Vercel Toolbar
 const toolbarProjectId = 'prj_bRdDHFkFdH7YZmPcbWgSgB7bA38U';
 const toolbarOwnerId = 'team_lO4dEQU7946C21LoJmzJTUP7';
-const toolbarBranch = process.env.VERCEL_GIT_COMMIT_REF ?? 'main';
+const toolbarBranch = import.meta.env.VERCEL_GIT_COMMIT_REF ?? 'main';
 
 inject();
 ---
@@ -29,8 +31,7 @@ inject();
   </head>
   <body>
     <slot />
-    
-    {isDev && (
+    {appInfo.appEnv === 'development' && (
       <script
         is:inline
         src="https://vercel.live/_next-live/feedback/feedback.js"

@@ -76,9 +76,7 @@
 }
 
 .settings-app-info {
-  margin-top: 0.85rem;
-  padding-top: 0.75rem;
-  border-top: 1px solid var(--line);
+  padding: 0;
 }
 
 .settings-app-info dl {
@@ -87,7 +85,7 @@
   margin: 0;
 }
 
-.settings-app-info div {
+.settings-app-info dl > div {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
@@ -122,6 +120,48 @@
   margin-top: 0.65rem;
   padding-top: 0.65rem;
   border-top: 1px solid var(--line);
+}
+
+.settings-disclosure {
+  margin-top: 0.65rem;
+  padding-top: 0.65rem;
+  border-top: 1px solid var(--line);
+}
+
+.settings-disclosure[open] .settings-app-info {
+  margin-top: 0;
+}
+
+.settings-summary {
+  list-style: none;
+  cursor: pointer;
+  transition: color var(--transition);
+}
+
+.settings-summary:hover .settings-label,
+.settings-summary:focus-visible .settings-label,
+.settings-summary:hover .settings-summary-icon,
+.settings-summary:focus-visible .settings-summary-icon {
+  color: var(--fg);
+}
+
+.settings-summary:focus-visible {
+  outline: 1px solid var(--fg);
+  outline-offset: 4px;
+}
+
+.settings-summary::-webkit-details-marker {
+  display: none;
+}
+
+.settings-summary-icon {
+  color: var(--muted);
+  font-size: 0.72rem;
+  transition: transform var(--transition), color var(--transition);
+}
+
+.settings-disclosure.is-visually-open .settings-summary-icon {
+  transform: rotate(180deg);
 }
 
 .settings-row-slider {

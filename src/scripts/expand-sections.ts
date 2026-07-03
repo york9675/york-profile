@@ -8,8 +8,28 @@ import { ANIMATION_DURATION, ANIMATION_EASING, SELECTORS } from './constants';
  * Initialize expandable sections with smooth animations
  */
 export function initExpandSectionAnimations() {
-  const sections = Array.from(document.querySelectorAll<HTMLDetailsElement>(SELECTORS.expandSections));
-  if (!sections.length) return;
+  const disclosureTypes = [
+    {
+      sectionSelector: SELECTORS.expandSections,
+      summarySelector: SELECTORS.expandSummary,
+      bodySelector: SELECTORS.expandBody,
+      innerSelector: SELECTORS.expandBodyInner,
+      innerClassName: 'expand-body-inner'
+    },
+    {
+      sectionSelector: SELECTORS.settingsDisclosure,
+      summarySelector: SELECTORS.settingsSummary,
+      bodySelector: SELECTORS.settingsAppInfo,
+      innerSelector: SELECTORS.settingsAppInfoInner,
+      innerClassName: 'settings-app-info-inner'
+    }
+  ];
+
+  const disclosures = disclosureTypes.flatMap(type =>
+    Array.from(document.querySelectorAll<HTMLDetailsElement>(type.sectionSelector))
+      .map(section => ({ section, type }))
+  );
+  if (!disclosures.length) return;
 
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const activeAnimations = new WeakMap<HTMLDetailsElement, { timerId: number; body: HTMLElement }>();
@@ -35,12 +55,14 @@ export function initExpandSectionAnimations() {
   const finishAnimation = (section: HTMLDetailsElement, body: HTMLElement, shouldStayOpen: boolean) => {
     clearAnimationStyles(body);
     section.open = shouldStayOpen;
+    section.classList.toggle('is-visually-open', shouldStayOpen);
     activeAnimations.delete(section);
   };
 
   const animateOpen = (section: HTMLDetailsElement, body: HTMLElement) => {
     cancelRunningAnimation(section);
     section.open = true;
+    section.classList.add('is-visually-open');
 
     body.style.height = '0px';
     body.style.opacity = '0';
@@ -64,6 +86,7 @@ export function initExpandSectionAnimations() {
   const animateClose = (section: HTMLDetailsElement, body: HTMLElement) => {
     cancelRunningAnimation(section);
     section.open = true;
+    section.classList.remove('is-visually-open');
 
     const startHeight = body.scrollHeight;
     body.style.height = `${startHeight}px`;
@@ -85,14 +108,15 @@ export function initExpandSectionAnimations() {
     activeAnimations.set(section, { timerId, body });
   };
 
-  sections.forEach(section => {
-    const summary = section.querySelector<HTMLElement>(SELECTORS.expandSummary);
-    const body = section.querySelector<HTMLElement>(SELECTORS.expandBody);
+  disclosures.forEach(({ section, type }) => {
+    const summary = section.querySelector<HTMLElement>(type.summarySelector);
+    const body = section.querySelector<HTMLElement>(type.bodySelector);
     if (!summary || !body) return;
+    section.classList.toggle('is-visually-open', section.open);
 
-    if (!body.querySelector(':scope > ' + SELECTORS.expandBodyInner)) {
+    if (!body.querySelector(':scope > ' + type.innerSelector)) {
       const inner = document.createElement('div');
-      inner.className = 'expand-body-inner';
+      inner.className = type.innerClassName;
       while (body.firstChild) inner.appendChild(body.firstChild);
       body.appendChild(inner);
     }
@@ -103,6 +127,7 @@ export function initExpandSectionAnimations() {
       if (prefersReducedMotion) {
         cancelRunningAnimation(section);
         section.open = !section.open;
+        section.classList.toggle('is-visually-open', section.open);
         return;
       }
 
