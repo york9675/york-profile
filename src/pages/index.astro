@@ -1,0 +1,41 @@
+---
+import PageShell from '../layouts/PageShell.astro';
+import SeoHead from '../components/SeoHead.astro';
+import EffectsCanvases from '../components/EffectsCanvases.astro';
+import ProfileHeader from '../components/ProfileHeader.astro';
+import AboutSection from '../components/AboutSection.astro';
+import NowPlayingSection from '../components/NowPlayingSection.astro';
+import LinksSection from '../components/LinksSection.astro';
+import OrgSection from '../components/OrgSection.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import SettingsFab from '../components/SettingsFab.astro';
+import RainAudio from '../components/RainAudio.astro';
+import NowPlayingOverlays from '../components/NowPlayingOverlays.astro';
+import { profile } from '../data/app';
+import '../styles/main.css';
+---
+
+<PageShell title="York | Profile" description={profile.description}>
+  <SeoHead slot="head" />
+
+  <EffectsCanvases />
+
+  <div id="app">
+    <ProfileHeader />
+    <main class="content grid" id="main-content">
+      <AboutSection />
+      <NowPlayingSection />
+      <LinksSection />
+      <OrgSection />
+    </main>
+    <SiteFooter />
+  </div>
+
+  <SettingsFab />
+  <RainAudio />
+  <NowPlayingOverlays />
+
+  <script>
+    import '../scripts/main';
+  </script>
+</PageShell>

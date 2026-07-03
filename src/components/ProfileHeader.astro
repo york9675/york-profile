@@ -1,0 +1,45 @@
+---
+import { Image } from 'astro:assets';
+import avatar from '../assets/Avatar.jpeg';
+import { profile } from '../data/app';
+---
+
+<header class="site-header frame" role="banner">
+  <div class="identity">
+    <Image
+      class="avatar"
+      src={avatar}
+      alt="York"
+      width={160}
+      height={160}
+      densities={[1, 2, 3]}
+      sizes="160px"
+      quality={95}
+      decoding="async"
+      loading="eager"
+    />
+    <div class="name-block">
+      <h1 class="primary-name">York</h1>
+      <h2 class="secondary-name">york0524 • ヨーク</h2>
+      <p class="bio-subtitle" aria-hidden="true">Bio</p>
+      <p class="tagline" id="bio">I love music and the sky.</p>
+      <p class="contact-email">
+        <a href={`mailto:${profile.email}`} id="contact-email-link" class="email-link mono" title="Email me" rel="noopener noreferrer">
+          <span class="icon" aria-hidden="true"><i class="fas fa-envelope"></i></span>
+          <span class="addr">york<span style="display:none">null</span>@york.qzz.io</span>
+        </a>
+      </p>
+    </div>
+  </div>
+
+  <div class="meta-lines" aria-label="Profile metadata">
+    <div class="clock-line">
+      <span class="label">Location</span>
+      <span class="mono">Taiwan</span>
+    </div>
+    <div class="clock-line">
+      <span class="label">Local Time (UTC +8)</span>
+      <span id="local-time" class="mono">--:--</span>
+    </div>
+  </div>
+</header>

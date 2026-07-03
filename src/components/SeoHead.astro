@@ -1,0 +1,72 @@
+---
+import { profile } from '../data/app';
+
+const personSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  '@id': `${profile.siteUrl}/`,
+  name: profile.name,
+  alternateName: profile.handle,
+  url: profile.siteUrl,
+  image: profile.avatar,
+  description: profile.description,
+  jobTitle: 'Founder / Developer',
+  homeLocation: {
+    '@type': 'Place',
+    name: 'Taiwan'
+  },
+  sameAs: [
+    'https://github.com/york9675',
+    'https://www.last.fm/user/york0524',
+    'https://soundcloud.com/york0524'
+  ]
+};
+---
+
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; img-src 'self' data: blob: https:; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; connect-src 'self' https://lastfm-proxy.york.qzz.io; media-src 'self'; frame-src 'self';" />
+<meta name="msapplication-TileColor" content="#000000" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
+<meta name="color-scheme" content="light dark" />
+<link rel="icon" href={profile.avatar} />
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500;600;700;900&display=swap" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+<meta property="og:type" content="profile" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:title" content="York • york0524" />
+<meta property="og:description" content={profile.description} />
+<meta property="og:image" content={profile.avatar} />
+<meta property="og:image:alt" content="York avatar" />
+<meta property="og:url" content={profile.siteUrl} />
+<meta property="og:site_name" content="York Profile" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="York • york0524" />
+<meta name="twitter:description" content={profile.description} />
+<meta name="twitter:image" content={profile.avatar} />
+<meta name="twitter:creator" content="@york0524" />
+<meta name="twitter:site" content="@york0524" />
+<link rel="canonical" href={profile.siteUrl} />
+
+<script type="application/ld+json" set:html={JSON.stringify(personSchema)} is:inline />
+
+<script is:inline>
+  try {
+    const theme = localStorage.getItem('themeMode');
+    if (theme === 'light') {
+      document.documentElement.setAttribute('data-theme', 'light');
+    } else if (theme === 'newspaper') {
+      document.documentElement.setAttribute('data-theme', 'newspaper');
+    } else if (theme === 'system') {
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    }
+  } catch (error) {
+    console.warn('Could not load theme preference:', error);
+  }
+</script>

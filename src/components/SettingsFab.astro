@@ -1,0 +1,96 @@
+---
+import { appInfo } from '../data/app';
+
+const appMode = import.meta.env.PROD ? 'Production' : 'Development';
+---
+
+<div class="settings-fab">
+  <div class="settings-panel" id="settings-panel" hidden>
+    <p class="settings-title">Settings</p>
+    <div class="settings-row">
+      <label class="settings-label" for="rain-toggle">
+        <i class="fas fa-cloud-rain" aria-hidden="true"></i>
+        Rain effect
+      </label>
+      <button type="button" class="toggle-btn" id="rain-toggle" role="switch" aria-checked="false" aria-label="Toggle rain effect">
+        <span class="toggle-thumb"></span>
+      </button>
+    </div>
+    <div class="settings-row settings-row-slider rain-control" id="rain-intensity-row" hidden>
+      <label class="settings-label" for="rain-intensity">
+        <i class="fas fa-droplet" aria-hidden="true"></i>
+        Rain intensity
+      </label>
+      <div class="slider-wrap">
+        <input type="range" id="rain-intensity" min="20" max="100" step="1" value="25" aria-label="Rain intensity" />
+        <span class="slider-value mono" id="rain-intensity-value">25%</span>
+      </div>
+    </div>
+    <div class="settings-row rain-control" id="rain-sound-row" hidden>
+      <label class="settings-label" for="rain-sound-toggle">
+        <i class="fas fa-volume-xmark" aria-hidden="true"></i>
+        Mute rain sound
+      </label>
+      <button type="button" class="toggle-btn" id="rain-sound-toggle" role="switch" aria-checked="false" aria-label="Toggle rain sound mute">
+        <span class="toggle-thumb"></span>
+      </button>
+    </div>
+    <div class="settings-row">
+      <label class="settings-label" for="snow-toggle">
+        <i class="fas fa-snowflake" aria-hidden="true"></i>
+        Snow effect
+      </label>
+      <button type="button" class="toggle-btn" id="snow-toggle" role="switch" aria-checked="false" aria-label="Toggle snow effect">
+        <span class="toggle-thumb"></span>
+      </button>
+    </div>
+    <div class="settings-row settings-row-slider snow-control" id="snow-intensity-row" hidden>
+      <label class="settings-label" for="snow-intensity">
+        <i class="fas fa-wind" aria-hidden="true"></i>
+        Snow intensity
+      </label>
+      <div class="slider-wrap">
+        <input type="range" id="snow-intensity" min="15" max="100" step="1" value="15" aria-label="Snow intensity" />
+        <span class="slider-value mono" id="snow-intensity-value">15%</span>
+      </div>
+    </div>
+    <div class="settings-row snow-control" id="snow-clear-row" hidden>
+      <button type="button" class="btn-plain small snow-clear-btn" id="snow-clear-btn" aria-label="Clear accumulated snowdrift">
+        <i class="fas fa-broom" aria-hidden="true"></i>
+        Clear snowdrift
+      </button>
+    </div>
+    <div class="settings-row">
+      <label class="settings-label" for="particles-toggle">
+        <i class="fas fa-project-diagram" aria-hidden="true"></i>
+        Particles effect
+      </label>
+      <button type="button" class="toggle-btn" id="particles-toggle" role="switch" aria-checked="false" aria-label="Toggle particles effect">
+        <span class="toggle-thumb"></span>
+      </button>
+    </div>
+    <div class="settings-row">
+      <label class="settings-label" for="theme-select">
+        <i class="fas fa-palette" aria-hidden="true"></i>
+        Theme
+      </label>
+      <select id="theme-select" class="theme-select" aria-label="Select theme">
+        <option value="system">System</option>
+        <option value="dark">Dark</option>
+        <option value="light">Light</option>
+        <option value="newspaper">Newspaper (BETA)</option>
+      </select>
+    </div>
+    <div class="settings-app-info" aria-label="App information">
+      <dl>
+        <div><dt>Version</dt><dd>{appInfo.version}</dd></div>
+        <div><dt>Mode</dt><dd>{appMode}</dd></div>
+        <div><dt>Framework</dt><dd>{appInfo.framework}</dd></div>
+        <div><dt>Developer</dt><dd>York</dd></div>
+      </dl>
+    </div>
+  </div>
+  <button type="button" class="settings-btn" id="settings-btn" title="Settings" aria-label="Open settings" aria-expanded="false" aria-controls="settings-panel">
+    <i class="fas fa-sliders-h" aria-hidden="true"></i>
+  </button>
+</div>

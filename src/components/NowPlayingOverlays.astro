@@ -1,0 +1,44 @@
+---
+const lastFmProfile = 'https://www.last.fm/user/york0524';
+---
+
+<div id="np-image-viewer" class="np-image-viewer" hidden aria-hidden="true" role="dialog" aria-modal="true" aria-label="Album Artwork Viewer">
+  <div class="np-iv-backdrop" id="np-iv-backdrop"></div>
+  <div class="np-iv-content">
+    <a class="np-iv-external" id="np-iv-external" href={lastFmProfile} target="_blank" rel="noopener noreferrer" title="Open artwork in a new tab" aria-label="Open original artwork in a new tab">
+      <i class="fas fa-external-link-alt" aria-hidden="true"></i>
+    </a>
+    <button class="np-iv-close" id="np-iv-close" type="button" title="Close" aria-label="Close viewer">
+      <i class="fas fa-times" aria-hidden="true"></i>
+    </button>
+    <div class="np-iv-image-wrapper">
+      <img id="np-iv-art" src="" alt="Album artwork" decoding="async" crossorigin="anonymous" />
+    </div>
+    <div class="np-iv-info">
+      <p class="np-iv-title" id="np-iv-album-title">—</p>
+      <p class="np-iv-artist"><a id="np-iv-artist" href={lastFmProfile} target="_blank" rel="noopener noreferrer">—</a></p>
+      <p class="np-iv-album" id="np-iv-album-playcount" hidden>I've listened to this album for <a id="np-iv-album-library-link" href={lastFmProfile} target="_blank" rel="noopener noreferrer" class="np-iv-playcount-link">—</a> times.</p>
+      <a id="np-iv-link" href={lastFmProfile} target="_blank" rel="noopener noreferrer" class="btn-plain np-iv-btn btn-arrow">
+        <i class="fab fa-lastfm" aria-hidden="true"></i> View on Last.fm <span class="arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<div id="np-fullscreen-viewer" class="np-fullscreen-viewer" hidden aria-hidden="true" role="dialog" aria-modal="true" aria-label="Now Playing Fullscreen">
+  <div class="np-fs-bg" id="np-fs-bg"></div>
+  <button class="np-fs-close" id="np-fs-close" type="button" title="Close" aria-label="Close fullscreen">
+    <i class="fas fa-times" aria-hidden="true"></i>
+  </button>
+  <div class="np-fs-content">
+    <div class="np-fs-art-wrap">
+      <img id="np-fs-art" class="np-fs-art" src="" alt="Album artwork" decoding="async" crossorigin="anonymous" />
+    </div>
+    <div class="np-fs-info">
+      <p class="np-fs-status" id="np-fs-status">Loading…</p>
+      <h2 class="np-fs-track" id="np-fs-track">—</h2>
+      <h3 class="np-fs-artist" id="np-fs-artist">—</h3>
+      <p class="np-fs-album" id="np-fs-album">—</p>
+    </div>
+  </div>
+</div>

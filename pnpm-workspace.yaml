@@ -1,0 +1,8 @@
+allowBuilds:
+  esbuild: true
+  sharp: true
+confirmModulesPurge: false
+onlyBuiltDependencies:
+  - esbuild
+  - sharp
+verifyDepsBeforeRun: false
