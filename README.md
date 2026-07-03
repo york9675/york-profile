@@ -1,10 +1,8 @@
 ## York's Profile Page
 
-*Rewrite of my old [profile](https://github.com/york9675/profile) page, rebuilt with the Astro framework.*
+This is the source code for my personal profile page, which is built using [Astro](https://astro.build) and hosted on [Vercel](https://vercel.com).
 
-This is the source code for my personal profile page.
-
-Visit: https://york.qzz.io (or https://york-profile.vercel.app)
+**Visit: https://york.qzz.io (or https://york-profile.vercel.app)**
 
 ---
 
