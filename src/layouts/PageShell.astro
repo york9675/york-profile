@@ -1,4 +1,6 @@
 ---
+import { inject } from '@vercel/analytics';
+
 interface Props {
   title: string;
   description?: string;
@@ -6,6 +8,8 @@ interface Props {
 }
 
 const { title, description, lang = 'en' } = Astro.props;
+
+inject();
 ---
 
 <!DOCTYPE html>
