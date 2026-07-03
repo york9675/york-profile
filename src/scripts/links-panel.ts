@@ -11,8 +11,8 @@ export function initDiscordLinksPanelView() {
   const linksPanel = document.getElementById('links');
   const mainView = document.getElementById('links-main-view');
   const discordView = document.getElementById('discord-before-dm-view');
-  const discordTrigger = document.querySelector(SELECTORS.discordTrigger);
-  const backButton = document.querySelector(SELECTORS.discordBack);
+  const discordTrigger = document.querySelector<HTMLAnchorElement>(SELECTORS.discordTrigger);
+  const backButton = document.querySelector<HTMLButtonElement>(SELECTORS.discordBack);
 
   if (!linksPanel || !mainView || !discordView || !discordTrigger || !backButton) return;
   if (linksPanel.dataset.islandReady === 'true') return;

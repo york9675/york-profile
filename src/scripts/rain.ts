@@ -24,6 +24,24 @@ import {
   SELECTORS
 } from './constants';
 
+type RainDrop = {
+  x: number;
+  y: number;
+  speed: number;
+  len: number;
+  opacity: number;
+  w: number;
+};
+
+type RainSplash = {
+  x: number;
+  y: number;
+  r: number;
+  maxR: number;
+  opacity: number;
+  decay: number;
+};
+
 let isRainInitialized = false;
 
 /**
@@ -32,18 +50,18 @@ let isRainInitialized = false;
 export function initRain() {
   if (isRainInitialized) return;
 
-  const canvas = $(SELECTORS.rainCanvas);
+  const canvas = $<HTMLCanvasElement>(SELECTORS.rainCanvas);
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
-  const rainAudio = $(SELECTORS.rainAudio);
+  const rainAudio = $<HTMLAudioElement>(SELECTORS.rainAudio);
   isRainInitialized = true;
 
-  let drops = [];
-  let splashes = [];
-  let animId = null;
-  let thunderTimerId = null;
-  let thunderAudioCtx = null;
+  let drops: RainDrop[] = [];
+  let splashes: RainSplash[] = [];
+  let animId: number | null = null;
+  let thunderTimerId: number | null = null;
+  let thunderAudioCtx: AudioContext | null = null;
   let unlockListenersBound = false;
 
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -94,16 +112,16 @@ export function initRain() {
   }
 
   function updateIntensityUI() {
-    const slider = $(SELECTORS.rainIntensity);
+    const slider = $<HTMLInputElement>(SELECTORS.rainIntensity);
     const valueEl = $(SELECTORS.rainIntensityValue);
     if (slider) slider.value = String(intensity);
     if (valueEl) valueEl.textContent = `${intensity}%`;
   }
 
   function updateRainControlState() {
-    const slider = $(SELECTORS.rainIntensity);
-    const rainControls = document.querySelectorAll(SELECTORS.rainControls);
-    const soundBtn = $(SELECTORS.rainSoundToggle);
+    const slider = $<HTMLInputElement>(SELECTORS.rainIntensity);
+    const rainControls = document.querySelectorAll<HTMLElement>(SELECTORS.rainControls);
+    const soundBtn = $<HTMLButtonElement>(SELECTORS.rainSoundToggle);
     if (slider) slider.disabled = !enabled;
     rainControls.forEach(el => {
       if (enabled) el.removeAttribute('hidden');
@@ -140,7 +158,7 @@ export function initRain() {
 
   function playThunderRumble() {
     if (!enabled || soundMuted) return;
-    const AudioCtx = window.AudioContext || window['webkitAudioContext'];
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
     if (!AudioCtx) return;
     if (!thunderAudioCtx) thunderAudioCtx = new AudioCtx();
     if (thunderAudioCtx.state === 'suspended') {
@@ -249,14 +267,14 @@ export function initRain() {
   }
 
   function stop() {
-    cancelAnimationFrame(animId);
+    if (animId) window.cancelAnimationFrame(animId);
     animId = null;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     canvas.style.opacity = '0';
   }
 
   function applyState() {
-    const btn = $(SELECTORS.rainToggle);
+    const btn = $<HTMLButtonElement>(SELECTORS.rainToggle);
     if (enabled) {
       start();
     } else {

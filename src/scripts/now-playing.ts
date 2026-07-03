@@ -26,6 +26,18 @@ let npCountdownTimerId: ReturnType<typeof setInterval> | undefined;
 let npFullscreenIdleTimerId: ReturnType<typeof setTimeout> | undefined;
 let isNowPlayingInitialized = false;
 
+type NowPlayingState = {
+  type: string;
+  art?: string;
+  album?: string;
+  artist?: string;
+  artistUrl?: string;
+  albumPlayCount?: number;
+  albumLibraryUrl?: string;
+  albumUrl?: string;
+  trackUrl?: string;
+};
+
 /**
  * Create and inject CSS keyframes for scroll animation with pause timing
  */
@@ -154,7 +166,7 @@ function setNowPlayingLoading(isLoading: boolean) {
     const metaSepEl = $('#np-meta-sep');
     const playCountEl = $('#np-playcount');
     const playCountTextEl = $('#np-playcount-text');
-    const playCountLinkEl = $('#np-playcount-link');
+    const playCountLinkEl = $<HTMLAnchorElement>('#np-playcount-link');
     const artistMetaEl = $('#np-artist-meta');
     if (lovedMetaEl) lovedMetaEl.hidden = true;
     if (metaSepEl) metaSepEl.hidden = true;
@@ -176,16 +188,16 @@ function setNowPlayingError() {
   if (nextStateKey === npLastStateKey) return;
 
   const statusEl = $('#np-status');
-  const trackEl = $('#np-track');
+  const trackEl = $<HTMLAnchorElement>('#np-track');
   const lovedMetaEl = $('#np-loved-meta');
   const metaSepEl = $('#np-meta-sep');
-  const artistEl = $('#np-artist');
+  const artistEl = $<HTMLAnchorElement>('#np-artist');
   const albumEl = $('#np-album');
   const playCountEl = $('#np-playcount');
   const playCountTextEl = $('#np-playcount-text');
   const artistMetaEl = $('#np-artist-meta');
-  const artEl = $('#np-art');
-  const artLinkEl = $('#np-art-link');
+  const artEl = $<HTMLImageElement>('#np-art');
+  const artLinkEl = $<HTMLButtonElement>('#np-art-link');
   const widgetEl = $('#now-playing');
 
   // Fullscreen elements
@@ -193,7 +205,7 @@ function setNowPlayingError() {
   const fsTrackEl = $('#np-fs-track');
   const fsArtistEl = $('#np-fs-artist');
   const fsAlbumEl = $('#np-fs-album');
-  const fsArtEl = $('#np-fs-art');
+  const fsArtEl = $<HTMLImageElement>('#np-fs-art');
   const fsBgEl = $('#np-fs-bg');
 
   if (widgetEl) widgetEl.style.removeProperty('--np-color');
@@ -388,26 +400,26 @@ async function fetchRecentTrack(retryCount = 0) {
     }
 
     const statusEl = $('#np-status');
-    const trackEl = $('#np-track');
+    const trackEl = $<HTMLAnchorElement>('#np-track');
     const lovedMetaEl = $('#np-loved-meta');
     const metaSepEl = $('#np-meta-sep');
-    const artistEl = $('#np-artist');
-    const albumEl = $('#np-album');
+    const artistEl = $<HTMLAnchorElement>('#np-artist');
+    const albumEl = $<HTMLButtonElement>('#np-album');
     const playCountEl = $('#np-playcount');
     const playCountTextEl = $('#np-playcount-text');
-    const playCountLinkEl = $('#np-playcount-link');
-    const artEl = $('#np-art');
-    const artLinkEl = $('#np-art-link');
+    const playCountLinkEl = $<HTMLAnchorElement>('#np-playcount-link');
+    const artEl = $<HTMLImageElement>('#np-art');
+    const artLinkEl = $<HTMLButtonElement>('#np-art-link');
     const artistMetaEl = $('#np-artist-meta');
-    const artistMetaNameEl = $('#np-artist-meta-name');
-    const artistMetaCountEl = $('#np-artist-meta-count');
+    const artistMetaNameEl = $<HTMLAnchorElement>('#np-artist-meta-name');
+    const artistMetaCountEl = $<HTMLAnchorElement>('#np-artist-meta-count');
 
     // Fullscreen elements
     const fsStatusEl = $('#np-fs-status');
     const fsTrackEl = $('#np-fs-track');
     const fsArtistEl = $('#np-fs-artist');
     const fsAlbumEl = $('#np-fs-album');
-    const fsArtEl = $('#np-fs-art');
+    const fsArtEl = $<HTMLImageElement>('#np-fs-art');
     const fsBgEl = $('#np-fs-bg');
 
     if (statusEl) {
@@ -613,23 +625,23 @@ export function initNowPlaying() {
   if (!document.getElementById('now-playing')) return;
   isNowPlayingInitialized = true;
 
-  const npRefreshBtn = $('#np-refresh');
-  const npFullscreenBtn = $('#np-fullscreen-btn');
-  const npArtEl = $('#np-art');
-  const npArtLinkEl = $('#np-art-link');
-  const npAlbumEl = $('#np-album');
+  const npRefreshBtn = $<HTMLButtonElement>('#np-refresh');
+  const npFullscreenBtn = $<HTMLButtonElement>('#np-fullscreen-btn');
+  const npArtEl = $<HTMLImageElement>('#np-art');
+  const npArtLinkEl = $<HTMLButtonElement>('#np-art-link');
+  const npAlbumEl = $<HTMLButtonElement>('#np-album');
   
   // Image viewer elements
   const ivViewer = $('#np-image-viewer');
   const ivBackdrop = $('#np-iv-backdrop');
-  const ivClose = $('#np-iv-close');
-  const ivArt = $('#np-iv-art');
+  const ivClose = $<HTMLButtonElement>('#np-iv-close');
+  const ivArt = $<HTMLImageElement>('#np-iv-art');
   const ivTitle = $('#np-iv-album-title');
-  const ivArtist = $('#np-iv-artist');
+  const ivArtist = $<HTMLAnchorElement>('#np-iv-artist');
   const ivPlayCount = $('#np-iv-album-playcount');
-  const ivPlayCountLink = $('#np-iv-album-library-link');
-  const ivLink = $('#np-iv-link');
-  const ivExternal = $('#np-iv-external');
+  const ivPlayCountLink = $<HTMLAnchorElement>('#np-iv-album-library-link');
+  const ivLink = $<HTMLAnchorElement>('#np-iv-link');
+  const ivExternal = $<HTMLAnchorElement>('#np-iv-external');
   const appRoot = document.getElementById('app');
   const settingsFab = document.querySelector('.settings-fab');
   let previousFocus: HTMLElement | null = null;
@@ -671,9 +683,9 @@ export function initNowPlaying() {
   const openViewer = (e: Event) => {
     if (!npLastStateKey) return;
     
-    let state: any;
+    let state: NowPlayingState;
     try {
-      state = JSON.parse(npLastStateKey);
+      state = JSON.parse(npLastStateKey) as NowPlayingState;
     } catch (err) {
       return;
     }
@@ -783,7 +795,7 @@ export function initNowPlaying() {
   
   // Fullscreen viewer elements
   const fsViewer = $('#np-fullscreen-viewer');
-  const fsClose = $('#np-fs-close');
+  const fsClose = $<HTMLButtonElement>('#np-fs-close');
 
   const clearFullscreenIdleTimer = () => {
     if (npFullscreenIdleTimerId) {
@@ -940,7 +952,7 @@ export function initNowPlaying() {
  * Initializes the 'Since' tooltip time difference
  */
 function initSinceTooltip() {
-  const sinceEl = document.querySelector('#np-since');
+  const sinceEl = document.querySelector<HTMLElement>('#np-since');
   if (!sinceEl) return;
   
   const dateStr = sinceEl.getAttribute('data-date');
@@ -966,7 +978,7 @@ function initSinceTooltip() {
     months += 12;
   }
   
-  let labelParts = [];
+  const labelParts: string[] = [];
   if (years > 0) labelParts.push(`${years} year${years !== 1 ? 's' : ''}`);
   if (months > 0) labelParts.push(`${months} month${months !== 1 ? 's' : ''}`);
   

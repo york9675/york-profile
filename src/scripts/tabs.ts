@@ -2,7 +2,7 @@
  * Interest tabs functionality
  */
 
-import { $$, rafDebounce } from './utils';
+import { $$ } from './utils';
 import { SELECTORS } from './constants';
 
 let interestPanelsSyncInitialized = false;
@@ -87,13 +87,13 @@ export function initInterestPanelsSync() {
 
   const nowPlaying = document.getElementById('now-playing');
   const linksPanel = document.getElementById('links');
-  const interestPanels = document.querySelector('.interest-panels');
+  const interestPanels = document.querySelector<HTMLElement>('.interest-panels');
   const aboutPanel = document.getElementById('about');
 
   if (!nowPlaying || !linksPanel || !interestPanels || !aboutPanel) return;
   interestPanelsSyncInitialized = true;
 
-  let rafId = 0;
+  let rafId: number | null = null;
 
   function syncNow() {
     if (window.innerWidth < 860) {
@@ -111,7 +111,11 @@ export function initInterestPanelsSync() {
   }
 
   function sync() {
-    rafId = rafDebounce(syncNow, rafId);
+    if (rafId) return;
+    rafId = window.requestAnimationFrame(() => {
+      rafId = null;
+      syncNow();
+    });
   }
 
   const ro = new ResizeObserver(sync);

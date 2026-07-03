@@ -5,7 +5,7 @@ export default function ProfileHeaderIsland() {
   useEffect(() => {
     initClock();
 
-    const contactLink = document.getElementById('contact-email-link');
+    const contactLink = document.querySelector<HTMLAnchorElement>('#contact-email-link');
     if (!contactLink || contactLink.dataset.islandReady === 'true') return;
 
     contactLink.dataset.islandReady = 'true';

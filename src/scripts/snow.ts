@@ -42,7 +42,7 @@ let isSnowInitialized = false;
 export function initSnow() {
   if (isSnowInitialized) return;
 
-  const canvas = $(SELECTORS.snowCanvas) as HTMLCanvasElement | null;
+  const canvas = $<HTMLCanvasElement>(SELECTORS.snowCanvas);
   if (!canvas) return;
 
   const ctx = canvas.getContext('2d');
@@ -100,15 +100,15 @@ export function initSnow() {
   }
 
   function updateIntensityUI() {
-    const slider = $(SELECTORS.snowIntensity);
+    const slider = $<HTMLInputElement>(SELECTORS.snowIntensity);
     const valueEl = $(SELECTORS.snowIntensityValue);
     if (slider) slider.value = String(intensity);
     if (valueEl) valueEl.textContent = `${intensity}%`;
   }
 
   function updateSnowControlState() {
-    const slider = $(SELECTORS.snowIntensity);
-    const controls = document.querySelectorAll(SELECTORS.snowControls);
+    const slider = $<HTMLInputElement>(SELECTORS.snowIntensity);
+    const controls = document.querySelectorAll<HTMLElement>(SELECTORS.snowControls);
     if (slider) slider.disabled = !enabled;
     controls.forEach(el => {
       if (enabled) el.removeAttribute('hidden');
@@ -208,7 +208,7 @@ export function initSnow() {
     if (progress >= 1) {
       snowBanks.fill(0);
       clearAnim = null;
-      const clearBtn = $(SELECTORS.snowClearBtn);
+      const clearBtn = $<HTMLButtonElement>(SELECTORS.snowClearBtn);
       if (clearBtn) clearBtn.disabled = false;
     }
   }
@@ -260,14 +260,14 @@ export function initSnow() {
   }
 
   function stop() {
-    cancelAnimationFrame(animId);
+    if (animId) window.cancelAnimationFrame(animId);
     animId = null;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     canvas.style.opacity = '0';
   }
 
   function applyState() {
-    const btn = $(SELECTORS.snowToggle);
+    const btn = $<HTMLButtonElement>(SELECTORS.snowToggle);
     if (enabled) start();
     else stop();
     if (btn) btn.setAttribute('aria-checked', String(enabled));
@@ -304,7 +304,7 @@ export function initSnow() {
       duration: CLEAR_DURATION,
       from: snowBanks.slice()
     };
-    const clearBtn = $(SELECTORS.snowClearBtn);
+    const clearBtn = $<HTMLButtonElement>(SELECTORS.snowClearBtn);
     if (clearBtn) clearBtn.disabled = true;
   };
 }

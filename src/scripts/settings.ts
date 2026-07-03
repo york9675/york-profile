@@ -9,15 +9,15 @@ import { SELECTORS, SETTINGS_CLOSE_DELAY } from './constants';
  * Initialize settings panel
  */
 export function initSettings() {
-  const settingsBtn = $(SELECTORS.settingsBtn);
+  const settingsBtn = $<HTMLButtonElement>(SELECTORS.settingsBtn);
   const settingsPanel = $(SELECTORS.settingsPanel);
-  const rainToggle = $(SELECTORS.rainToggle);
-  const rainIntensity = $(SELECTORS.rainIntensity);
-  const rainSoundToggle = $(SELECTORS.rainSoundToggle);
-  const snowToggle = $(SELECTORS.snowToggle);
-  const snowIntensity = $(SELECTORS.snowIntensity);
-  const snowClearBtn = $(SELECTORS.snowClearBtn);
-  const particlesToggle = $(SELECTORS.particlesToggle);
+  const rainToggle = $<HTMLButtonElement>(SELECTORS.rainToggle);
+  const rainIntensity = $<HTMLInputElement>(SELECTORS.rainIntensity);
+  const rainSoundToggle = $<HTMLButtonElement>(SELECTORS.rainSoundToggle);
+  const snowToggle = $<HTMLButtonElement>(SELECTORS.snowToggle);
+  const snowIntensity = $<HTMLInputElement>(SELECTORS.snowIntensity);
+  const snowClearBtn = $<HTMLButtonElement>(SELECTORS.snowClearBtn);
+  const particlesToggle = $<HTMLButtonElement>(SELECTORS.particlesToggle);
   
   if (!settingsBtn || !settingsPanel) return;
   if (settingsBtn.dataset.islandReady === 'true') return;
@@ -70,11 +70,12 @@ export function initSettings() {
   snowClearBtn?.addEventListener('click', () => { window._clearSnowdrift?.(); });
   particlesToggle?.addEventListener('click', () => { window._toggleParticles?.(); });
 
-  document.addEventListener('click', e => {
-    if (isOpen && !e.target.closest('.settings-fab')) close();
+  document.addEventListener('click', event => {
+    const target = event.target;
+    if (isOpen && target instanceof Element && !target.closest('.settings-fab')) close();
   });
 
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && isOpen) close();
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && isOpen) close();
   });
 }

@@ -20,7 +20,7 @@ let isParticlesInitialized = false;
 export function initParticles() {
   if (isParticlesInitialized) return;
 
-  const canvas = $(SELECTORS.particlesCanvas) as HTMLCanvasElement | null;
+  const canvas = $<HTMLCanvasElement>(SELECTORS.particlesCanvas);
   if (!canvas) return;
 
   const ctx = canvas.getContext('2d');
@@ -135,7 +135,7 @@ export function initParticles() {
   }
 
   function updateToggle() {
-    const toggleBtn = $(SELECTORS.particlesToggle);
+    const toggleBtn = $<HTMLButtonElement>(SELECTORS.particlesToggle);
     if (!toggleBtn) return;
     
     if (enabled) {
@@ -161,10 +161,10 @@ export function initParticles() {
     }, 200);
   });
   
-  window.addEventListener('mousemove', (e) => {
+  window.addEventListener('mousemove', event => {
     const rect = canvas.getBoundingClientRect();
-    mouse.x = (e.clientX - rect.left) * (canvas.width / rect.width);
-    mouse.y = (e.clientY - rect.top) * (canvas.height / rect.height);
+    mouse.x = (event.clientX - rect.left) * (canvas.width / rect.width);
+    mouse.y = (event.clientY - rect.top) * (canvas.height / rect.height);
   });
   
   window.addEventListener('mouseout', () => {

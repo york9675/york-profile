@@ -30,7 +30,7 @@ function applyTheme(mode: string) {
 }
 
 export function initTheme() {
-  const el = $(SELECTORS.themeSelect) as HTMLSelectElement | null;
+  const el = $<HTMLSelectElement>(SELECTORS.themeSelect);
 
   // expose setTheme for other modules
   window._setTheme = function (mode) {

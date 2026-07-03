@@ -26,13 +26,17 @@
 }
 
 .interest-tabs {
+  --interest-tab-bg: #101010;
+  --interest-tab-hover-bg: #111;
+  --interest-tab-active-bg: #151515;
+
   display: flex;
   flex-wrap: wrap;
   gap: 0.6rem;
 }
 
 .interest-tab {
-  background: #101010;
+  background: var(--interest-tab-bg);
   border: 1px solid var(--line);
   color: var(--fg);
   padding: 0.55rem 0.95rem;
@@ -47,11 +51,11 @@
 .interest-tab:hover,
 .interest-tab:focus {
   border-color: var(--fg);
-  background: #111;
+  background: var(--interest-tab-hover-bg);
 }
 
 .interest-tab.is-active {
-  background: #151515;
+  background: var(--interest-tab-active-bg);
   border-color: var(--fg);
   transform: translateY(-1px);
 }
@@ -100,11 +104,11 @@
   }
 }
 
-/* Light mode overrides */
-html[data-theme="light"] .interest-tab { background: #e2e2e2; }
-html[data-theme="light"] .interest-tab:hover,
-html[data-theme="light"] .interest-tab:focus { background: #d8d8d8; }
-html[data-theme="light"] .interest-tab.is-active { background: #d4d4d4; }
+html[data-theme="light"] .interest-tabs {
+  --interest-tab-bg: #e2e2e2;
+  --interest-tab-hover-bg: #d8d8d8;
+  --interest-tab-active-bg: #d4d4d4;
+}
 
 @media (max-width: 640px) {
   .interest-tabs {

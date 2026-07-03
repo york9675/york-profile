@@ -20,7 +20,8 @@
   --sans: system-ui, -apple-system, "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
 
   /* Animations */
-  --transition: 140ms cubic-bezier(.4,.0,.2,1);
+  --ease-standard: cubic-bezier(.4, 0, .2, 1);
+  --transition: 140ms var(--ease-standard);
 
   color-scheme: dark;
 }

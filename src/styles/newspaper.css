@@ -327,7 +327,7 @@ html[data-theme="newspaper"] .np-fs-album {
 
 /* Album viewer controls should keep strong contrast in newspaper mode */
 html[data-theme="newspaper"] .np-iv-external {
-  background: rgba(0, 0, 0, 0.5) !important;
+  background: #667173 !important;
   color: #fff !important;
   border: none !important;
   width: 2.5rem !important;
@@ -345,9 +345,15 @@ html[data-theme="newspaper"] .np-iv-external {
   box-sizing: border-box;
 }
 
-html[data-theme="newspaper"] .np-iv-external:hover,
-html[data-theme="newspaper"] .np-iv-external:focus {
-  background: rgba(0, 0, 0, 0.8) !important;
+html[data-theme="newspaper"] .np-iv-external:hover {
+  background: #202627 !important;
+  color: #fff !important;
+  text-decoration: none !important;
+}
+
+html[data-theme="newspaper"] .np-iv-external:focus-visible {
+  outline: 2px solid #fff !important;
+  outline-offset: 2px !important;
   color: #fff !important;
   text-decoration: none !important;
 }
@@ -412,5 +418,3 @@ html[data-theme="newspaper"] ::-webkit-scrollbar-thumb {
 html[data-theme="newspaper"] ::-webkit-scrollbar-thumb:hover {
   background: #1a1a1a;
 }
-
-

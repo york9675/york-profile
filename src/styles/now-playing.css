@@ -495,6 +495,7 @@
 }
 
 .np-artist-meta {
+  margin-top: 0.4rem;
   text-transform: none;
   letter-spacing: normal;
   font-size: 0.65rem;
@@ -550,6 +551,7 @@
 }
 
 .np-meta-item i {
+  flex-shrink: 0;
   font-size: 0.62rem;
   opacity: 0.85;
 }
@@ -603,38 +605,31 @@
   }
 }
 
-/* Rain canvas */
-#rain-canvas {
+#rain-canvas,
+#snow-canvas,
+#particles-canvas {
   position: fixed;
-  top: 0;
-  left: 0;
+  inset: 0;
+  display: block;
   width: 100%;
   height: 100%;
   pointer-events: none;
+}
+
+/* Rain canvas */
+#rain-canvas {
   z-index: 100;
   opacity: 1;
   transition: opacity 0.8s ease;
 }
 
 #snow-canvas {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
   z-index: 101;
   opacity: 0;
   transition: opacity 1.3s ease;
 }
 
 #particles-canvas {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
   z-index: 99; /* Below rain and snow */
   opacity: 0;
   transition: opacity 1.3s ease;
@@ -768,7 +763,7 @@ html[data-theme="light"] .np-iv-backdrop {
   position: absolute;
   top: 0.75rem;
   right: 0.75rem;
-  background: rgba(0, 0, 0, 0.5);
+  background: #667173;
   border: none;
   color: #fff;
   width: 2.5rem;
@@ -780,21 +775,27 @@ html[data-theme="light"] .np-iv-backdrop {
   justify-content: center;
   cursor: pointer;
   z-index: 2;
-  transition: background var(--transition);
+  transition:
+    background var(--transition),
+    outline-color var(--transition);
   outline: none;
   padding: 0;
 }
 
-.np-iv-close:hover,
-.np-iv-close:focus {
-  background: rgba(0, 0, 0, 0.8);
+.np-iv-close:hover {
+  background: #202627;
+}
+
+.np-iv-close:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
 }
 
 .np-iv-external {
   position: absolute;
   top: 0.75rem;
   right: 3.75rem; /* Shifted slightly more to the left to account for the larger width */
-  background: rgba(0, 0, 0, 0.5);
+  background: #667173;
   border: none;
   color: #fff;
   width: 2.5rem;
@@ -806,15 +807,22 @@ html[data-theme="light"] .np-iv-backdrop {
   justify-content: center;
   cursor: pointer;
   z-index: 2;
-  transition: background var(--transition);
+  transition:
+    background var(--transition),
+    outline-color var(--transition);
   outline: none;
   text-decoration: none;
   padding: 0;
 }
 
-.np-iv-external:hover,
-.np-iv-external:focus {
-  background: rgba(0, 0, 0, 0.8);
+.np-iv-external:hover {
+  background: #202627;
+  color: #fff;
+}
+
+.np-iv-external:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
   color: #fff;
 }
 

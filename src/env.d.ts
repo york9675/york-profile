@@ -1,11 +1,5 @@
 /// <reference types="astro/client" />
 
-declare namespace JSX {
-  interface IntrinsicElements {
-    [elemName: string]: any;
-  }
-}
-
 interface ImportMetaEnv {
   readonly MODE: string;
   readonly DEV: boolean;
@@ -37,15 +31,4 @@ interface Document {
 
 interface HTMLElement {
   webkitRequestFullscreen?: () => Promise<void>;
-}
-
-interface Element {
-  open?: boolean;
-  style: CSSStyleDeclaration;
-  title: string;
-  blur?: () => void;
-}
-
-interface EventTarget {
-  closest?: (selector: string) => Element | null;
 }
