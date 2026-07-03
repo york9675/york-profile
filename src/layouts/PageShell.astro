@@ -9,6 +9,10 @@ interface Props {
 }
 
 const { title, description, lang = 'en' } = Astro.props;
+const isDev = import.meta.env.DEV;
+const toolbarProjectId = 'prj_bRdDHFkFdH7YZmPcbWgSgB7bA38U';
+const toolbarOwnerId = 'team_lO4dEQU7946C21LoJmzJTUP7';
+const toolbarBranch = process.env.VERCEL_GIT_COMMIT_REF ?? 'main';
 
 inject();
 ---
@@ -25,5 +29,16 @@ inject();
   </head>
   <body>
     <slot />
+    
+    {isDev && (
+      <script
+        is:inline
+        src="https://vercel.live/_next-live/feedback/feedback.js"
+        data-explicit-opt-in="true"
+        data-owner-id={toolbarOwnerId}
+        data-project-id={toolbarProjectId}
+        data-branch={toolbarBranch}
+      ></script>
+    )}
   </body>
 </html>

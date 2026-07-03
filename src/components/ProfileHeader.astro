@@ -1,20 +1,15 @@
 ---
-import { Image } from 'astro:assets';
-import avatar from '../assets/Avatar.jpeg';
 import { profile } from '../data/app';
 ---
 
 <header class="site-header frame" role="banner">
   <div class="identity">
-    <Image
+    <img
       class="avatar"
-      src={avatar}
+      src={profile.avatar}
       alt="York"
-      width={160}
-      height={160}
-      densities={[1, 2, 3]}
-      sizes="160px"
-      quality={95}
+      width="160"
+      height="160"
       decoding="async"
       loading="eager"
     />

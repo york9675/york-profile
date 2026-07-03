@@ -1,7 +1,7 @@
 {
   "name": "york-profile",
   "type": "module",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "packageManager": "pnpm@11.9.0",
   "scripts": {
@@ -14,6 +14,7 @@
     "@astrojs/sitemap": "^3.7.3",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
+    "@vercel/toolbar": "^0.2.6",
     "astro": "^7.0.6",
     "sharp": "^0.35.3"
   },

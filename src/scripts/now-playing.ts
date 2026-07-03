@@ -470,7 +470,6 @@ async function fetchRecentTrack(retryCount = 0) {
           const linkLabel = title
             ? `View my plays for ${title} by ${artist} on Last.fm`
             : `View my plays on Last.fm`;
-          playCountLinkEl.setAttribute('aria-label', linkLabel);
           playCountLinkEl.title = linkLabel;
         } else {
           playCountLinkEl.href = LASTFM_PROFILE;
@@ -626,6 +625,25 @@ export function initNowPlaying() {
   const ivPlayCountLink = $('#np-iv-album-library-link');
   const ivLink = $('#np-iv-link');
   const ivExternal = $('#np-iv-external');
+  const appRoot = document.getElementById('app');
+  const settingsFab = document.querySelector('.settings-fab');
+  let previousFocus: HTMLElement | null = null;
+
+  const setBackgroundInert = (isInert: boolean) => {
+    if (appRoot) {
+      appRoot.toggleAttribute('inert', isInert);
+    }
+    if (settingsFab) {
+      settingsFab.toggleAttribute('inert', isInert);
+    }
+  };
+
+  const focusDialogControl = (control: HTMLElement | null) => {
+    if (!control) return;
+    window.requestAnimationFrame(() => {
+      control.focus({ preventScroll: true });
+    });
+  };
 
   // Handle art loading error
   npArtEl?.addEventListener('error', () => {
@@ -722,9 +740,11 @@ export function initNowPlaying() {
       const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
       document.body.style.paddingRight = `${scrollbarWidth}px`;
       
+      previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
       ivViewer.hidden = false;
-      ivViewer.setAttribute('aria-hidden', 'false');
+      setBackgroundInert(true);
       document.body.style.overflow = 'hidden'; // Prevent background scrolling
+      focusDialogControl(ivClose);
     }
   };
 
@@ -738,11 +758,13 @@ export function initNowPlaying() {
       const handleClose = () => {
         ivViewer.classList.remove('is-closing');
         ivViewer.hidden = true;
-        ivViewer.setAttribute('aria-hidden', 'true');
         
         // Restore standard body styling
         document.body.style.overflow = '';
         document.body.style.paddingRight = '';
+        setBackgroundInert(false);
+        previousFocus?.focus({ preventScroll: true });
+        previousFocus = null;
         
         if (ivArt) ivArt.removeAttribute('src'); // clear image to avoid flash on next open
         ivViewer.removeEventListener('animationend', handleClose);
@@ -803,11 +825,13 @@ export function initNowPlaying() {
       const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
       document.body.style.paddingRight = `${scrollbarWidth}px`;
       
+      previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
       fsViewer.hidden = false;
-      fsViewer.setAttribute('aria-hidden', 'false');
+      setBackgroundInert(true);
       document.body.style.overflow = 'hidden';
       enterFullscreenChromeHiddenMode();
       showFullscreenControls();
+      focusDialogControl(fsClose);
       
       try {
         if (document.documentElement.requestFullscreen) {
@@ -828,11 +852,13 @@ export function initNowPlaying() {
       const handleClose = () => {
         fsViewer.classList.remove('is-closing');
         fsViewer.hidden = true;
-        fsViewer.setAttribute('aria-hidden', 'true');
         
         document.body.style.overflow = '';
         document.body.style.paddingRight = '';
+        setBackgroundInert(false);
         exitFullscreenChromeHiddenMode();
+        previousFocus?.focus({ preventScroll: true });
+        previousFocus = null;
         
         fsViewer.removeEventListener('animationend', handleClose);
       };
@@ -858,6 +884,7 @@ export function initNowPlaying() {
         closeFullscreen();
       } else if (!fsViewer || fsViewer.hidden) {
         exitFullscreenChromeHiddenMode();
+        setBackgroundInert(false);
       }
     }
   };

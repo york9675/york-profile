@@ -4,7 +4,7 @@
 
 This is the source code for my personal profile page.
 
-Visit: https://york.qzz.io
+Visit: https://york.qzz.io (or https://york-profile.vercel.app)
 
 ---
 
