@@ -1,7 +1,9 @@
 allowBuilds:
   esbuild: true
+  sharp: true
 confirmModulesPurge: false
 minimumReleaseAge: 0
 onlyBuiltDependencies:
   - esbuild
+  - sharp
 verifyDepsBeforeRun: false
