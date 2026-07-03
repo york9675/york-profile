@@ -24,6 +24,7 @@ let npHasResolvedOnce = false;
 let npLastStateKey = '';
 let npCountdownTimerId: ReturnType<typeof setInterval> | undefined;
 let npFullscreenIdleTimerId: ReturnType<typeof setTimeout> | undefined;
+let isNowPlayingInitialized = false;
 
 /**
  * Create and inject CSS keyframes for scroll animation with pause timing
@@ -608,6 +609,10 @@ function startCountdown() {
  * Initialize Now Playing widget
  */
 export function initNowPlaying() {
+  if (isNowPlayingInitialized) return;
+  if (!document.getElementById('now-playing')) return;
+  isNowPlayingInitialized = true;
+
   const npRefreshBtn = $('#np-refresh');
   const npFullscreenBtn = $('#np-fullscreen-btn');
   const npArtEl = $('#np-art');

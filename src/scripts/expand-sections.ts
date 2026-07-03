@@ -109,6 +109,9 @@ export function initExpandSectionAnimations() {
   };
 
   disclosures.forEach(({ section, type }) => {
+    if (section.dataset.islandReady === 'true') return;
+    section.dataset.islandReady = 'true';
+
     const summary = section.querySelector<HTMLElement>(type.summarySelector);
     const body = section.querySelector<HTMLElement>(type.bodySelector);
     if (!summary || !body) return;

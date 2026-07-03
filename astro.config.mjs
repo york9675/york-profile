@@ -2,6 +2,8 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
+import preact from '@astrojs/preact';
+
 export default defineConfig({
   site: 'https://york.qzz.io',
   output: 'static',
@@ -9,5 +11,5 @@ export default defineConfig({
     host: true,
     port: 3000
   },
-  integrations: [sitemap()]
+  integrations: [sitemap(), preact()]
 });

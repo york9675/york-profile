@@ -34,15 +34,20 @@ type ClearAnimation = {
   from: number[];
 };
 
+let isSnowInitialized = false;
+
 /**
  * Initialize snow effect
  */
 export function initSnow() {
+  if (isSnowInitialized) return;
+
   const canvas = $(SELECTORS.snowCanvas) as HTMLCanvasElement | null;
   if (!canvas) return;
 
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
+  isSnowInitialized = true;
 
   let flakes: SnowFlake[] = [];
   let snowBanks: number[] = [];

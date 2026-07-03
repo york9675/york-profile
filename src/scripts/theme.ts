@@ -5,6 +5,8 @@
 import { $ } from './utils';
 import { SELECTORS, THEMES, STORAGE_KEYS } from './constants';
 
+let isThemeInitialized = false;
+
 function applyTheme(mode: string) {
   try {
     if (mode === THEMES.system) {
@@ -42,6 +44,9 @@ export function initTheme() {
   const stored = localStorage.getItem(STORAGE_KEYS.themeMode) || THEMES.dark;
   if (el) el.value = stored;
   applyTheme(stored);
+
+  if (isThemeInitialized) return;
+  isThemeInitialized = true;
 
   // if a select exists, attach change handler
   if (el) {

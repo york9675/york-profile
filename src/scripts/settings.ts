@@ -18,9 +18,10 @@ export function initSettings() {
   const snowIntensity = $(SELECTORS.snowIntensity);
   const snowClearBtn = $(SELECTORS.snowClearBtn);
   const particlesToggle = $(SELECTORS.particlesToggle);
-  const themeSelect = $(SELECTORS.themeSelect);
   
   if (!settingsBtn || !settingsPanel) return;
+  if (settingsBtn.dataset.islandReady === 'true') return;
+  settingsBtn.dataset.islandReady = 'true';
 
   let isOpen = false;
   let closeTimerId = 0;
@@ -68,7 +69,6 @@ export function initSettings() {
   snowIntensity?.addEventListener('input', () => { window._setSnowIntensity?.(snowIntensity.value); });
   snowClearBtn?.addEventListener('click', () => { window._clearSnowdrift?.(); });
   particlesToggle?.addEventListener('click', () => { window._toggleParticles?.(); });
-  themeSelect?.addEventListener('change', () => { window._setTheme?.(themeSelect.value); });
 
   document.addEventListener('click', e => {
     if (isOpen && !e.target.closest('.settings-fab')) close();

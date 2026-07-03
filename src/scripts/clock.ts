@@ -5,7 +5,8 @@
 import { $, padZero } from './utils';
 import { SELECTORS } from './constants';
 
-let clockTimerId = null;
+let clockTimerId: number | null = null;
+let isClockInitialized = false;
 
 /**
  * Update clock display with current time
@@ -31,6 +32,12 @@ function scheduleClockTick() {
  * Initialize clock functionality
  */
 export function initClock() {
+  if (isClockInitialized) {
+    updateClocks();
+    return;
+  }
+
+  isClockInitialized = true;
   scheduleClockTick();
 
   // Pause clock when page is hidden
@@ -47,7 +54,4 @@ export function initClock() {
     window.clearTimeout(clockTimerId);
   });
 
-  // Set current year
-  const yearEl = $(SELECTORS.year);
-  if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 }

@@ -15,14 +15,13 @@ export function initDiscordLinksPanelView() {
   const backButton = document.querySelector(SELECTORS.discordBack);
 
   if (!linksPanel || !mainView || !discordView || !discordTrigger || !backButton) return;
+  if (linksPanel.dataset.islandReady === 'true') return;
+  linksPanel.dataset.islandReady = 'true';
 
   const showDiscordView = () => {
     discordView.hidden = false;
-    window.requestAnimationFrame(() => {
-      window.requestAnimationFrame(() => {
-        linksPanel.classList.add('is-discord-view');
-      });
-    });
+    void discordView.offsetWidth;
+    linksPanel.classList.add('is-discord-view');
   };
 
   const showMainView = () => {

@@ -3,8 +3,17 @@
   "compilerOptions": {
     "strict": false,
     "noImplicitAny": false,
-    "strictNullChecks": false
+    "strictNullChecks": false,
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact"
   },
-  "include": ["src/**/*", "src/env.d.ts"],
-  "exclude": ["dist", "node_modules", "old"]
+  "include": [
+    "src/**/*",
+    "src/env.d.ts"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules",
+    "old"
+  ]
 }

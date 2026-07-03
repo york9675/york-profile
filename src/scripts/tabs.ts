@@ -5,6 +5,8 @@
 import { $$, rafDebounce } from './utils';
 import { SELECTORS } from './constants';
 
+let interestPanelsSyncInitialized = false;
+
 /**
  * Initialize interest tabs with keyboard navigation
  */
@@ -44,6 +46,9 @@ export function initInterestTabs() {
   };
 
   tabs.forEach(tab => {
+    if (tab.dataset.islandReady === 'true') return;
+    tab.dataset.islandReady = 'true';
+
     tab.addEventListener('click', () => activate(tab, { focus: false }));
     
     tab.addEventListener('keydown', (event: KeyboardEvent) => {
@@ -78,12 +83,15 @@ export function initInterestTabs() {
  * Sync interest panels height with nearby elements
  */
 export function initInterestPanelsSync() {
+  if (interestPanelsSyncInitialized) return;
+
   const nowPlaying = document.getElementById('now-playing');
   const linksPanel = document.getElementById('links');
   const interestPanels = document.querySelector('.interest-panels');
   const aboutPanel = document.getElementById('about');
 
   if (!nowPlaying || !linksPanel || !interestPanels || !aboutPanel) return;
+  interestPanelsSyncInitialized = true;
 
   let rafId = 0;
 

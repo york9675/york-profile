@@ -24,14 +24,20 @@ import {
   SELECTORS
 } from './constants';
 
+let isRainInitialized = false;
+
 /**
  * Initialize rain effect
  */
 export function initRain() {
+  if (isRainInitialized) return;
+
   const canvas = $(SELECTORS.rainCanvas);
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
+  if (!ctx) return;
   const rainAudio = $(SELECTORS.rainAudio);
+  isRainInitialized = true;
 
   let drops = [];
   let splashes = [];

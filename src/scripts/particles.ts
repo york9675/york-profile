@@ -15,12 +15,17 @@ type Particle = {
   size: number;
 };
 
+let isParticlesInitialized = false;
+
 export function initParticles() {
+  if (isParticlesInitialized) return;
+
   const canvas = $(SELECTORS.particlesCanvas) as HTMLCanvasElement | null;
   if (!canvas) return;
 
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
+  isParticlesInitialized = true;
 
   let particles: Particle[] = [];
   let animId: number | null = null;
