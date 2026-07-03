@@ -1,7 +1,7 @@
 ---
 import { appInfo } from '../data/app';
 
-const appMode = import.meta.env.PROD ? 'Production' : 'Development';
+const appEnv = import.meta.env.PROD ? 'Production' : 'Development';
 ---
 
 <div class="settings-fab">
@@ -88,8 +88,8 @@ const appMode = import.meta.env.PROD ? 'Production' : 'Development';
           <dd>{appInfo.version}</dd>
         </div>
         <div>
-          <dt>Mode</dt>
-          <dd>{appMode}</dd>
+          <dt>Environment</dt>
+          <dd>{appEnv}</dd>
         </div>
         <div>
           <dt>Framework</dt>
