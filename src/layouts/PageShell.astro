@@ -1,5 +1,6 @@
 ---
 import { inject } from '@vercel/analytics';
+import SpeedInsights from '@vercel/speed-insights/astro';
 
 interface Props {
   title: string;
@@ -19,6 +20,7 @@ inject();
     <title>{title}</title>
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     {description && <meta name="description" content={description} />}
+    <SpeedInsights />
     <slot name="head" />
   </head>
   <body>
