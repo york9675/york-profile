@@ -31,8 +31,8 @@
 }
 
 .avatar {
-  width: 130px;
-  height: 130px;
+  width: 175px;
+  height: 175px;
   object-fit: cover;
   border: 1px solid var(--line-alt);
   image-rendering: -webkit-optimize-contrast;

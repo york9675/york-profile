@@ -1,13 +1,20 @@
 ---
-import { Image } from 'astro:assets';
-import orgAvatar from '../assets/york-dev-avatar.jpeg';
+import { profile } from '../data/app';
 ---
 
 <section id="org" class="panel" aria-labelledby="org-heading">
   <h3 class="section-title" id="org-heading">Organizations</h3>
   <div class="org-wrapper">
     <div class="org-card">
-      <Image src={orgAvatar} alt="York Development" class="org-avatar" width={128} height={128} loading="lazy" decoding="async" />
+      <img
+        src={profile.orgAvatar}
+        alt="York Development"
+        class="org-avatar"
+        width="128"
+        height="128"
+        loading="lazy"
+        decoding="async"
+      />
       <div class="org-text">
         <h4 class="org-name">York Development</h4>
         <p class="org-role">Founder / Developer</p>

@@ -9,8 +9,5 @@ export default defineConfig({
     host: true,
     port: 3000
   },
-  integrations: [sitemap()],
-  image: {
-    domains: ['avatars.githubusercontent.com']
-  }
+  integrations: [sitemap()]
 });

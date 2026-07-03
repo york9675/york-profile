@@ -33,6 +33,7 @@
 .org-avatar {
   width: 128px;
   height: 128px;
+  aspect-ratio: 1;
   border-radius: 10px;
   object-fit: cover;
   border: 1px solid var(--line-alt);
