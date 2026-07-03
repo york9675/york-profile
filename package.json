@@ -1,14 +1,29 @@
 {
   "name": "york-profile",
   "type": "module",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "private": true,
   "packageManager": "pnpm@11.9.0",
+  "productName": "York Profile",
+  "description": "York's personal profile website.",
+  "homepage": "https://github.com/york9675/york-profile",
+    "bugs": {
+        "url": "https://github.com/york9675/york-profile/issues"
+    },
+    "license": "MIT",
+    "author": {
+        "name": "york9675",
+        "email": "york@york.qzz.io",
+        "url": "https://github.com/york9675/"
+    },
   "scripts": {
     "dev": "ASTRO_TELEMETRY_DISABLED=1 astro dev",
     "build": "ASTRO_TELEMETRY_DISABLED=1 astro build",
     "check": "ASTRO_TELEMETRY_DISABLED=1 astro check",
-    "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview"
+    "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview",
+    "typecheck": "ASTRO_TELEMETRY_DISABLED=1 astro check",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "dependencies": {
     "@astrojs/preact": "^6.0.1",
@@ -21,6 +36,12 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
-    "typescript": "^6.0.3"
+    "@eslint/js": "^10.0.1",
+    "@typescript-eslint/eslint-plugin": "^8.62.1",
+    "@typescript-eslint/parser": "^8.62.1",
+    "eslint": "^10.6.0",
+    "eslint-plugin-astro": "^2.1.1",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.62.1"
   }
 }

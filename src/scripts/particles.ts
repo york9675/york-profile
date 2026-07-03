@@ -32,7 +32,7 @@ export function initParticles() {
   // Default is off
   const pref = localStorage.getItem(STORAGE_KEYS.particlesEnabled);
   let enabled = pref === 'true';
-  let mouse = { x: -9999, y: -9999, radius: 150 };
+  const mouse = { x: -9999, y: -9999, radius: 150 };
 
   function resize() {
     canvas.width = window.innerWidth;

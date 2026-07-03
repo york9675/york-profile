@@ -51,7 +51,13 @@ export function initSettings() {
     }, SETTINGS_CLOSE_DELAY);
   }
 
-  settingsBtn.addEventListener('click', () => { isOpen ? close() : open(); });
+  settingsBtn.addEventListener('click', () => {
+    if (isOpen) {
+      close();
+    } else {
+      open();
+    }
+  });
   rainToggle?.addEventListener('click', () => {
     const rainIsOn = rainToggle.getAttribute('aria-checked') === 'true';
     const snowIsOn = snowToggle?.getAttribute('aria-checked') === 'true';

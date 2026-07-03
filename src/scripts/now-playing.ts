@@ -141,7 +141,7 @@ function extractImageColor(imgEl: HTMLImageElement | null) {
     if (count > 0) {
       return `${Math.round(r / count)}, ${Math.round(g / count)}, ${Math.round(b / count)}`;
     }
-  } catch (e) {
+  } catch (_e) {  // eslint-disable-line @typescript-eslint/no-unused-vars
     // CORS or canvas error
   }
   return null;
@@ -525,7 +525,7 @@ async function fetchRecentTrack(retryCount = 0) {
     if (artEl) {
       const widgetEl = document.getElementById('now-playing');
       if (art) {
-        let highestResArt = art.replace(/\/[^\/]+\/([0-9a-f]{32})/, '/_/$1');
+        const highestResArt = art.replace(/\/[^/]+\/([0-9a-f]{32})/, '/_/$1');
         
         if (artEl.src !== art) {
           artEl.onload = () => {
@@ -572,7 +572,7 @@ async function fetchRecentTrack(retryCount = 0) {
 
     npHasResolvedOnce = true;
     setNowPlayingLoading(false);
-  } catch (_) {
+  } catch (_err) {  // eslint-disable-line @typescript-eslint/no-unused-vars
     if (retryCount === 0) {
       setTimeout(() => fetchRecentTrack(1), 5000);
     } else if (retryCount === 1) {
@@ -686,7 +686,7 @@ export function initNowPlaying() {
     let state: NowPlayingState;
     try {
       state = JSON.parse(npLastStateKey) as NowPlayingState;
-    } catch (err) {
+    } catch (_err) {  // eslint-disable-line @typescript-eslint/no-unused-vars
       return;
     }
     
@@ -700,7 +700,7 @@ export function initNowPlaying() {
       
       // Bypass Last.fm's CDN resizing by replacing the size directory with /_/
       // This fetches the original highest-resolution file uploaded to Last.fm
-      let highestResArt = state.art.replace(/\/[^\/]+\/([0-9a-f]{32})/, '/_/$1');
+      const highestResArt = state.art.replace(/\/[^/]+\/([0-9a-f]{32})/, '/_/$1');
       
       // Assign the absolute highest-res URL to the new tab button
       if (ivExternal) {
@@ -856,7 +856,7 @@ export function initNowPlaying() {
         } else if (document.documentElement.webkitRequestFullscreen) {
           await document.documentElement.webkitRequestFullscreen();
         }
-      } catch (e) {
+      } catch (_e) {  // eslint-disable-line @typescript-eslint/no-unused-vars
         // Silently ignore if fullscreen is denied
       }
     }
@@ -889,7 +889,7 @@ export function initNowPlaying() {
             document.webkitExitFullscreen();
           }
         }
-      } catch (e) {
+      } catch (_e) {  // eslint-disable-line @typescript-eslint/no-unused-vars
         // Silently ignore
       }
     }

@@ -24,7 +24,7 @@ function applyTheme(mode: string) {
       // dark
       document.documentElement.removeAttribute('data-theme');
     }
-  } catch (e) {
+  } catch (_e) {  // eslint-disable-line @typescript-eslint/no-unused-vars
     // ignore
   }
 }
