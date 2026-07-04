@@ -1,5 +1,6 @@
 ---
 import PageShell from '../layouts/PageShell.astro';
+import { profile } from '../data/app';
 ---
 
 <PageShell title="404 - Page Not Found">
@@ -11,7 +12,7 @@ import PageShell from '../layouts/PageShell.astro';
     <div class="qr-code-container">
       <img class="qr-code" src="/assets/qrcode.png" alt="Support information QR code" width="150" height="150" loading="eager" />
       <div>
-        <p class="info">For more information about this issue and possible fixes, contact <br>york@york.qzz.io</p>
+        <p class="info">For more information about this issue and possible fixes, contact <br>{profile.email}</p>
         <p class="info">If you call a support person, give them this info:<br>Stop code: PAGE_NOT_FOUND</p>
       </div>
     </div>

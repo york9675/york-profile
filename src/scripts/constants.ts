@@ -9,6 +9,10 @@ export const ANIMATION_EASING = 'cubic-bezier(.4, 0, .2, 1)';
 // Settings panel
 export const SETTINGS_CLOSE_DELAY = 170; // ms
 
+// Now playing
+export const NOW_PLAYING_REFRESH_INTERVAL = 30; // seconds
+export const NOW_PLAYING_SCROLL_PAUSE_DURATION = 1; // seconds
+
 // Rain effect
 export const RAIN_MIN_INTENSITY = 20;
 export const RAIN_MAX_INTENSITY = 100;

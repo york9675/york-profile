@@ -1,5 +1,6 @@
 ---
 import AboutSectionIsland from './islands/AboutSectionIsland';
+import { profileLinks } from '../data/config';
 import type { UiStrings } from '../i18n/ui';
 
 interface Props {
@@ -32,10 +33,10 @@ const projectParts = t.tech.projectsTemplate.split(/\{(github|yorkDevelopment)\}
           <p>
             {projectParts.map((part) => {
               if (part === 'github') {
-                return <a href="https://github.com/york9675" target="_blank" rel="noopener noreferrer">GitHub</a>;
+                return <a href={profileLinks.github} target="_blank" rel="noopener noreferrer">GitHub</a>;
               }
               if (part === 'yorkDevelopment') {
-                return <a href="https://york9675.github.io/website" target="_blank" rel="noopener noreferrer">York Development</a>;
+                return <a href={profileLinks.organizationSite} target="_blank" rel="noopener noreferrer">York Development</a>;
               }
               return part;
             })}
@@ -89,7 +90,7 @@ const projectParts = t.tech.projectsTemplate.split(/\{(github|yorkDevelopment)\}
         <div class="interest-panel" role="tabpanel" id="panel-aviation" aria-labelledby="interest-aviation" data-interest-panel hidden>
           <p>{t.aviation.intro}</p>
           <p>{t.aviation.airbus}</p>
-          <p>{t.aviation.simPrefix}<a href="https://fly.volanta.app/profile/York" target="_blank" rel="noopener noreferrer">{t.aviation.simLink}</a>{t.aviation.simSuffix}</p>
+          <p>{t.aviation.simPrefix}<a href={profileLinks.volanta} target="_blank" rel="noopener noreferrer">{t.aviation.simLink}</a>{t.aviation.simSuffix}</p>
         </div>
 
         <div class="interest-panel" role="tabpanel" id="panel-photo" aria-labelledby="interest-photo" data-interest-panel hidden>

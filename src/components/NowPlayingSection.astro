@@ -1,8 +1,7 @@
 ---
 import NowPlayingIsland from './islands/NowPlayingIsland';
+import { nowPlayingConfig } from '../data/config';
 import type { UiStrings } from '../i18n/ui';
-
-const lastFmProfile = 'https://www.last.fm/user/york0524';
 
 interface Props {
   t: UiStrings['nowPlaying'];
@@ -31,8 +30,8 @@ const { t } = Astro.props;
       </button>
       <div class="np-info">
         <p class="np-status" id="np-status">{t.loading}</p>
-        <p class="np-title"><span class="np-title-main"><a id="np-track" href={lastFmProfile} target="_blank" rel="noopener noreferrer">—</a></span></p>
-        <p class="np-artist"><a id="np-artist" href={lastFmProfile} target="_blank" rel="noopener noreferrer">—</a></p>
+        <p class="np-title"><span class="np-title-main"><a id="np-track" href={nowPlayingConfig.profileUrl} target="_blank" rel="noopener noreferrer">—</a></span></p>
+        <p class="np-artist"><a id="np-artist" href={nowPlayingConfig.profileUrl} target="_blank" rel="noopener noreferrer">—</a></p>
         <p class="np-album"><button id="np-album" type="button">—</button></p>
       </div>
     </div>
@@ -40,7 +39,7 @@ const { t } = Astro.props;
   <div class="np-meta" aria-live="polite">
     <span id="np-playcount" class="np-meta-item np-playcount" hidden>
       <i class="fas fa-play" aria-hidden="true"></i>
-      <a id="np-playcount-link" href={lastFmProfile} target="_blank" rel="noopener noreferrer">
+      <a id="np-playcount-link" href={nowPlayingConfig.profileUrl} target="_blank" rel="noopener noreferrer">
         <span id="np-playcount-text">—</span>
       </a>
     </span>
@@ -55,14 +54,14 @@ const { t } = Astro.props;
       <i class="fas fa-headphones" aria-hidden="true"></i>
       <span class="np-artist-meta-wrap">
         <span id="np-artist-meta-text" data-template={t.artistMetaTemplate}>
-          {t.artistMetaTemplate.split('{artist}')[0]}<a id="np-artist-meta-name" href={lastFmProfile} target="_blank" rel="noopener noreferrer">—</a>{t.artistMetaTemplate.split('{artist}')[1]?.split('{count}')[0]}<a id="np-artist-meta-count" href={lastFmProfile} target="_blank" rel="noopener noreferrer">—</a>{t.artistMetaTemplate.split('{count}')[1]}
+          {t.artistMetaTemplate.split('{artist}')[0]}<a id="np-artist-meta-name" href={nowPlayingConfig.profileUrl} target="_blank" rel="noopener noreferrer">—</a>{t.artistMetaTemplate.split('{artist}')[1]?.split('{count}')[0]}<a id="np-artist-meta-count" href={nowPlayingConfig.profileUrl} target="_blank" rel="noopener noreferrer">—</a>{t.artistMetaTemplate.split('{count}')[1]}
         </span>
       </span>
     </span>
   </div>
   <div class="np-actions">
-    <span class="np-since" id="np-since" data-date="2025-07-11T00:00:00Z"><i class="fas fa-info-circle" aria-hidden="true"></i> {t.dataSince}</span>
-    <a href={lastFmProfile} target="_blank" rel="noopener noreferrer" class="btn-plain small btn-arrow">
+    <span class="np-since" id="np-since" data-date={nowPlayingConfig.sinceDateIso}><i class="fas fa-info-circle" aria-hidden="true"></i> {t.dataSince}</span>
+    <a href={nowPlayingConfig.profileUrl} target="_blank" rel="noopener noreferrer" class="btn-plain small btn-arrow">
       <i class="fab fa-lastfm" aria-hidden="true"></i> {t.lastFmProfile} <span class="arrow" aria-hidden="true">→</span>
     </a>
   </div>

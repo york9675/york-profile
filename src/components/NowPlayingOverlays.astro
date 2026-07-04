@@ -1,7 +1,6 @@
 ---
+import { nowPlayingConfig } from '../data/config';
 import type { UiStrings } from '../i18n/ui';
-
-const lastFmProfile = 'https://www.last.fm/user/york0524';
 
 interface Props {
   t: UiStrings['overlays'];
@@ -13,7 +12,7 @@ const { t } = Astro.props;
 <div id="np-image-viewer" class="np-image-viewer" hidden role="dialog" aria-modal="true" aria-label={t.imageViewerLabel}>
   <div class="np-iv-backdrop" id="np-iv-backdrop"></div>
   <div class="np-iv-content">
-    <a class="np-iv-external" id="np-iv-external" href={lastFmProfile} target="_blank" rel="noopener noreferrer" title={t.openArtworkTitle} aria-label={t.openArtworkLabel}>
+    <a class="np-iv-external" id="np-iv-external" href={nowPlayingConfig.profileUrl} target="_blank" rel="noopener noreferrer" title={t.openArtworkTitle} aria-label={t.openArtworkLabel}>
       <i class="fas fa-external-link-alt" aria-hidden="true"></i>
     </a>
     <button class="np-iv-close" id="np-iv-close" type="button" title={t.close} aria-label={t.closeViewer}>
@@ -24,11 +23,11 @@ const { t } = Astro.props;
     </div>
     <div class="np-iv-info">
       <p class="np-iv-title" id="np-iv-album-title">—</p>
-      <p class="np-iv-artist"><a id="np-iv-artist" href={lastFmProfile} target="_blank" rel="noopener noreferrer">—</a></p>
+      <p class="np-iv-artist"><a id="np-iv-artist" href={nowPlayingConfig.profileUrl} target="_blank" rel="noopener noreferrer">—</a></p>
       <p class="np-iv-album" id="np-iv-album-playcount" data-template={t.albumPlayTemplate} hidden>
-        {t.albumPlayTemplate.split('{count}')[0]}<a id="np-iv-album-library-link" href={lastFmProfile} target="_blank" rel="noopener noreferrer" class="np-iv-playcount-link">—</a>{t.albumPlayTemplate.split('{count}')[1]}
+        {t.albumPlayTemplate.split('{count}')[0]}<a id="np-iv-album-library-link" href={nowPlayingConfig.profileUrl} target="_blank" rel="noopener noreferrer" class="np-iv-playcount-link">—</a>{t.albumPlayTemplate.split('{count}')[1]}
       </p>
-      <a id="np-iv-link" href={lastFmProfile} target="_blank" rel="noopener noreferrer" class="btn-plain np-iv-btn btn-arrow">
+      <a id="np-iv-link" href={nowPlayingConfig.profileUrl} target="_blank" rel="noopener noreferrer" class="btn-plain np-iv-btn btn-arrow">
         <i class="fab fa-lastfm" aria-hidden="true"></i> {t.viewOnLastFm} <span class="arrow" aria-hidden="true">→</span>
       </a>
     </div>

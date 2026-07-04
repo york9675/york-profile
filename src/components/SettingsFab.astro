@@ -1,5 +1,6 @@
 ---
 import { appInfo } from '../data/app';
+import { profileLinks } from '../data/config';
 import SettingsFabIsland from './islands/SettingsFabIsland';
 import { getLocaleUrl, localeLabels, locales } from '../i18n/ui';
 import type { Locale, UiStrings } from '../i18n/ui';
@@ -124,7 +125,7 @@ const { locale, t } = Astro.props;
           </div>
           <div>
             <dt>{t.source}</dt>
-            <dd><a href="https://github.com/york9675/york-profile" target="_blank" rel="noopener noreferrer">york9675/york-profile</a></dd>
+            <dd><a href={profileLinks.projectRepository} target="_blank" rel="noopener noreferrer">york9675/york-profile</a></dd>
           </div>
         </dl>
       </div>

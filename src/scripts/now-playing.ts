@@ -3,21 +3,14 @@
  */
 
 import { $ } from './utils';
+import { nowPlayingConfig } from '../data/config';
+import { NOW_PLAYING_REFRESH_INTERVAL, NOW_PLAYING_SCROLL_PAUSE_DURATION } from './constants';
 
-/**
- * Last.fm API proxy endpoint
- * 
- * Test routes
- * - /test/slow (default 6000ms), optional override with ?ms=3000
- * - /test/missing-artist
- * - /test/missing-album
- * - /test/missing-both
- */
-const LASTFM_API = 'https://lastfm-proxy.york.qzz.io/';
-const LASTFM_PROFILE = 'https://www.last.fm/user/york0524';
-
-const NP_INTERVAL = 30; // seconds
-const SCROLL_PAUSE_DURATION = 1; // seconds to pause at start and end
+const LASTFM_API = nowPlayingConfig.apiUrl;
+const LASTFM_PROFILE = nowPlayingConfig.profileUrl;
+const LASTFM_USERNAME = nowPlayingConfig.username;
+const NP_INTERVAL = NOW_PLAYING_REFRESH_INTERVAL;
+const SCROLL_PAUSE_DURATION = NOW_PLAYING_SCROLL_PAUSE_DURATION;
 
 let npCountdown = NP_INTERVAL;
 let npHasResolvedOnce = false;
@@ -452,7 +445,7 @@ async function fetchRecentTrack(retryCount = 0) {
     const playedTs = track.date?.uts ? Number(track.date.uts) : 0;
 
     const apiUsername = data?.recenttracks?.['@attr']?.user;
-    const username = apiUsername || 'york0524';
+    const username = apiUsername || LASTFM_USERNAME;
     const artistEncoded = encodeURIComponent(rawArtist || '');
     const trackEncoded = encodeURIComponent(title || '');
     const albumEncoded = encodeURIComponent(rawAlbum || '');

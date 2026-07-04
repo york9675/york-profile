@@ -16,7 +16,7 @@ const { t } = Astro.props;
     <Image
       class="avatar"
       src={profile.avatarOptimizedSource}
-      alt="York"
+      alt={profile.name}
       width="160"
       height="160"
       decoding="async"
@@ -25,8 +25,8 @@ const { t } = Astro.props;
       densities={[1.5, 2]}
     />
     <div class="name-block">
-      <h1 class="primary-name">York</h1>
-      <h2 class="secondary-name">york0524 • ヨーク</h2>
+      <h1 class="primary-name">{profile.name}</h1>
+      <h2 class="secondary-name">{profile.handle} • {profile.alias}</h2>
       <p class="bio-subtitle" aria-hidden="true">{t.bioLabel}</p>
       <p class="tagline" id="bio">{t.tagline}</p>
       <p class="contact-email">

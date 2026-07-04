@@ -1,5 +1,6 @@
 ---
 import { profile } from '../data/app';
+import { nowPlayingConfig, profileHandles, profileLinks } from '../data/config';
 import { defaultLocale, getLocaleUrl, locales } from '../i18n/ui';
 import type { Locale, UiStrings } from '../i18n/ui';
 
@@ -10,6 +11,7 @@ interface Props {
 
 const { locale, t } = Astro.props;
 const canonicalUrl = `${profile.siteUrl}${getLocaleUrl(locale)}`;
+const profileTitle = `${profile.name} • ${profile.handle}`;
 const personSchema = {
   '@context': 'https://schema.org',
   '@type': 'Person',
@@ -25,9 +27,9 @@ const personSchema = {
     name: t.header.location
   },
   sameAs: [
-    'https://github.com/york9675',
-    'https://www.last.fm/user/york0524',
-    'https://soundcloud.com/york0524'
+    profileLinks.github,
+    nowPlayingConfig.profileUrl,
+    profileLinks.soundcloud
   ]
 };
 ---
@@ -48,18 +50,18 @@ const personSchema = {
 
 <meta property="og:type" content="profile" />
 <meta property="og:locale" content={t.meta.ogLocale} />
-<meta property="og:title" content="York • york0524" />
+<meta property="og:title" content={profileTitle} />
 <meta property="og:description" content={t.meta.description} />
 <meta property="og:image" content={profile.avatar} />
 <meta property="og:image:alt" content={t.meta.avatarAlt} />
 <meta property="og:url" content={canonicalUrl} />
 <meta property="og:site_name" content={t.meta.siteName} />
 <meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content="York • york0524" />
+<meta name="twitter:title" content={profileTitle} />
 <meta name="twitter:description" content={t.meta.description} />
 <meta name="twitter:image" content={profile.avatar} />
-<meta name="twitter:creator" content="@york0524" />
-<meta name="twitter:site" content="@york0524" />
+<meta name="twitter:creator" content={`@${profileHandles.twitter}`} />
+<meta name="twitter:site" content={`@${profileHandles.twitter}`} />
 <link rel="canonical" href={canonicalUrl} />
 {locales.map((item) => (
   <link rel="alternate" hreflang={item} href={`${profile.siteUrl}${getLocaleUrl(item)}`} />

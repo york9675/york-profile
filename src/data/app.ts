@@ -3,6 +3,7 @@ import packageJson from '../../package.json';
 export const profile = {
   name: 'York',
   handle: 'york0524',
+  alias: 'ヨーク',
   avatar: 'https://avatars.githubusercontent.com/u/84720688?v=4',
   avatarOptimizedSource: 'https://avatars.githubusercontent.com/u/84720688?s=320&v=4',
   orgAvatar: 'https://avatars.githubusercontent.com/u/178259609?v=4',

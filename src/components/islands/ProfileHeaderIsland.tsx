@@ -1,4 +1,5 @@
 import { useEffect } from 'preact/hooks';
+import { profile } from '../../data/app';
 import { initClock } from '../../scripts/clock';
 
 export default function ProfileHeaderIsland() {
@@ -11,7 +12,7 @@ export default function ProfileHeaderIsland() {
     contactLink.dataset.islandReady = 'true';
     contactLink.addEventListener('click', (event) => {
       event.preventDefault();
-      window.location.href = 'mailto:york@york.qzz.io';
+      window.location.href = `mailto:${profile.email}`;
     });
   }, []);
 
