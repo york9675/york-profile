@@ -7,6 +7,13 @@ import preact from '@astrojs/preact';
 export default defineConfig({
   site: 'https://york.qzz.io',
   output: 'static',
+  i18n: {
+    locales: ['en', 'tw'],
+    defaultLocale: 'en',
+    routing: {
+      prefixDefaultLocale: false
+    }
+  },
   prefetch: {
     defaultStrategy: 'viewport'
   },

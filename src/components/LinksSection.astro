@@ -1,34 +1,41 @@
 ---
 import LinksSectionIsland from './islands/LinksSectionIsland';
+import type { UiStrings } from '../i18n/ui';
+
+interface Props {
+  t: UiStrings['links'];
+}
+
+const { t } = Astro.props;
 ---
 
-<section id="links" class="panel" aria-label="Links">
+<section id="links" class="panel" aria-label={t.label}>
   <div class="links-viewport" aria-live="polite">
-    <div class="links-view links-view-main" id="links-main-view" data-links-view="main" aria-label="Links list">
-      <h3 class="section-title" id="links-heading">Links</h3>
+    <div class="links-view links-view-main" id="links-main-view" data-links-view="main" aria-label={t.listLabel}>
+      <h3 class="section-title" id="links-heading">{t.heading}</h3>
       <section class="link-group" aria-labelledby="links-code">
-        <h4 id="links-code" class="link-group-title">Code</h4>
+        <h4 id="links-code" class="link-group-title">{t.code}</h4>
         <ul class="link-list">
           <li>
             <a href="https://github.com/york9675" class="line-link" target="_blank" rel="noopener noreferrer me">
               <span class="icon" aria-hidden="true"><i class="fab fa-github"></i></span>
               <span class="text-wrap">
                 <span class="text">GitHub</span>
-                <span class="subtext">Open-source projects and experiments</span>
+                <span class="subtext">{t.githubSubtext}</span>
               </span>
             </a>
           </li>
         </ul>
       </section>
       <section class="link-group" aria-labelledby="links-community">
-        <h4 id="links-community" class="link-group-title">Community</h4>
+        <h4 id="links-community" class="link-group-title">{t.community}</h4>
         <ul class="link-list">
           <li>
             <a class="line-link" href="https://discordapp.com/users/571310191807692821" target="_blank" rel="noopener noreferrer" id="discord-link-trigger" data-discord-link>
               <span class="icon" aria-hidden="true"><i class="fab fa-discord"></i></span>
               <span class="text-wrap">
                 <span class="text">Discord (york0524)</span>
-                <span class="subtext">DM for questions</span>
+                <span class="subtext">{t.discordSubtext}</span>
               </span>
             </a>
           </li>
@@ -37,21 +44,21 @@ import LinksSectionIsland from './islands/LinksSectionIsland';
               <span class="icon" aria-hidden="true"><i class="fab fa-steam"></i></span>
               <span class="text-wrap">
                 <span class="text">Steam</span>
-                <span class="subtext">Gaming profile and activity</span>
+                <span class="subtext">{t.steamSubtext}</span>
               </span>
             </a>
           </li>
         </ul>
       </section>
       <section class="link-group" aria-labelledby="links-music">
-        <h4 id="links-music" class="link-group-title">Music [524-Hz]</h4>
+        <h4 id="links-music" class="link-group-title">{t.music}</h4>
         <ul class="link-list">
           <li>
             <a class="line-link" href="https://soundcloud.com/york0524" target="_blank" rel="noopener noreferrer">
               <span class="icon" aria-hidden="true"><i class="fab fa-soundcloud"></i></span>
               <span class="text-wrap">
                 <span class="text">SoundCloud</span>
-                <span class="subtext">Music sketches and uploads</span>
+                <span class="subtext">{t.soundcloudSubtext}</span>
               </span>
             </a>
           </li>
@@ -60,21 +67,21 @@ import LinksSectionIsland from './islands/LinksSectionIsland';
               <span class="icon" aria-hidden="true"><i class="fab fa-bandcamp"></i></span>
               <span class="text-wrap">
                 <span class="text">Bandcamp</span>
-                <span class="subtext">Original tracks and releases</span>
+                <span class="subtext">{t.bandcampSubtext}</span>
               </span>
             </a>
           </li>
         </ul>
       </section>
       <section class="link-group" aria-labelledby="links-support">
-        <h4 id="links-support" class="link-group-title">Support</h4>
+        <h4 id="links-support" class="link-group-title">{t.support}</h4>
         <ul class="link-list">
           <li>
             <a class="line-link" href="https://www.buymeacoffee.com/york0524" target="_blank" rel="noopener noreferrer">
               <span class="icon" aria-hidden="true"><i class="fas fa-coffee"></i></span>
               <span class="text-wrap">
                 <span class="text">Buy Me a Coffee</span>
-                <span class="subtext">Help me do more amazing things!</span>
+                <span class="subtext">{t.coffeeSubtext}</span>
               </span>
             </a>
           </li>
@@ -83,15 +90,15 @@ import LinksSectionIsland from './islands/LinksSectionIsland';
     </div>
 
     <section class="links-view links-view-discord" id="discord-before-dm-view" data-links-view="discord" aria-labelledby="discord-before-title" hidden>
-      <h3 class="section-title" id="discord-before-title">⚠️ Before you DM</h3>
-      <p class="discord-before-text">Before sending me a Discord DM, please start by saying what you want to ask.</p>
-      <p class="discord-before-text">Please do not send just a friend request. I only accept requests from people I know.</p>
-      <p class="discord-before-text">If I do not know your purpose for DMing or who you are, your friend request and DM may be ignored.</p>
-      <p class="discord-before-text">Also read: <a href="https://nohello.net/" target="_blank" rel="noopener noreferrer">https://nohello.net/</a></p>
+      <h3 class="section-title" id="discord-before-title">{t.discordWarningHeading}</h3>
+      <p class="discord-before-text">{t.discordWarning1}</p>
+      <p class="discord-before-text">{t.discordWarning2}</p>
+      <p class="discord-before-text">{t.discordWarning3}</p>
+      <p class="discord-before-text">{t.alsoRead} <a href="https://nohello.net/" target="_blank" rel="noopener noreferrer">https://nohello.net/</a></p>
       <div class="discord-before-actions">
-        <button type="button" class="btn-plain" id="discord-back-btn" data-discord-back><i class="fas fa-arrow-left" aria-hidden="true"></i> Back to Links</button>
+        <button type="button" class="btn-plain" id="discord-back-btn" data-discord-back><i class="fas fa-arrow-left" aria-hidden="true"></i> {t.back}</button>
         <a href="https://discordapp.com/users/571310191807692821" target="_blank" rel="noopener noreferrer" class="btn-plain btn-arrow" id="discord-profile-btn" data-discord-profile>
-          Open Discord Profile <span class="arrow" aria-hidden="true">→</span>
+          {t.openDiscord} <span class="arrow" aria-hidden="true">→</span>
         </a>
       </div>
     </section>

@@ -18,6 +18,7 @@ export function initSettings() {
   const snowIntensity = $<HTMLInputElement>(SELECTORS.snowIntensity);
   const snowClearBtn = $<HTMLButtonElement>(SELECTORS.snowClearBtn);
   const particlesToggle = $<HTMLButtonElement>(SELECTORS.particlesToggle);
+  const languageSelect = $<HTMLSelectElement>('#language-select');
   
   if (!settingsBtn || !settingsPanel) return;
   if (settingsBtn.dataset.islandReady === 'true') return;
@@ -32,7 +33,7 @@ export function initSettings() {
     settingsPanel.classList.remove('is-closing');
     settingsPanel.removeAttribute('hidden');
     settingsBtn.setAttribute('aria-expanded', 'true');
-    settingsBtn.setAttribute('aria-label', 'Close settings');
+    settingsBtn.setAttribute('aria-label', settingsBtn.dataset.closeLabel || 'Close settings');
     settingsBtn.classList.add('is-open');
     window._retryRainAudio?.();
   }
@@ -42,7 +43,7 @@ export function initSettings() {
     isOpen = false;
     settingsPanel.classList.add('is-closing');
     settingsBtn.setAttribute('aria-expanded', 'false');
-    settingsBtn.setAttribute('aria-label', 'Open settings');
+    settingsBtn.setAttribute('aria-label', settingsBtn.dataset.openLabel || 'Open settings');
     settingsBtn.classList.remove('is-open');
     window.clearTimeout(closeTimerId);
     closeTimerId = window.setTimeout(() => {
@@ -75,6 +76,11 @@ export function initSettings() {
   snowIntensity?.addEventListener('input', () => { window._setSnowIntensity?.(snowIntensity.value); });
   snowClearBtn?.addEventListener('click', () => { window._clearSnowdrift?.(); });
   particlesToggle?.addEventListener('click', () => { window._toggleParticles?.(); });
+  languageSelect?.addEventListener('change', () => {
+    const nextPath = languageSelect.value;
+    if (!nextPath || nextPath === window.location.pathname) return;
+    window.location.href = nextPath;
+  });
 
   document.addEventListener('click', event => {
     const target = event.target;

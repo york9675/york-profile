@@ -1,29 +1,36 @@
 ---
 import NowPlayingIsland from './islands/NowPlayingIsland';
+import type { UiStrings } from '../i18n/ui';
 
 const lastFmProfile = 'https://www.last.fm/user/york0524';
+
+interface Props {
+  t: UiStrings['nowPlaying'];
+}
+
+const { t } = Astro.props;
 ---
 
 <section id="now-playing" class="panel" aria-labelledby="np-heading">
   <div class="np-header">
-    <h3 class="section-title" id="np-heading">Now Playing</h3>
+    <h3 class="section-title" id="np-heading">{t.heading}</h3>
     <div class="np-header-actions">
-      <button id="np-refresh" class="np-refresh-btn" type="button" title="Refresh now playing" aria-label="Refresh now playing">
+      <button id="np-refresh" class="np-refresh-btn" type="button" title={t.refreshTitle} aria-label={t.refreshLabel}>
         <span id="np-countdown" class="np-countdown"></span>
         <i class="fas fa-sync-alt" aria-hidden="true"></i>
       </button>
-      <button id="np-fullscreen-btn" class="np-fullscreen-btn" type="button" title="View in fullscreen" aria-label="View in fullscreen">
+      <button id="np-fullscreen-btn" class="np-fullscreen-btn" type="button" title={t.fullscreenTitle} aria-label={t.fullscreenLabel}>
         <i class="fas fa-expand" aria-hidden="true"></i>
       </button>
     </div>
   </div>
   <div class="np-widget is-loading" aria-live="polite" aria-atomic="true" aria-busy="true">
     <div class="np-inner">
-      <button id="np-art-link" class="np-art-link" type="button" aria-label="Open album artwork viewer">
-        <img id="np-art" class="np-art" alt="Album artwork loading" width="80" height="80" decoding="async" crossorigin="anonymous" />
+      <button id="np-art-link" class="np-art-link" type="button" aria-label={t.artLabel}>
+        <img id="np-art" class="np-art" alt={t.artLoadingAlt} width="80" height="80" decoding="async" crossorigin="anonymous" />
       </button>
       <div class="np-info">
-        <p class="np-status" id="np-status">Loading…</p>
+        <p class="np-status" id="np-status">{t.loading}</p>
         <p class="np-title"><span class="np-title-main"><a id="np-track" href={lastFmProfile} target="_blank" rel="noopener noreferrer">—</a></span></p>
         <p class="np-artist"><a id="np-artist" href={lastFmProfile} target="_blank" rel="noopener noreferrer">—</a></p>
         <p class="np-album"><button id="np-album" type="button">—</button></p>
@@ -40,21 +47,23 @@ const lastFmProfile = 'https://www.last.fm/user/york0524';
     <span id="np-meta-sep" class="np-meta-sep" aria-hidden="true" hidden>·</span>
     <span id="np-loved-meta" class="np-meta-item" hidden>
       <i class="fas fa-heart" aria-hidden="true"></i>
-      <span>Loved Track</span>
+      <span>{t.lovedTrack}</span>
     </span>
   </div>
   <div class="np-meta np-artist-meta" aria-live="polite" id="np-artist-meta" hidden>
     <span class="np-meta-item">
       <i class="fas fa-headphones" aria-hidden="true"></i>
       <span class="np-artist-meta-wrap">
-        <span id="np-artist-meta-text">I've listened to <a id="np-artist-meta-name" href={lastFmProfile} target="_blank" rel="noopener noreferrer">—</a> for <a id="np-artist-meta-count" href={lastFmProfile} target="_blank" rel="noopener noreferrer">—</a> times.</span>
+        <span id="np-artist-meta-text" data-template={t.artistMetaTemplate}>
+          {t.artistMetaTemplate.split('{artist}')[0]}<a id="np-artist-meta-name" href={lastFmProfile} target="_blank" rel="noopener noreferrer">—</a>{t.artistMetaTemplate.split('{artist}')[1]?.split('{count}')[0]}<a id="np-artist-meta-count" href={lastFmProfile} target="_blank" rel="noopener noreferrer">—</a>{t.artistMetaTemplate.split('{count}')[1]}
+        </span>
       </span>
     </span>
   </div>
   <div class="np-actions">
-    <span class="np-since" id="np-since" data-date="2025-07-11T00:00:00Z"><i class="fas fa-info-circle" aria-hidden="true"></i> Data since 11 Jul 2025</span>
+    <span class="np-since" id="np-since" data-date="2025-07-11T00:00:00Z"><i class="fas fa-info-circle" aria-hidden="true"></i> {t.dataSince}</span>
     <a href={lastFmProfile} target="_blank" rel="noopener noreferrer" class="btn-plain small btn-arrow">
-      <i class="fab fa-lastfm" aria-hidden="true"></i> Last.fm Profile <span class="arrow" aria-hidden="true">→</span>
+      <i class="fab fa-lastfm" aria-hidden="true"></i> {t.lastFmProfile} <span class="arrow" aria-hidden="true">→</span>
     </a>
   </div>
 </section>

@@ -1,0 +1,224 @@
+{
+  "meta": {
+    "title": "York | 個人頁面",
+    "description": "York (york0524) 的個人頁面。",
+    "ogLocale": "zh_TW",
+    "siteName": "York 個人頁面",
+    "avatarAlt": "York 頭像"
+  },
+  "header": {
+    "bioLabel": "簡介",
+    "tagline": "我喜歡音樂與天空。",
+    "emailTitle": "寄信聯絡我",
+    "metadataLabel": "個人資料",
+    "locationLabel": "所在地",
+    "location": "台灣",
+    "localTime": "當地時間 (UTC +8)"
+  },
+  "about": {
+    "heading": "關於",
+    "summary": "我對音樂、航空與科技很感興趣，也是個內向的人。",
+    "interestsHeading": "興趣",
+    "tabsLabel": "進一步了解我的興趣",
+    "tabs": {
+      "tech": "科技",
+      "music": "音樂",
+      "aviation": "航空",
+      "photo": "攝影"
+    },
+    "tech": {
+      "intro": "我是個業餘開發者，喜歡製作應用程式，也會參與開源專案。",
+      "experience": {
+        "heading": "開發經驗",
+        "discordBot": [
+          "Discord Bot",
+          "使用 Node.js 製作的抽獎機器人，目前有約 5,000 個伺服器在使用。"
+        ],
+        "ios": [
+          "iOS App 開發",
+          "使用 Swift 與 SwiftUI 開發的應用程式。"
+        ],
+        "web": [
+          "網頁應用",
+          "個人網站、歌詞搜尋網站、節拍器等。"
+        ],
+        "oss": [
+          "開源",
+          "參與多個開源專案。"
+        ],
+        "more": "還有更多..."
+      },
+      "languages": {
+        "heading": "程式語言",
+        "learning": [
+          "正在學習",
+          "Java、C、C++、Python、JavaScript (Node.js)、TypeScript 與 Swift。"
+        ],
+        "more": "還有更多..."
+      },
+      "hardware": {
+        "heading": "硬體與動手實作經驗",
+        "hackintosh": [
+          "Hackintosh",
+          "有在非 Apple 硬體上安裝與維護 macOS 的經驗。"
+        ],
+        "raspberryPi": [
+          "Raspberry Pi 5 (8GB)",
+          "作為伺服器部署與管理。"
+        ],
+        "maker": [
+          "Maker 專案",
+          "Arduino、ESP32、3D 列印、雷射雕刻等。"
+        ],
+        "more": "還有更多..."
+      },
+      "projectsTemplate": "如果你想看看我做過什麼，可以逛逛我的 {github}，或看看 {yorkDevelopment}。"
+    },
+    "music": {
+      "daw": "空閒時我有時會打開 DAW。最近主要使用 Logic Pro，不過 FL Studio 是我最先接觸的軟體。不管是在寫新歌、學技巧，還是單純實驗，我都想持續進步。",
+      "guitar": "我最近開始接觸電吉他，還在剛起步的階段。",
+      "recommended": "推薦的藝術家",
+      "note": "註：還有很多很棒的藝術家沒有列在這裡。"
+    },
+    "aviation": {
+      "intro": "我特別對民航與飛行操作感興趣，喜歡了解客機如何運作、機組員如何管理複雜航班，以及安全順暢飛行背後的決策。",
+      "airbus": "我也是 Airbus 愛好者，從 fly-by-wire 的理念到駕駛艙設計，我都很喜歡。",
+      "simPrefix": "使用的飛行模擬器：X-Plane 11 搭配 ToLiss Airbus。你也可以查看我的 ",
+      "simLink": "Volanta 個人頁面",
+      "simSuffix": "，了解更多我的虛擬飛行活動。"
+    },
+    "photo": {
+      "intro": "攝影是我比較新的興趣。我還是初學者，目前使用 Canon EOS R50 拍攝。",
+      "craft": "我喜歡學習基礎、練習構圖，也在探索中捕捉一些小瞬間。"
+    }
+  },
+  "nowPlaying": {
+    "heading": "正在播放",
+    "refreshTitle": "重新整理正在播放",
+    "refreshLabel": "重新整理正在播放",
+    "fullscreenTitle": "全螢幕檢視",
+    "fullscreenLabel": "全螢幕檢視",
+    "artLabel": "開啟專輯封面檢視器",
+    "artLoadingAlt": "專輯封面載入中",
+    "loading": "載入中...",
+    "lovedTrack": "喜愛的歌曲",
+    "artistMetaTemplate": "我聽過 {artist} {count} 次。",
+    "dataSince": "資料自 2025 年 7 月 11 日起",
+    "lastFmProfile": "Last.fm 個人頁面"
+  },
+  "links": {
+    "label": "連結",
+    "listLabel": "連結清單",
+    "heading": "連結",
+    "code": "程式",
+    "githubSubtext": "開源專案與實驗",
+    "community": "社群",
+    "discordSubtext": "有問題可以私訊",
+    "steamSubtext": "遊戲個人頁面與活動",
+    "music": "音樂 [524-Hz]",
+    "soundcloudSubtext": "音樂草稿與上傳作品",
+    "bandcampSubtext": "原創曲目與發行作品",
+    "support": "支持",
+    "coffeeSubtext": "幫助我做更多有趣的事！",
+    "discordWarningHeading": "⚠️ 私訊我之前",
+    "discordWarning1": "在 Discord 私訊我之前，請先說明你想問什麼。",
+    "discordWarning2": "請不要只傳送好友邀請。我只會接受認識的人的邀請。",
+    "discordWarning3": "如果我不知道你私訊的目的或你是誰，你的好友邀請與私訊可能會被忽略。",
+    "alsoRead": "也請閱讀: ",
+    "back": "返回連結",
+    "openDiscord": "開啟 Discord 個人頁面"
+  },
+  "org": {
+    "heading": "組織",
+    "role": "創辦人 / 開發者",
+    "description": "我們製作直覺、友善的應用程式，讓日常任務更方便。",
+    "visitLabel": "造訪 York Development 網站",
+    "visit": "造訪"
+  },
+  "footer": {
+    "builtWith": "在台灣用 ❤️ 與 Astro 製作。",
+    "loveLabel": "❤️",
+    "backToTop": "回到頁首 ↑"
+  },
+  "settings": {
+    "title": "設定",
+    "rainEffect": "雨天效果",
+    "rainToggle": "切換雨天效果",
+    "rainIntensity": "雨量強度",
+    "muteRain": "靜音雨聲",
+    "rainSoundToggle": "切換雨聲靜音",
+    "snowEffect": "雪花效果",
+    "snowToggle": "切換雪花效果",
+    "snowIntensity": "雪量強度",
+    "clearSnow": "清除積雪",
+    "clearSnowLabel": "清除累積的積雪",
+    "particlesEffect": "粒子效果",
+    "particlesToggle": "切換粒子效果",
+    "theme": "主題",
+    "selectTheme": "選擇主題",
+    "language": "語言",
+    "selectLanguage": "選擇語言",
+    "themes": {
+      "system": "系統",
+      "dark": "深色",
+      "light": "淺色",
+      "newspaper": "報紙 (BETA)"
+    },
+    "about": "關於",
+    "appInfo": "應用程式資訊",
+    "version": "版本",
+    "framework": "框架",
+    "environment": "環境",
+    "source": "原始碼",
+    "open": "開啟設定",
+    "close": "關閉設定"
+  },
+  "overlays": {
+    "imageViewerLabel": "專輯封面檢視器",
+    "openArtworkTitle": "在新分頁開啟封面",
+    "openArtworkLabel": "在新分頁開啟原始封面",
+    "close": "關閉",
+    "closeViewer": "關閉檢視器",
+    "artAlt": "專輯封面",
+    "albumPlayTemplate": "我聽過這張專輯 {count} 次。",
+    "viewOnLastFm": "在 Last.fm 檢視",
+    "fullscreenLabel": "正在播放全螢幕",
+    "closeFullscreen": "關閉全螢幕"
+  },
+  "runtime": {
+    "justNow": "剛剛",
+    "minutesAgo": "{count} 分鐘前",
+    "hoursAgo": "{count} 小時前",
+    "daysAgo": "{count} 天前",
+    "plays": "{count} 次播放",
+    "currentlyListening": "目前正在聽",
+    "lastPlayed": "上次播放",
+    "autoRefresh": "{seconds} 秒後自動重新整理",
+    "failedNowPlaying": "無法載入正在播放",
+    "failed": "載入失敗",
+    "unavailable": "無法使用",
+    "fetchFailed": "無法取得資料",
+    "tryRefreshing": "請嘗試重新整理；如果問題持續發生，請回報給我。",
+    "unknownArtist": "未知演出者",
+    "unknownAlbum": "未知專輯",
+    "unknownTrack": "未知歌曲",
+    "artUnavailable": "正在播放無法使用",
+    "albumArtworkUnavailable": "專輯封面無法使用",
+    "viewAlbum": "檢視專輯",
+    "albumByArtist": "{artist} 的《{album}》",
+    "trackByArtist": "{artist} 的「{track}」",
+    "onLastFm": "在 Last.fm 檢視 {name}",
+    "albumByArtistOnLastFm": "在 Last.fm 檢視 {artist} 的《{album}》",
+    "viewMyPlaysForTrack": "在 Last.fm 檢視我播放 {artist}「{title}」的紀錄",
+    "viewMyPlays": "在 Last.fm 檢視我的播放紀錄",
+    "year": "{count} 年",
+    "years": "{count} 年",
+    "month": "{count} 個月",
+    "months": "{count} 個月",
+    "day": "{count} 天",
+    "days": "{count} 天",
+    "durationJoin": "{first}{second}",
+    "sinceLabel": "資料自 {date} 起 ({ago}前)",
+    "sinceTooltip": "我的 Last.fm 帳號建立於 {ago}前，播放次數是根據自那時起的所有播放紀錄計算。請注意，實際播放次數可能比這裡顯示的更多。"
+  }
+}

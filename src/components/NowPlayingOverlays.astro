@@ -1,38 +1,48 @@
 ---
+import type { UiStrings } from '../i18n/ui';
+
 const lastFmProfile = 'https://www.last.fm/user/york0524';
+
+interface Props {
+  t: UiStrings['overlays'];
+}
+
+const { t } = Astro.props;
 ---
 
-<div id="np-image-viewer" class="np-image-viewer" hidden role="dialog" aria-modal="true" aria-label="Album Artwork Viewer">
+<div id="np-image-viewer" class="np-image-viewer" hidden role="dialog" aria-modal="true" aria-label={t.imageViewerLabel}>
   <div class="np-iv-backdrop" id="np-iv-backdrop"></div>
   <div class="np-iv-content">
-    <a class="np-iv-external" id="np-iv-external" href={lastFmProfile} target="_blank" rel="noopener noreferrer" title="Open artwork in a new tab" aria-label="Open original artwork in a new tab">
+    <a class="np-iv-external" id="np-iv-external" href={lastFmProfile} target="_blank" rel="noopener noreferrer" title={t.openArtworkTitle} aria-label={t.openArtworkLabel}>
       <i class="fas fa-external-link-alt" aria-hidden="true"></i>
     </a>
-    <button class="np-iv-close" id="np-iv-close" type="button" title="Close" aria-label="Close viewer">
+    <button class="np-iv-close" id="np-iv-close" type="button" title={t.close} aria-label={t.closeViewer}>
       <i class="fas fa-times" aria-hidden="true"></i>
     </button>
     <div class="np-iv-image-wrapper">
-      <img id="np-iv-art" src="" alt="Album artwork" decoding="async" crossorigin="anonymous" />
+      <img id="np-iv-art" src="" alt={t.artAlt} decoding="async" crossorigin="anonymous" />
     </div>
     <div class="np-iv-info">
       <p class="np-iv-title" id="np-iv-album-title">—</p>
       <p class="np-iv-artist"><a id="np-iv-artist" href={lastFmProfile} target="_blank" rel="noopener noreferrer">—</a></p>
-      <p class="np-iv-album" id="np-iv-album-playcount" hidden>I've listened to this album for <a id="np-iv-album-library-link" href={lastFmProfile} target="_blank" rel="noopener noreferrer" class="np-iv-playcount-link">—</a> times.</p>
+      <p class="np-iv-album" id="np-iv-album-playcount" data-template={t.albumPlayTemplate} hidden>
+        {t.albumPlayTemplate.split('{count}')[0]}<a id="np-iv-album-library-link" href={lastFmProfile} target="_blank" rel="noopener noreferrer" class="np-iv-playcount-link">—</a>{t.albumPlayTemplate.split('{count}')[1]}
+      </p>
       <a id="np-iv-link" href={lastFmProfile} target="_blank" rel="noopener noreferrer" class="btn-plain np-iv-btn btn-arrow">
-        <i class="fab fa-lastfm" aria-hidden="true"></i> View on Last.fm <span class="arrow" aria-hidden="true">→</span>
+        <i class="fab fa-lastfm" aria-hidden="true"></i> {t.viewOnLastFm} <span class="arrow" aria-hidden="true">→</span>
       </a>
     </div>
   </div>
 </div>
 
-<div id="np-fullscreen-viewer" class="np-fullscreen-viewer" hidden role="dialog" aria-modal="true" aria-label="Now Playing Fullscreen">
+<div id="np-fullscreen-viewer" class="np-fullscreen-viewer" hidden role="dialog" aria-modal="true" aria-label={t.fullscreenLabel}>
   <div class="np-fs-bg" id="np-fs-bg"></div>
-  <button class="np-fs-close" id="np-fs-close" type="button" title="Close" aria-label="Close fullscreen">
+  <button class="np-fs-close" id="np-fs-close" type="button" title={t.close} aria-label={t.closeFullscreen}>
     <i class="fas fa-times" aria-hidden="true"></i>
   </button>
   <div class="np-fs-content">
     <div class="np-fs-art-wrap">
-      <img id="np-fs-art" class="np-fs-art" src="" alt="Album artwork" decoding="async" crossorigin="anonymous" />
+      <img id="np-fs-art" class="np-fs-art" src="" alt={t.artAlt} decoding="async" crossorigin="anonymous" />
     </div>
     <div class="np-fs-info">
       <p class="np-fs-status" id="np-fs-status">Loading…</p>

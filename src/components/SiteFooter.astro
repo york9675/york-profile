@@ -1,5 +1,12 @@
 ---
 import SiteFooterIsland from './islands/SiteFooterIsland';
+import type { UiStrings } from '../i18n/ui';
+
+interface Props {
+  t: UiStrings['footer'];
+}
+
+const { t } = Astro.props;
 ---
 
 <footer class="site-footer frame" role="contentinfo">
@@ -8,10 +15,10 @@ import SiteFooterIsland from './islands/SiteFooterIsland';
       <p class="mono small">&copy; <span id="year"></span> York Development</p>
     </div>
     <div class="col">
-      <p class="small muted">Built with <span aria-label="love" role="img">❤️</span> and Astro in Taiwan.</p>
+      <p class="small muted">{t.builtWith}</p>
     </div>
     <div class="col align-right">
-      <button id="scroll-top" class="btn-plain small" type="button">Back To Top ↑</button>
+      <button id="scroll-top" class="btn-plain small" type="button">{t.backToTop}</button>
     </div>
   </div>
 </footer>

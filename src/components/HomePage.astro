@@ -1,0 +1,47 @@
+---
+import PageShell from '../layouts/PageShell.astro';
+import SeoHead from './SeoHead.astro';
+import EffectsCanvases from './EffectsCanvases.astro';
+import ProfileHeader from './ProfileHeader.astro';
+import AboutSection from './AboutSection.astro';
+import NowPlayingSection from './NowPlayingSection.astro';
+import LinksSection from './LinksSection.astro';
+import OrgSection from './OrgSection.astro';
+import SiteFooter from './SiteFooter.astro';
+import SettingsFab from './SettingsFab.astro';
+import RainAudio from './RainAudio.astro';
+import NowPlayingOverlays from './NowPlayingOverlays.astro';
+import { profile } from '../data/app';
+import type { Locale, UiStrings } from '../i18n/ui';
+import '../styles/main.css';
+
+interface Props {
+  locale: Locale;
+  t: UiStrings;
+}
+
+const { locale, t } = Astro.props;
+const description = t.meta.description || profile.description;
+---
+
+<PageShell title={t.meta.title} description={description} lang={locale}>
+  <SeoHead slot="head" locale={locale} t={t} />
+
+  <EffectsCanvases />
+
+  <div id="app">
+    <ProfileHeader t={t.header} />
+    <main class="content grid" id="main-content">
+      <AboutSection t={t.about} />
+      <NowPlayingSection t={t.nowPlaying} />
+      <LinksSection t={t.links} />
+      <OrgSection t={t.org} />
+    </main>
+    <SiteFooter t={t.footer} />
+  </div>
+
+  <SettingsFab locale={locale} t={t.settings} />
+  <RainAudio />
+  <NowPlayingOverlays t={t.overlays} />
+  <script is:inline type="application/json" id="i18n-runtime" set:html={JSON.stringify(t.runtime)} />
+</PageShell>

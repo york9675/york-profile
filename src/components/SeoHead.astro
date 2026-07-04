@@ -1,19 +1,28 @@
 ---
 import { profile } from '../data/app';
+import { defaultLocale, getLocaleUrl, locales } from '../i18n/ui';
+import type { Locale, UiStrings } from '../i18n/ui';
 
+interface Props {
+  locale: Locale;
+  t: UiStrings;
+}
+
+const { locale, t } = Astro.props;
+const canonicalUrl = `${profile.siteUrl}${getLocaleUrl(locale)}`;
 const personSchema = {
   '@context': 'https://schema.org',
   '@type': 'Person',
-  '@id': `${profile.siteUrl}/`,
+  '@id': canonicalUrl,
   name: profile.name,
   alternateName: profile.handle,
-  url: profile.siteUrl,
+  url: canonicalUrl,
   image: profile.avatar,
-  description: profile.description,
-  jobTitle: 'Founder / Developer',
+  description: t.meta.description,
+  jobTitle: t.org.role,
   homeLocation: {
     '@type': 'Place',
-    name: 'Taiwan'
+    name: t.header.location
   },
   sameAs: [
     'https://github.com/york9675',
@@ -38,20 +47,24 @@ const personSchema = {
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 <meta property="og:type" content="profile" />
-<meta property="og:locale" content="en_US" />
+<meta property="og:locale" content={t.meta.ogLocale} />
 <meta property="og:title" content="York • york0524" />
-<meta property="og:description" content={profile.description} />
+<meta property="og:description" content={t.meta.description} />
 <meta property="og:image" content={profile.avatar} />
-<meta property="og:image:alt" content="York avatar" />
-<meta property="og:url" content={profile.siteUrl} />
-<meta property="og:site_name" content="York Profile" />
+<meta property="og:image:alt" content={t.meta.avatarAlt} />
+<meta property="og:url" content={canonicalUrl} />
+<meta property="og:site_name" content={t.meta.siteName} />
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="York • york0524" />
-<meta name="twitter:description" content={profile.description} />
+<meta name="twitter:description" content={t.meta.description} />
 <meta name="twitter:image" content={profile.avatar} />
 <meta name="twitter:creator" content="@york0524" />
 <meta name="twitter:site" content="@york0524" />
-<link rel="canonical" href={profile.siteUrl} />
+<link rel="canonical" href={canonicalUrl} />
+{locales.map((item) => (
+  <link rel="alternate" hreflang={item} href={`${profile.siteUrl}${getLocaleUrl(item)}`} />
+))}
+<link rel="alternate" hreflang="x-default" href={`${profile.siteUrl}${getLocaleUrl(defaultLocale)}`} />
 
 <script type="application/ld+json" set:html={JSON.stringify(personSchema)} is:inline />
 

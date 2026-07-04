@@ -1,116 +1,136 @@
 ---
 import { appInfo } from '../data/app';
 import SettingsFabIsland from './islands/SettingsFabIsland';
+import { getLocaleUrl, localeLabels, locales } from '../i18n/ui';
+import type { Locale, UiStrings } from '../i18n/ui';
+
+interface Props {
+  locale: Locale;
+  t: UiStrings['settings'];
+}
+
+const { locale, t } = Astro.props;
 ---
 
 <div class="settings-fab">
   <div class="settings-panel" id="settings-panel" hidden>
-    <p class="settings-title">Settings</p>
+    <p class="settings-title">{t.title}</p>
     <div class="settings-row">
       <label class="settings-label" for="rain-toggle">
         <i class="fas fa-cloud-rain" aria-hidden="true"></i>
-        Rain effect
+        {t.rainEffect}
       </label>
-      <button type="button" class="toggle-btn" id="rain-toggle" role="switch" aria-checked="false" aria-label="Toggle rain effect">
+      <button type="button" class="toggle-btn" id="rain-toggle" role="switch" aria-checked="false" aria-label={t.rainToggle}>
         <span class="toggle-thumb"></span>
       </button>
     </div>
     <div class="settings-row settings-row-slider rain-control" id="rain-intensity-row" hidden>
       <label class="settings-label" for="rain-intensity">
         <i class="fas fa-droplet" aria-hidden="true"></i>
-        Rain intensity
+        {t.rainIntensity}
       </label>
       <div class="slider-wrap">
-        <input type="range" id="rain-intensity" min="20" max="100" step="1" value="25" aria-label="Rain intensity" />
+        <input type="range" id="rain-intensity" min="20" max="100" step="1" value="25" aria-label={t.rainIntensity} />
         <span class="slider-value mono" id="rain-intensity-value">25%</span>
       </div>
     </div>
     <div class="settings-row rain-control" id="rain-sound-row" hidden>
       <label class="settings-label" for="rain-sound-toggle">
         <i class="fas fa-volume-xmark" aria-hidden="true"></i>
-        Mute rain sound
+        {t.muteRain}
       </label>
-      <button type="button" class="toggle-btn" id="rain-sound-toggle" role="switch" aria-checked="false" aria-label="Toggle rain sound mute">
+      <button type="button" class="toggle-btn" id="rain-sound-toggle" role="switch" aria-checked="false" aria-label={t.rainSoundToggle}>
         <span class="toggle-thumb"></span>
       </button>
     </div>
     <div class="settings-row">
       <label class="settings-label" for="snow-toggle">
         <i class="fas fa-snowflake" aria-hidden="true"></i>
-        Snow effect
+        {t.snowEffect}
       </label>
-      <button type="button" class="toggle-btn" id="snow-toggle" role="switch" aria-checked="false" aria-label="Toggle snow effect">
+      <button type="button" class="toggle-btn" id="snow-toggle" role="switch" aria-checked="false" aria-label={t.snowToggle}>
         <span class="toggle-thumb"></span>
       </button>
     </div>
     <div class="settings-row settings-row-slider snow-control" id="snow-intensity-row" hidden>
       <label class="settings-label" for="snow-intensity">
         <i class="fas fa-wind" aria-hidden="true"></i>
-        Snow intensity
+        {t.snowIntensity}
       </label>
       <div class="slider-wrap">
-        <input type="range" id="snow-intensity" min="15" max="100" step="1" value="15" aria-label="Snow intensity" />
+        <input type="range" id="snow-intensity" min="15" max="100" step="1" value="15" aria-label={t.snowIntensity} />
         <span class="slider-value mono" id="snow-intensity-value">15%</span>
       </div>
     </div>
     <div class="settings-row snow-control" id="snow-clear-row" hidden>
-      <button type="button" class="btn-plain small snow-clear-btn" id="snow-clear-btn" aria-label="Clear accumulated snowdrift">
+      <button type="button" class="btn-plain small snow-clear-btn" id="snow-clear-btn" aria-label={t.clearSnowLabel}>
         <i class="fas fa-broom" aria-hidden="true"></i>
-        Clear snowdrift
+        {t.clearSnow}
       </button>
     </div>
     <div class="settings-row">
       <label class="settings-label" for="particles-toggle">
         <i class="fas fa-project-diagram" aria-hidden="true"></i>
-        Particles effect
+        {t.particlesEffect}
       </label>
-      <button type="button" class="toggle-btn" id="particles-toggle" role="switch" aria-checked="false" aria-label="Toggle particles effect">
+      <button type="button" class="toggle-btn" id="particles-toggle" role="switch" aria-checked="false" aria-label={t.particlesToggle}>
         <span class="toggle-thumb"></span>
       </button>
     </div>
     <div class="settings-row">
       <label class="settings-label" for="theme-select">
         <i class="fas fa-palette" aria-hidden="true"></i>
-        Theme
+        {t.theme}
       </label>
-      <select id="theme-select" class="theme-select" aria-label="Select theme">
-        <option value="system">System</option>
-        <option value="dark">Dark</option>
-        <option value="light">Light</option>
-        <option value="newspaper">Newspaper (BETA)</option>
+      <select id="theme-select" class="theme-select" aria-label={t.selectTheme}>
+        <option value="system">{t.themes.system}</option>
+        <option value="dark">{t.themes.dark}</option>
+        <option value="light">{t.themes.light}</option>
+        <option value="newspaper">{t.themes.newspaper}</option>
+      </select>
+    </div>
+    <div class="settings-row">
+      <label class="settings-label" for="language-select">
+        <i class="fas fa-language" aria-hidden="true"></i>
+        {t.language}
+      </label>
+      <select id="language-select" class="theme-select" aria-label={t.selectLanguage}>
+        {locales.map((item) => (
+          <option value={getLocaleUrl(item)} selected={item === locale}>{localeLabels[item]}</option>
+        ))}
       </select>
     </div>
     <details class="settings-disclosure">
       <summary class="settings-row settings-summary">
         <span class="settings-label">
           <i class="fas fa-circle-info" aria-hidden="true"></i>
-          About
+          {t.about}
         </span>
         <i class="fas fa-chevron-down settings-summary-icon" aria-hidden="true"></i>
       </summary>
-      <div class="settings-app-info" aria-label="App information">
+      <div class="settings-app-info" aria-label={t.appInfo}>
         <dl>
           <div>
-            <dt>Version</dt>
+            <dt>{t.version}</dt>
             <dd>{appInfo.version}</dd>
           </div>
           <div>
-            <dt>Framework</dt>
+            <dt>{t.framework}</dt>
             <dd><a href="https://astro.build" target="_blank" rel="noopener noreferrer">Astro</a> v{appInfo.astroVersion}</dd>
           </div>
           <div>
-            <dt>Environment</dt>
+            <dt>{t.environment}</dt>
             <dd>{appInfo.appEnv}</dd>
           </div>
           <div>
-            <dt>Source</dt>
+            <dt>{t.source}</dt>
             <dd><a href="https://github.com/york9675/york-profile" target="_blank" rel="noopener noreferrer">york9675/york-profile</a></dd>
           </div>
         </dl>
       </div>
     </details>
   </div>
-  <button type="button" class="settings-btn" id="settings-btn" title="Settings" aria-label="Open settings" aria-expanded="false" aria-controls="settings-panel">
+  <button type="button" class="settings-btn" id="settings-btn" title={t.title} aria-label={t.open} data-open-label={t.open} data-close-label={t.close} aria-expanded="false" aria-controls="settings-panel">
     <i class="fas fa-sliders-h" aria-hidden="true"></i>
   </button>
 </div>

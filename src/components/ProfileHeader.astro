@@ -2,6 +2,13 @@
 import { Image } from 'astro:assets';
 import { profile } from '../data/app';
 import ProfileHeaderIsland from './islands/ProfileHeaderIsland';
+import type { UiStrings } from '../i18n/ui';
+
+interface Props {
+  t: UiStrings['header'];
+}
+
+const { t } = Astro.props;
 ---
 
 <header class="site-header frame" role="banner">
@@ -20,10 +27,10 @@ import ProfileHeaderIsland from './islands/ProfileHeaderIsland';
     <div class="name-block">
       <h1 class="primary-name">York</h1>
       <h2 class="secondary-name">york0524 • ヨーク</h2>
-      <p class="bio-subtitle" aria-hidden="true">Bio</p>
-      <p class="tagline" id="bio">I love music and the sky.</p>
+      <p class="bio-subtitle" aria-hidden="true">{t.bioLabel}</p>
+      <p class="tagline" id="bio">{t.tagline}</p>
       <p class="contact-email">
-        <a href={`mailto:${profile.email}`} id="contact-email-link" class="email-link mono" title="Email me" rel="noopener noreferrer">
+        <a href={`mailto:${profile.email}`} id="contact-email-link" class="email-link mono" title={t.emailTitle} rel="noopener noreferrer">
           <span class="icon" aria-hidden="true"><i class="fas fa-envelope"></i></span>
           <span class="addr">york<span class="email-honeypot">null</span>@york.qzz.io</span>
         </a>
@@ -31,13 +38,13 @@ import ProfileHeaderIsland from './islands/ProfileHeaderIsland';
     </div>
   </div>
 
-  <div class="meta-lines" aria-label="Profile metadata">
+  <div class="meta-lines" aria-label={t.metadataLabel}>
     <div class="clock-line">
-      <span class="label">Location</span>
-      <span class="mono">Taiwan</span>
+      <span class="label">{t.locationLabel}</span>
+      <span class="mono">{t.location}</span>
     </div>
     <div class="clock-line">
-      <span class="label">Local Time (UTC +8)</span>
+      <span class="label">{t.localTime}</span>
       <span id="local-time" class="mono">--:--</span>
     </div>
   </div>

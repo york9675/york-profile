@@ -26,6 +26,95 @@ let npCountdownTimerId: ReturnType<typeof setInterval> | undefined;
 let npFullscreenIdleTimerId: ReturnType<typeof setTimeout> | undefined;
 let isNowPlayingInitialized = false;
 
+const defaultRuntimeText = {
+  justNow: 'just now',
+  minutesAgo: '{count}m ago',
+  hoursAgo: '{count}h ago',
+  daysAgo: '{count}d ago',
+  plays: '{count} plays',
+  currentlyListening: 'Currently Listening',
+  lastPlayed: 'Last Played',
+  autoRefresh: 'Auto-refresh in {seconds}s',
+  failedNowPlaying: 'Failed to load now playing',
+  failed: 'Failed to load',
+  unavailable: 'Unavailable',
+  fetchFailed: 'Could not fetch data',
+  tryRefreshing: 'Please try refreshing and if the issue persists, report it to me.',
+  unknownArtist: 'Unknown Artist',
+  unknownAlbum: 'Unknown Album',
+  unknownTrack: 'Unknown track',
+  artUnavailable: 'Now playing unavailable',
+  albumArtworkUnavailable: 'Album artwork unavailable',
+  viewAlbum: 'View album',
+  albumByArtist: '{album} by {artist}',
+  trackByArtist: '{track} by {artist}',
+  onLastFm: '{name} on Last.fm',
+  albumByArtistOnLastFm: '{album} by {artist} on Last.fm',
+  viewMyPlaysForTrack: 'View my plays for {title} by {artist} on Last.fm',
+  viewMyPlays: 'View my plays on Last.fm',
+  year: '{count} year',
+  years: '{count} years',
+  month: '{count} month',
+  months: '{count} months',
+  day: '{count} day',
+  days: '{count} days',
+  durationJoin: '{first} and {second}',
+  sinceLabel: 'Data since {date} ({ago} ago)',
+  sinceTooltip: 'My Last.fm account was created {ago} ago, and the playcount is based on all plays since then. Please note that the actual playcount may be higher than it shows here.'
+};
+
+type RuntimeText = typeof defaultRuntimeText;
+
+let runtimeText: RuntimeText | undefined;
+
+function getRuntimeText() {
+  if (runtimeText) return runtimeText;
+  const sourceEl = document.getElementById('i18n-runtime');
+  try {
+    const parsed = sourceEl?.textContent ? JSON.parse(sourceEl.textContent) : {};
+    runtimeText = { ...defaultRuntimeText, ...parsed };
+  } catch (_e) {  // eslint-disable-line @typescript-eslint/no-unused-vars
+    runtimeText = defaultRuntimeText;
+  }
+  return runtimeText;
+}
+
+function formatTemplate(template: string, values: Record<string, string | number>) {
+  return Object.entries(values).reduce(
+    (result, [key, value]) => result.replaceAll(`{${key}}`, String(value)),
+    template
+  );
+}
+
+function formatInlineTemplate(
+  container: HTMLElement,
+  template: string,
+  replacements: Record<string, Node | string | number>
+) {
+  const fragment = document.createDocumentFragment();
+  const matches = [...template.matchAll(/\{([a-zA-Z0-9_]+)\}/g)];
+  let offset = 0;
+
+  matches.forEach(match => {
+    const index = match.index ?? 0;
+    if (index > offset) fragment.append(template.slice(offset, index));
+
+    const replacement = replacements[match[1]];
+    if (replacement instanceof Node) {
+      fragment.append(replacement);
+    } else if (replacement !== undefined) {
+      fragment.append(String(replacement));
+    } else {
+      fragment.append(match[0]);
+    }
+
+    offset = index + match[0].length;
+  });
+
+  if (offset < template.length) fragment.append(template.slice(offset));
+  container.replaceChildren(fragment);
+}
+
 type NowPlayingState = {
   type: string;
   art?: string;
@@ -90,12 +179,19 @@ function formatNowPlayingStatus({ isPlaying, statusText }: { isPlaying: boolean;
  * Calculate time ago from timestamp
  */
 function timeAgo(epoch: number) {
+  const text = getRuntimeText();
   const diff = Math.floor((Date.now() / 1000) - epoch);
-  if (diff < 60) return 'just now';
-  if (diff < 3600) { const m = Math.floor(diff / 60); return `${m}m ago`; }
-  if (diff < 86400) { const h = Math.floor(diff / 3600); return `${h}h ago`; }
+  if (diff < 60) return text.justNow;
+  if (diff < 3600) {
+    const m = Math.floor(diff / 60);
+    return formatTemplate(text.minutesAgo, { count: m });
+  }
+  if (diff < 86400) {
+    const h = Math.floor(diff / 3600);
+    return formatTemplate(text.hoursAgo, { count: h });
+  }
   const d = Math.floor(diff / 86400);
-  return `${d}d ago`;
+  return formatTemplate(text.daysAgo, { count: d });
 }
 
 /**
@@ -103,18 +199,21 @@ function timeAgo(epoch: number) {
  */
 function formatFullDateTime(epoch: number) {
   const date = new Date(epoch * 1000);
-  return date.toLocaleString();
+  return date.toLocaleString(document.documentElement.lang || undefined);
 }
 
 /**
  * Format play count label
  */
 function formatPlayCount(playCount: number | string) {
+  const text = getRuntimeText();
   const parsedCount = Number(playCount);
   if (!Number.isFinite(parsedCount) || parsedCount < 0) {
     return '';
   }
-  return `${parsedCount.toLocaleString()} plays`;
+  return formatTemplate(text.plays, {
+    count: parsedCount.toLocaleString(document.documentElement.lang || undefined)
+  });
 }
 
 /**
@@ -184,6 +283,7 @@ function setNowPlayingLoading(isLoading: boolean) {
  * Display error state
  */
 function setNowPlayingError() {
+  const text = getRuntimeText();
   const nextStateKey = 'error';
   if (nextStateKey === npLastStateKey) return;
 
@@ -211,18 +311,18 @@ function setNowPlayingError() {
   if (widgetEl) widgetEl.style.removeProperty('--np-color');
 
   if (statusEl) {
-    statusEl.innerHTML = '<span class="np-error-dot" aria-hidden="true"></span> Failed to load now playing';
+    statusEl.innerHTML = `<span class="np-error-dot" aria-hidden="true"></span> ${text.failedNowPlaying}`;
   }
   if (fsStatusEl) {
-    fsStatusEl.innerHTML = '<span class="np-error-dot" aria-hidden="true"></span> Failed to load';
+    fsStatusEl.innerHTML = `<span class="np-error-dot" aria-hidden="true"></span> ${text.failed}`;
   }
   
   if (trackEl) {
-    trackEl.textContent = 'Unavailable';
+    trackEl.textContent = text.unavailable;
     trackEl.href = LASTFM_PROFILE;
   }
   if (fsTrackEl) {
-    fsTrackEl.textContent = 'Unavailable';
+    fsTrackEl.textContent = text.unavailable;
   }
   
   if (lovedMetaEl) {
@@ -230,15 +330,15 @@ function setNowPlayingError() {
   }
   
   if (artistEl) {
-    artistEl.textContent = 'Could not fetch data';
+    artistEl.textContent = text.fetchFailed;
     artistEl.href = LASTFM_PROFILE;
   }
   if (fsArtistEl) {
-    fsArtistEl.textContent = 'Could not fetch data';
+    fsArtistEl.textContent = text.fetchFailed;
   }
   
   if (albumEl) {
-    albumEl.textContent = 'Please try refreshing and if the issue persists, report it to me.';
+    albumEl.textContent = text.tryRefreshing;
   }
   if (fsAlbumEl) {
     fsAlbumEl.textContent = '';
@@ -262,11 +362,11 @@ function setNowPlayingError() {
   }
   if (artEl) {
     artEl.removeAttribute('src');
-    artEl.alt = 'Now playing unavailable';
+    artEl.alt = text.artUnavailable;
   }
   if (fsArtEl) {
     fsArtEl.removeAttribute('src');
-    fsArtEl.alt = 'Now playing unavailable';
+    fsArtEl.alt = text.artUnavailable;
   }
   if (fsBgEl) {
     fsBgEl.dataset.bg = '';
@@ -274,7 +374,7 @@ function setNowPlayingError() {
   }
   
   if (artLinkEl) {
-    artLinkEl.setAttribute('aria-label', 'Now playing unavailable');
+    artLinkEl.setAttribute('aria-label', text.artUnavailable);
   }
 
   npLastStateKey = nextStateKey;
@@ -327,6 +427,7 @@ function refreshNowPlayingScroll() {
  * Fetch and display recent track from Last.fm
  */
 async function fetchRecentTrack(retryCount = 0) {
+  const text = getRuntimeText();
   npCountdown = NP_INTERVAL;
   setNowPlayingLoading(!npHasResolvedOnce);
 
@@ -341,8 +442,8 @@ async function fetchRecentTrack(retryCount = 0) {
     const title = track.name;
     const rawArtist = track.artist['#text'];
     const rawAlbum = track.album?.['#text'];
-    const artist = rawArtist || 'Unknown Artist';
-    const album = rawAlbum || 'Unknown Album';
+    const artist = rawArtist || text.unknownArtist;
+    const album = rawAlbum || text.unknownAlbum;
     const art = track.image?.[3]?.['#text'] || '';
     const isLoved = String(track.userloved ?? '').trim() === '1';
     const playCount = Number(track.userplaycount ?? 0);
@@ -373,8 +474,8 @@ async function fetchRecentTrack(retryCount = 0) {
     }
 
     const statusText = isPlaying
-      ? 'Currently Listening'
-      : `Last Played${playedTs ? ` (${timeAgo(playedTs)})` : ''}`;
+      ? text.currentlyListening
+      : `${text.lastPlayed}${playedTs ? ` (${timeAgo(playedTs)})` : ''}`;
     const nextStateKey = JSON.stringify({
       type: 'ok',
       isPlaying,
@@ -443,7 +544,7 @@ async function fetchRecentTrack(retryCount = 0) {
     if (trackEl) {
       trackEl.textContent = title;
       trackEl.href = trackUrl;
-      trackEl.title = 'View album';
+      trackEl.title = text.viewAlbum;
     }
     if (fsTrackEl) {
       fsTrackEl.textContent = title;
@@ -464,7 +565,7 @@ async function fetchRecentTrack(retryCount = 0) {
 
     if (albumEl) {
       albumEl.textContent = album;
-      albumEl.title = 'View album';
+      albumEl.title = text.viewAlbum;
     }
     if (fsAlbumEl) {
       fsAlbumEl.textContent = album;
@@ -481,8 +582,8 @@ async function fetchRecentTrack(retryCount = 0) {
         if (playCountLabel && libraryUrl) {
           playCountLinkEl.href = libraryUrl;
           const linkLabel = title
-            ? `View my plays for ${title} by ${artist} on Last.fm`
-            : `View my plays on Last.fm`;
+            ? formatTemplate(text.viewMyPlaysForTrack, { title, artist })
+            : text.viewMyPlays;
           playCountLinkEl.title = linkLabel;
         } else {
           playCountLinkEl.href = LASTFM_PROFILE;
@@ -510,12 +611,20 @@ async function fetchRecentTrack(retryCount = 0) {
         }
         
         if (artistMetaCountEl) {
-          artistMetaCountEl.textContent = artistPlayCount.toLocaleString();
+          artistMetaCountEl.textContent = artistPlayCount.toLocaleString(document.documentElement.lang || undefined);
           if (artistLibraryUrl) {
             artistMetaCountEl.href = artistLibraryUrl;
           } else {
             artistMetaCountEl.href = LASTFM_PROFILE;
           }
+        }
+        const artistMetaTextEl = $('#np-artist-meta-text');
+        if (artistMetaTextEl && artistMetaNameEl && artistMetaCountEl) {
+          formatInlineTemplate(
+            artistMetaTextEl,
+            artistMetaTextEl.dataset.template || "I've listened to {artist} for {count} times.",
+            { artist: artistMetaNameEl, count: artistMetaCountEl }
+          );
         }
       } else {
         artistMetaEl.hidden = true;
@@ -555,16 +664,18 @@ async function fetchRecentTrack(retryCount = 0) {
           fsBgEl.style.backgroundImage = 'none';
         }
       }
-      artEl.alt = album ? `${album} by ${artist}` : `${title} by ${artist}`;
+      artEl.alt = album
+        ? formatTemplate(text.albumByArtist, { album, artist })
+        : formatTemplate(text.trackByArtist, { track: title, artist });
       if (fsArtEl) fsArtEl.alt = artEl.alt;
     }
     if (artLinkEl) {
       artLinkEl.setAttribute('aria-label', rawAlbum
-        ? `${album} by ${artist} on Last.fm`
+        ? formatTemplate(text.albumByArtistOnLastFm, { album, artist })
         : rawArtist
-          ? `${artist} on Last.fm`
-          : 'Unknown track');
-      artLinkEl.title = 'View album';
+          ? formatTemplate(text.onLastFm, { name: artist })
+          : text.unknownTrack);
+      artLinkEl.title = text.viewAlbum;
     }
 
     npLastStateKey = nextStateKey;
@@ -589,8 +700,11 @@ async function fetchRecentTrack(retryCount = 0) {
  * Update refresh countdown display
  */
 function updateRefreshTooltip() {
+  const text = getRuntimeText();
   const npCountdownEl = $('#np-countdown');
-  if (npCountdownEl) npCountdownEl.textContent = `Auto-refresh in ${npCountdown}s`;
+  if (npCountdownEl) {
+    npCountdownEl.textContent = formatTemplate(text.autoRefresh, { seconds: npCountdown });
+  }
 }
 
 /**
@@ -624,6 +738,7 @@ export function initNowPlaying() {
   if (isNowPlayingInitialized) return;
   if (!document.getElementById('now-playing')) return;
   isNowPlayingInitialized = true;
+  const text = getRuntimeText();
 
   const npRefreshBtn = $<HTMLButtonElement>('#np-refresh');
   const npFullscreenBtn = $<HTMLButtonElement>('#np-fullscreen-btn');
@@ -665,7 +780,7 @@ export function initNowPlaying() {
   // Handle art loading error
   npArtEl?.addEventListener('error', () => {
     npArtEl.removeAttribute('src');
-    npArtEl.alt = 'Album artwork unavailable';
+    npArtEl.alt = text.albumArtworkUnavailable;
   });
 
   // Refresh button click handler
@@ -724,7 +839,7 @@ export function initNowPlaying() {
       }
     }
     if (ivTitle) {
-      ivTitle.textContent = state.album || 'Unknown Album';
+      ivTitle.textContent = state.album || text.unknownAlbum;
       ivTitle.hidden = !state.album;
     }
     if (ivArtist) {
@@ -737,12 +852,17 @@ export function initNowPlaying() {
     }
     if (ivPlayCount && ivPlayCountLink) {
       if (state.albumPlayCount > 0) {
-        ivPlayCountLink.textContent = state.albumPlayCount.toLocaleString();
+        ivPlayCountLink.textContent = state.albumPlayCount.toLocaleString(document.documentElement.lang || undefined);
         if (state.albumLibraryUrl) {
           ivPlayCountLink.href = state.albumLibraryUrl;
         } else {
           ivPlayCountLink.href = LASTFM_PROFILE;
         }
+        formatInlineTemplate(
+          ivPlayCount,
+          ivPlayCount.dataset.template || "I've listened to this album for {count} times.",
+          { count: ivPlayCountLink }
+        );
         ivPlayCount.hidden = false;
       } else {
         ivPlayCount.hidden = true;
@@ -952,6 +1072,7 @@ export function initNowPlaying() {
  * Initializes the 'Since' tooltip time difference
  */
 function initSinceTooltip() {
+  const text = getRuntimeText();
   const sinceEl = document.querySelector<HTMLElement>('#np-since');
   if (!sinceEl) return;
   
@@ -979,21 +1100,31 @@ function initSinceTooltip() {
   }
   
   const labelParts: string[] = [];
-  if (years > 0) labelParts.push(`${years} year${years !== 1 ? 's' : ''}`);
-  if (months > 0) labelParts.push(`${months} month${months !== 1 ? 's' : ''}`);
+  if (years > 0) {
+    labelParts.push(formatTemplate(years === 1 ? text.year : text.years, { count: years }));
+  }
+  if (months > 0) {
+    labelParts.push(formatTemplate(months === 1 ? text.month : text.months, { count: months }));
+  }
   
   if (years === 0 && months === 0) {
-    labelParts.push(`${Math.max(1, days)} day${Math.max(1, days) !== 1 ? 's' : ''}`);
+    const dayCount = Math.max(1, days);
+    labelParts.push(formatTemplate(dayCount === 1 ? text.day : text.days, { count: dayCount }));
   }
 
-  const agoStr = labelParts.slice(0, 2).join(' and ');
+  const agoStr = labelParts.length > 1
+    ? formatTemplate(text.durationJoin, { first: labelParts[0], second: labelParts[1] })
+    : labelParts[0];
   
-  const label = 'My last.fm account was created ' + agoStr + ' ago, and the playcount is based on all plays since then. (Please note that the actual playcount may be higher than it shows here.)';
-  sinceEl.title = label;
+  sinceEl.title = formatTemplate(text.sinceTooltip, { ago: agoStr });
 
   if (agoStr) {
     const iconHtml = '<i class="fas fa-info-circle" aria-hidden="true"></i> ';
-    const originalText = 'Data since ' + date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-    sinceEl.innerHTML = `${iconHtml}${originalText} (${agoStr} ago)`;
+    const formattedDate = date.toLocaleDateString(document.documentElement.lang || undefined, {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric'
+    });
+    sinceEl.innerHTML = `${iconHtml}${formatTemplate(text.sinceLabel, { date: formattedDate, ago: agoStr })}`;
   }
 }
