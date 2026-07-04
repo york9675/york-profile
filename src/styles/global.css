@@ -110,19 +110,6 @@ a:hover {
   color: #000;
 }
 
-/* Scrollbars */
-::-webkit-scrollbar {
-  width: 11px;
-  background: #060606;
-}
-::-webkit-scrollbar-thumb {
-  background: #181818;
-  border: 2px solid #060606;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #222;
-}
-
 /* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
   * {

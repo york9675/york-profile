@@ -20,11 +20,3 @@ html[data-theme="light"] .panel:not(:last-child) {
   background: var(--bg-alt);
   border-color: var(--line-alt);
 }
-
-/* Scrollbars */
-html[data-theme="light"] ::-webkit-scrollbar { background: #e8e8e8; }
-html[data-theme="light"] ::-webkit-scrollbar-thumb {
-  background: #c4c4c4;
-  border-color: #e8e8e8;
-}
-html[data-theme="light"] ::-webkit-scrollbar-thumb:hover { background: #aaa; }

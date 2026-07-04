@@ -398,23 +398,3 @@ html[data-theme="newspaper"] .small {
 
 /* Ensure selection is readable */
 html[data-theme="newspaper"] ::selection { background: #000; color: #fff; }
-
-/* Visible page scrollbar in newspaper mode */
-html[data-theme="newspaper"] {
-  scrollbar-color: #000 #f1eadf;
-  scrollbar-width: auto;
-}
-
-html[data-theme="newspaper"] ::-webkit-scrollbar {
-  width: 14px;
-  background: #f1eadf;
-}
-
-html[data-theme="newspaper"] ::-webkit-scrollbar-thumb {
-  background: #000;
-  border: 3px solid #f1eadf;
-}
-
-html[data-theme="newspaper"] ::-webkit-scrollbar-thumb:hover {
-  background: #1a1a1a;
-}

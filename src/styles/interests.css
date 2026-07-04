@@ -64,7 +64,6 @@
   position: relative;
   overflow-y: auto;
   max-height: 26rem;
-  scrollbar-width: none;
   padding-right: 1px;
 }
 
@@ -72,10 +71,6 @@
   .interest-panels {
     max-height: none;
   }
-}
-
-.interest-panels::-webkit-scrollbar {
-  display: none;
 }
 
 .interest-panel {
