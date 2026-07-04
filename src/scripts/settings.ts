@@ -84,7 +84,12 @@ export function initSettings() {
 
   document.addEventListener('click', event => {
     const target = event.target;
-    if (isOpen && target instanceof Element && !target.closest('.settings-fab')) close();
+    if (!isOpen || !(target instanceof Node)) return;
+
+    const clickedInsidePanel = settingsPanel.contains(target);
+    const clickedSettingsButton = settingsBtn.contains(target);
+
+    if (!clickedInsidePanel && !clickedSettingsButton) close();
   });
 
   document.addEventListener('keydown', event => {
