@@ -11,6 +11,7 @@ import { SELECTORS, SETTINGS_CLOSE_DELAY } from './constants';
 export function initSettings() {
   const settingsBtn = $<HTMLButtonElement>(SELECTORS.settingsBtn);
   const settingsPanel = $(SELECTORS.settingsPanel);
+  const settingsBtnIcon = $<HTMLElement>('#settings-btn-icon');
   const rainToggle = $<HTMLButtonElement>(SELECTORS.rainToggle);
   const rainIntensity = $<HTMLInputElement>(SELECTORS.rainIntensity);
   const rainSoundToggle = $<HTMLButtonElement>(SELECTORS.rainSoundToggle);
@@ -35,6 +36,8 @@ export function initSettings() {
     settingsBtn.setAttribute('aria-expanded', 'true');
     settingsBtn.setAttribute('aria-label', settingsBtn.dataset.closeLabel || 'Close settings');
     settingsBtn.classList.add('is-open');
+    settingsBtnIcon?.classList.remove('fa-sliders-h');
+    settingsBtnIcon?.classList.add('fa-times');
     window._retryRainAudio?.();
   }
 
@@ -45,6 +48,8 @@ export function initSettings() {
     settingsBtn.setAttribute('aria-expanded', 'false');
     settingsBtn.setAttribute('aria-label', settingsBtn.dataset.openLabel || 'Open settings');
     settingsBtn.classList.remove('is-open');
+    settingsBtnIcon?.classList.remove('fa-times');
+    settingsBtnIcon?.classList.add('fa-sliders-h');
     window.clearTimeout(closeTimerId);
     closeTimerId = window.setTimeout(() => {
       settingsPanel.setAttribute('hidden', '');
