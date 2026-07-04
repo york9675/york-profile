@@ -1,4 +1,5 @@
 ---
+import { Image } from 'astro:assets';
 import { profile } from '../data/app';
 ---
 
@@ -6,14 +7,16 @@ import { profile } from '../data/app';
   <h3 class="section-title" id="org-heading">Organizations</h3>
   <div class="org-wrapper">
     <div class="org-card">
-      <img
-        src={profile.orgAvatar}
+      <Image
+        src={profile.orgAvatarOptimizedSource}
         alt="York Development"
         class="org-avatar"
         width="128"
         height="128"
         loading="lazy"
         decoding="async"
+        fetchpriority="low"
+        densities={[1.5, 2]}
       />
       <div class="org-text">
         <h4 class="org-name">York Development</h4>

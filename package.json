@@ -7,15 +7,15 @@
   "productName": "York Profile",
   "description": "York's personal profile website.",
   "homepage": "https://github.com/york9675/york-profile",
-    "bugs": {
-        "url": "https://github.com/york9675/york-profile/issues"
-    },
-    "license": "MIT",
-    "author": {
-        "name": "york9675",
-        "email": "york@york.qzz.io",
-        "url": "https://github.com/york9675/"
-    },
+  "bugs": {
+    "url": "https://github.com/york9675/york-profile/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "york9675",
+    "email": "york@york.qzz.io",
+    "url": "https://github.com/york9675/"
+  },
   "scripts": {
     "dev": "ASTRO_TELEMETRY_DISABLED=1 astro dev",
     "build": "ASTRO_TELEMETRY_DISABLED=1 astro build",
@@ -41,6 +41,7 @@
     "@typescript-eslint/parser": "^8.62.1",
     "eslint": "^10.6.0",
     "eslint-plugin-astro": "^2.1.1",
+    "sharp": "^0.35.3",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.62.1"
   }

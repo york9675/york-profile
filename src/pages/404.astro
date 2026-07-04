@@ -18,8 +18,12 @@ import PageShell from '../layouts/PageShell.astro';
   </div>
 
   <script>
+    import { prefetch } from 'astro:prefetch';
+
     let progress = 0;
     const progressText = document.getElementById('progress');
+
+    prefetch('/');
 
     function updateProgress() {
       if (!progressText) return;

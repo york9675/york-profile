@@ -3,8 +3,10 @@ import packageJson from '../../package.json';
 export const profile = {
   name: 'York',
   handle: 'york0524',
-  avatar: 'https://avatars.githubusercontent.com/u/84720688',
-  orgAvatar: 'https://avatars.githubusercontent.com/u/178259609',
+  avatar: 'https://avatars.githubusercontent.com/u/84720688?v=4',
+  avatarOptimizedSource: 'https://avatars.githubusercontent.com/u/84720688?s=320&v=4',
+  orgAvatar: 'https://avatars.githubusercontent.com/u/178259609?v=4',
+  orgAvatarOptimizedSource: 'https://avatars.githubusercontent.com/u/178259609?s=256&v=4',
   email: 'york@york.qzz.io',
   siteUrl: 'https://york.qzz.io',
   description: 'Personal profile of York (york0524).'

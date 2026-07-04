@@ -1,18 +1,21 @@
 ---
+import { Image } from 'astro:assets';
 import { profile } from '../data/app';
 import ProfileHeaderIsland from './islands/ProfileHeaderIsland';
 ---
 
 <header class="site-header frame" role="banner">
   <div class="identity">
-    <img
+    <Image
       class="avatar"
-      src={profile.avatar}
+      src={profile.avatarOptimizedSource}
       alt="York"
       width="160"
       height="160"
       decoding="async"
       loading="eager"
+      fetchpriority="high"
+      densities={[1.5, 2]}
     />
     <div class="name-block">
       <h1 class="primary-name">York</h1>
