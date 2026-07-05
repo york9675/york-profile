@@ -41,7 +41,7 @@
   transition: color var(--transition);
 }
 
-.expand-section[open] > .expand-summary::after {
+.expand-section.is-visually-open > .expand-summary::after {
   content: '\2212';
 }
 
