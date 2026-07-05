@@ -17,12 +17,12 @@ const { t } = Astro.props;
       class="avatar"
       src={profile.avatarOptimizedSource}
       alt={profile.name}
-      width="160"
-      height="160"
+      width="175"
+      height="175"
       decoding="async"
-      loading="eager"
-      fetchpriority="high"
-      densities={[1.5, 2]}
+      loading="lazy"
+      fetchpriority="low"
+      densities={[1, 2, 3]}
     />
     <div class="name-block">
       <h1 class="primary-name">{profile.name}</h1>
@@ -50,4 +50,4 @@ const { t } = Astro.props;
   </div>
 </header>
 
-<ProfileHeaderIsland client:load />
+<ProfileHeaderIsland client:idle />

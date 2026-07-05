@@ -40,13 +40,45 @@ const personSchema = {
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
 <meta name="color-scheme" content="light dark" />
 <link rel="icon" href={profile.avatar} />
-<link rel="dns-prefetch" href="https://avatars.githubusercontent.com" />
-<link rel="preconnect" href="https://avatars.githubusercontent.com" />
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500;600;700;900&display=swap" rel="stylesheet" />
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500;600;700;900&display=swap" />
+<link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script is:inline>
+  (() => {
+    const loadDeferredStyles = () => {
+      const styles = [
+        { href: 'https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500;600;700;900&display=swap' },
+        {
+          href: 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
+          crossOrigin: 'anonymous',
+          referrerPolicy: 'no-referrer'
+        }
+      ];
+
+      for (const style of styles) {
+        if (document.querySelector(`link[rel="stylesheet"][href="${style.href}"]`)) continue;
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = style.href;
+        if (style.crossOrigin) link.crossOrigin = style.crossOrigin;
+        if (style.referrerPolicy) link.referrerPolicy = style.referrerPolicy;
+        document.head.append(link);
+      }
+    };
+
+    if ('requestIdleCallback' in window) {
+      window.requestIdleCallback(loadDeferredStyles, { timeout: 1200 });
+    } else {
+      window.addEventListener('load', loadDeferredStyles, { once: true });
+    }
+  })();
+</script>
+<noscript>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500;600;700;900&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</noscript>
 
 <meta property="og:type" content="profile" />
 <meta property="og:locale" content={t.meta.ogLocale} />
@@ -69,20 +101,3 @@ const personSchema = {
 <link rel="alternate" hreflang="x-default" href={`${profile.siteUrl}${getLocaleUrl(defaultLocale)}`} />
 
 <script type="application/ld+json" set:html={JSON.stringify(personSchema)} is:inline />
-
-<script is:inline>
-  try {
-    const theme = localStorage.getItem('themeMode');
-    if (theme === 'light') {
-      document.documentElement.setAttribute('data-theme', 'light');
-    } else if (theme === 'newspaper') {
-      document.documentElement.setAttribute('data-theme', 'newspaper');
-    } else if (theme === 'system') {
-      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
-        document.documentElement.setAttribute('data-theme', 'light');
-      }
-    }
-  } catch (error) {
-    console.warn('Could not load theme preference:', error);
-  }
-</script>

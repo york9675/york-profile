@@ -26,7 +26,7 @@ const { t } = Astro.props;
   <div class="np-widget is-loading" aria-live="polite" aria-atomic="true" aria-busy="true">
     <div class="np-inner">
       <button id="np-art-link" class="np-art-link" type="button" aria-label={t.artLabel}>
-        <img id="np-art" class="np-art" alt={t.artLoadingAlt} width="80" height="80" decoding="async" crossorigin="anonymous" />
+        <img id="np-art" class="np-art" alt={t.artLoadingAlt} width="80" height="80" loading="lazy" decoding="async" fetchpriority="low" crossorigin="anonymous" />
       </button>
       <div class="np-info">
         <p class="np-status" id="np-status">{t.loading}</p>
@@ -67,4 +67,4 @@ const { t } = Astro.props;
   </div>
 </section>
 
-<NowPlayingIsland client:load />
+<NowPlayingIsland client:idle />
