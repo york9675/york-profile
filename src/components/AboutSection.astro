@@ -9,6 +9,7 @@ interface Props {
 
 const { t } = Astro.props;
 const projectParts = t.tech.projectsTemplate.split(/\{(github|yorkDevelopment)\}/g);
+const aviationParts = t.aviation.simTemplate.split(/\{(volanta)\}/g);
 ---
 
 <section id="about" class="panel" aria-labelledby="about-heading">
@@ -90,7 +91,14 @@ const projectParts = t.tech.projectsTemplate.split(/\{(github|yorkDevelopment)\}
         <div class="interest-panel" role="tabpanel" id="panel-aviation" aria-labelledby="interest-aviation" data-interest-panel hidden>
           <p>{t.aviation.intro}</p>
           <p>{t.aviation.airbus}</p>
-          <p>{t.aviation.simPrefix}<a href={profileLinks.volanta} target="_blank" rel="noopener noreferrer">{t.aviation.simLink}</a>{t.aviation.simSuffix}</p>
+          <p>
+            {aviationParts.map((part) => {
+              if (part === 'volanta') {
+                return <a href={profileLinks.volanta} target="_blank" rel="noopener noreferrer">{t.aviation.links.volanta}</a>;
+              }
+              return part;
+            })}
+          </p>
         </div>
 
         <div class="interest-panel" role="tabpanel" id="panel-photo" aria-labelledby="interest-photo" data-interest-panel hidden>

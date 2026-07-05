@@ -83,9 +83,10 @@
     "aviation": {
       "intro": "我特別對民航與飛行操作感興趣，喜歡了解客機如何運作、機組員如何管理複雜航班，以及安全順暢飛行背後的決策。",
       "airbus": "我也是 Airbus 愛好者，從 fly-by-wire 的理念到駕駛艙設計，我都很喜歡。",
-      "simPrefix": "使用的飛行模擬器：X-Plane 11 搭配 ToLiss Airbus。你也可以查看我的 ",
-      "simLink": "Volanta 個人頁面",
-      "simSuffix": "，了解更多我的虛擬飛行活動。"
+      "simTemplate": "使用的飛行模擬器：X-Plane 11 搭配 ToLiss Airbus。你也可以查看我的 {volanta}，了解更多我的虛擬飛行活動。",
+      "links": {
+        "volanta": "Volanta 個人頁面"
+      }
     },
     "photo": {
       "intro": "攝影是我比較新的興趣。我還是初學者，目前使用 Canon EOS R50 拍攝。",

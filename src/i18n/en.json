@@ -83,9 +83,10 @@
     "aviation": {
       "intro": "I'm especially interested in civil aviation and the piloting side of it. I enjoy learning how airliners are operated, how crews manage complex flights, and the decisions behind safe, smooth operations.",
       "airbus": "I'm also an Airbus fanboy—from the fly-by-wire philosophy to the cockpit design, I love everything about it.",
-      "simPrefix": "Flight simulator used: X-Plane 11 w/ ToLiss Airbus, you can check out my ",
-      "simLink": "Volanta Profile",
-      "simSuffix": " for more details on my virtual flying activity."
+      "simTemplate": "Flight simulator used: X-Plane 11 w/ ToLiss Airbus, you can check out my {volanta} for more details on my virtual flying activity.",
+      "links": {
+        "volanta": "Volanta Profile"
+      }
     },
     "photo": {
       "intro": "Photography is a newer hobby for me. I'm a beginner and currently shoot with a Canon EOS R50.",
