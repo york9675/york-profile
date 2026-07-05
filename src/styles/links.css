@@ -63,11 +63,18 @@
 .line-link {
   display: flex;
   align-items: center;
+  width: 100%;
   gap: 0.6rem;
   padding: 0.55rem 0.3rem 0.55rem 0;
+  border: 0;
   border-bottom: 1px solid var(--line);
+  background: transparent;
+  color: inherit;
   font-size: 0.92rem;
+  font-family: inherit;
+  text-align: left;
   letter-spacing: 0.5px;
+  cursor: pointer;
   transition: background var(--transition), color var(--transition);
 }
 

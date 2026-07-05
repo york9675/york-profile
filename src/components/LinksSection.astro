@@ -32,13 +32,13 @@ const { t } = Astro.props;
         <h4 id="links-community" class="link-group-title">{t.community}</h4>
         <ul class="link-list">
           <li>
-            <a class="line-link" href={profileLinks.discordProfile} target="_blank" rel="noopener noreferrer" id="discord-link-trigger" data-discord-link>
+            <button class="line-link" type="button" id="discord-link-trigger" data-discord-link>
               <span class="icon" aria-hidden="true"><i class="fab fa-discord"></i></span>
               <span class="text-wrap">
                 <span class="text">Discord ({profileHandles.discord})</span>
                 <span class="subtext">{t.discordSubtext}</span>
               </span>
-            </a>
+            </button>
           </li>
           <li>
             <a class="line-link" href={profileLinks.steamProfile} target="_blank" rel="noopener noreferrer">

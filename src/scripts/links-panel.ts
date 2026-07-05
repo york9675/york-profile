@@ -11,7 +11,7 @@ export function initDiscordLinksPanelView() {
   const linksPanel = document.getElementById('links');
   const mainView = document.getElementById('links-main-view');
   const discordView = document.getElementById('discord-before-dm-view');
-  const discordTrigger = document.querySelector<HTMLAnchorElement>(SELECTORS.discordTrigger);
+  const discordTrigger = document.querySelector<HTMLButtonElement>(SELECTORS.discordTrigger);
   const backButton = document.querySelector<HTMLButtonElement>(SELECTORS.discordBack);
 
   if (!linksPanel || !mainView || !discordView || !discordTrigger || !backButton) return;
@@ -33,8 +33,7 @@ export function initDiscordLinksPanelView() {
     }, 260);
   };
 
-  discordTrigger.addEventListener('click', event => {
-    event.preventDefault();
+  discordTrigger.addEventListener('click', () => {
     showDiscordView();
   });
 
