@@ -1,0 +1,225 @@
+{
+  "meta": {
+    "title": "York | プロフィール",
+    "description": "York (york0524) の個人プロフィールです。",
+    "ogLocale": "ja_JP",
+    "siteName": "York プロフィール",
+    "avatarAlt": "York のアバター"
+  },
+  "header": {
+    "bioLabel": "自己紹介",
+    "tagline": "音楽と空が好きです。",
+    "emailTitle": "メールで連絡する",
+    "metadataLabel": "プロフィール情報",
+    "locationLabel": "所在地",
+    "location": "台湾",
+    "localTime": "現地時間 (UTC +8)"
+  },
+  "about": {
+    "heading": "About",
+    "summary": "音楽、航空、テクノロジーに興味があります。かなり内向的なタイプです。",
+    "interestsHeading": "興味",
+    "tabsLabel": "興味についてさらに見る",
+    "tabs": {
+      "tech": "テック",
+      "music": "音楽",
+      "aviation": "航空",
+      "photo": "写真"
+    },
+    "tech": {
+      "intro": "趣味で開発をしていて、アプリ制作やオープンソースプロジェクトへの貢献が好きです。",
+      "experience": {
+        "heading": "開発経験",
+        "discordBot": [
+          "Discord Bot",
+          "Node.js で作った giveaway bot で、現在およそ 5,000 のサーバーで稼働しています。"
+        ],
+        "ios": [
+          "iOS アプリ開発",
+          "Swift と SwiftUI を使って開発したメモアプリです。"
+        ],
+        "web": [
+          "Web アプリケーション",
+          "個人ポートフォリオサイト、歌詞検索サイト、メトロノームなど。"
+        ],
+        "oss": [
+          "オープンソース",
+          "さまざまなオープンソースプロジェクトに貢献しています。"
+        ],
+        "more": "ほかにも..."
+      },
+      "languages": {
+        "heading": "プログラミング言語",
+        "learning": [
+          "学習中",
+          "Java、C、C++、Python、JavaScript (Node.js)、TypeScript、Swift。"
+        ],
+        "more": "ほかにも..."
+      },
+      "hardware": {
+        "heading": "ハードウェアとものづくり経験",
+        "hackintosh": [
+          "Hackintosh",
+          "Apple 以外のハードウェアで macOS を構築・保守した経験があります。"
+        ],
+        "raspberryPi": [
+          "Raspberry Pi 5 (8GB)",
+          "サーバーとして導入・管理しています。"
+        ],
+        "maker": [
+          "メイカープロジェクト",
+          "Arduino、ESP32、3D プリント、レーザー彫刻など。"
+        ],
+        "more": "ほかにも..."
+      },
+      "projectsTemplate": "作ったものを見たい場合は、私の {github} または {yorkDevelopment} をご覧ください。"
+    },
+    "music": {
+      "daw": "自由時間には、ときどき DAW を開きます。最近は主に Logic Pro を使っていますが、最初に使ったのは FL Studio でした。新しい曲を書いたり、技術を学んだり、ただ実験したりしながら、少しずつ上達していきたいと思っています。",
+      "guitar": "最近エレキギターを始めたばかりで、まだ学び始めたところです。",
+      "recommended": "おすすめアーティスト",
+      "note": "注: ここに載せきれていない素晴らしいアーティストもたくさんいます。"
+    },
+    "aviation": {
+      "intro": "特に民間航空と操縦の分野に興味があります。旅客機がどのように運航されるのか、クルーが複雑なフライトをどう管理するのか、安全でスムーズな運航の裏にある判断を学ぶのが好きです。",
+      "airbus": "Airbus も大好きです。フライ・バイ・ワイヤの思想からコックピット設計まで、全部好きです。",
+      "simTemplate": "使用しているフライトシミュレーター: X-Plane 11 + ToLiss Airbus。仮想フライトの詳しい活動は私の {volanta} でも確認できます。",
+      "links": {
+        "volanta": "Volanta プロフィール"
+      }
+    },
+    "photo": {
+      "intro": "写真は比較的新しい趣味です。まだ初心者で、現在は Canon EOS R50 で撮影しています。",
+      "craft": "基礎を学び、構図を練習しながら、探索の中で小さな瞬間を切り取るのを楽しんでいます。"
+    }
+  },
+  "nowPlaying": {
+    "heading": "再生中",
+    "refreshTitle": "再生中を更新",
+    "refreshLabel": "再生中を更新",
+    "fullscreenTitle": "全画面で表示",
+    "fullscreenLabel": "全画面で表示",
+    "artLabel": "アルバムアートビューアを開く",
+    "artLoadingAlt": "アルバムアートを読み込み中",
+    "loading": "読み込み中...",
+    "lovedTrack": "お気に入りの曲",
+    "artistMetaTemplate": "{artist} を {count} 回聴きました。",
+    "dataSince": "データは 2025年7月11日 から",
+    "lastFmProfile": "Last.fm プロフィール"
+  },
+  "links": {
+    "label": "リンク",
+    "listLabel": "リンク一覧",
+    "heading": "リンク",
+    "code": "コード",
+    "githubSubtext": "オープンソースプロジェクトと実験",
+    "community": "コミュニティ",
+    "discordSubtext": "質問は DM へ",
+    "steamSubtext": "ゲームプロフィールとアクティビティ",
+    "music": "音楽 [524-Hz]",
+    "soundcloudSubtext": "音楽のスケッチとアップロード",
+    "bandcampSubtext": "オリジナル曲とリリース",
+    "support": "サポート",
+    "coffeeSubtext": "もっと面白いことをするための応援！",
+    "discordWarningHeading": "⚠️ DM の前に",
+    "discordWarning1": "Discord で DM を送る前に、まず何を聞きたいのかを書いてください。",
+    "discordWarning2": "友達リクエストだけを送らないでください。知っている人からのリクエストのみ承認します。",
+    "discordWarning3": "DM の目的やあなたが誰なのか分からない場合、友達リクエストや DM は見落とされる可能性があります。",
+    "alsoRead": "あわせて読む:",
+    "back": "リンクに戻る",
+    "openDiscord": "Discord プロフィールを開く"
+  },
+  "org": {
+    "heading": "組織",
+    "role": "創設者 / 開発者",
+    "description": "日々の作業をもっと便利にする、直感的で使いやすいアプリケーションを作っています。",
+    "visitLabel": "York Development のサイトへ移動",
+    "visit": "開く"
+  },
+  "footer": {
+    "builtWith": "台湾で ❤️ と Astro を使って作りました。",
+    "loveLabel": "❤️",
+    "backToTop": "ページ上部へ ↑"
+  },
+  "settings": {
+    "title": "設定",
+    "rainEffect": "雨のエフェクト",
+    "rainToggle": "雨のエフェクトを切り替え",
+    "rainIntensity": "雨の強さ",
+    "muteRain": "雨音をミュート",
+    "rainSoundToggle": "雨音のミュートを切り替え",
+    "snowEffect": "雪のエフェクト",
+    "snowToggle": "雪のエフェクトを切り替え",
+    "snowIntensity": "雪の強さ",
+    "clearSnow": "積雪をクリア",
+    "clearSnowLabel": "たまった雪をクリア",
+    "particlesEffect": "パーティクルエフェクト",
+    "particlesToggle": "パーティクルエフェクトを切り替え",
+    "theme": "テーマ",
+    "selectTheme": "テーマを選択",
+    "language": "言語",
+    "selectLanguage": "言語を選択",
+    "themes": {
+      "system": "システム",
+      "dark": "ダーク",
+      "light": "ライト",
+      "newspaper": "新聞"
+    },
+    "about": "このサイトについて",
+    "appInfo": "アプリ情報",
+    "version": "バージョン",
+    "framework": "フレームワーク",
+    "environment": "環境",
+    "source": "ソース",
+    "open": "設定を開く",
+    "close": "設定を閉じる"
+  },
+  "overlays": {
+    "imageViewerLabel": "アルバムアートビューア",
+    "openArtworkTitle": "アートワークを新しいタブで開く",
+    "openArtworkLabel": "元のアートワークを新しいタブで開く",
+    "close": "閉じる",
+    "closeViewer": "ビューアを閉じる",
+    "artAlt": "アルバムアート",
+    "albumPlayTemplate": "このアルバムを {count} 回聴きました。",
+    "viewOnLastFm": "Last.fm で見る",
+    "fullscreenLabel": "再生中の全画面表示",
+    "closeFullscreen": "全画面を閉じる"
+  },
+  "runtime": {
+    "justNow": "たった今",
+    "minutesAgo": "{count} 分前",
+    "hoursAgo": "{count} 時間前",
+    "daysAgo": "{count} 日前",
+    "plays": "{count} 回再生",
+    "currentlyListening": "現在再生中",
+    "lastPlayed": "前回再生",
+    "autoRefresh": "{seconds} 秒後に自動更新",
+    "failedNowPlaying": "再生中を読み込めませんでした",
+    "failed": "読み込みに失敗しました",
+    "unavailable": "利用できません",
+    "fetchFailed": "データを取得できませんでした",
+    "tryRefreshing": "更新してみてください。問題が続く場合は報告してください。",
+    "unknownArtist": "不明なアーティスト",
+    "unknownAlbum": "不明なアルバム",
+    "unknownTrack": "不明な曲",
+    "artUnavailable": "再生中を利用できません",
+    "albumArtworkUnavailable": "アルバムアートを利用できません",
+    "viewAlbum": "アルバムを見る",
+    "albumByArtist": "{artist} の『{album}』",
+    "trackByArtist": "{artist} の「{track}」",
+    "onLastFm": "Last.fm で {name} を見る",
+    "albumByArtistOnLastFm": "Last.fm で {artist} の『{album}』を見る",
+    "viewMyPlaysForTrack": "Last.fm で {artist} の「{title}」の再生履歴を見る",
+    "viewMyPlays": "Last.fm で再生履歴を見る",
+    "year": "{count} 年",
+    "years": "{count} 年",
+    "month": "{count} か月",
+    "months": "{count} か月",
+    "day": "{count} 日",
+    "days": "{count} 日",
+    "durationJoin": "{first}と{second}",
+    "sinceLabel": "データは {date} から ({ago}前)",
+    "sinceTooltip": "私の Last.fm アカウントは {ago}前に作成され、再生回数はその時点以降のすべての再生に基づいています。実際の再生回数はここに表示される数より多い場合があります。"
+  }
+}

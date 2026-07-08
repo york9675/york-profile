@@ -8,7 +8,7 @@ export default defineConfig({
   site: 'https://york.qzz.io',
   output: 'static',
   i18n: {
-    locales: ['en', 'tw'],
+    locales: ['en', 'tw', 'ja'],
     defaultLocale: 'en',
     routing: {
       prefixDefaultLocale: false
