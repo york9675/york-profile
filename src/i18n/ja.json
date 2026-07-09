@@ -83,7 +83,7 @@
         "items": [
           {
             "label": "ヘッドホン",
-            "value": "audio-technica ATH-R50x"
+            "value": "Audio-Technica ATH-R50x"
           },
           {
             "label": "イヤホン/IEMs",
@@ -106,12 +106,16 @@
             "value": "Snowsky Echo Mini"
           },
           {
-            "label": "プレイヤー",
-            "value": "M4 MacBook Air (Feishin)"
+            "label": "CD プレイヤー",
+            "value": "KM5 Instant Disk Audio-CP1"
+          },
+          {
+            "label": "音楽ストリーミング",
+            "value": "Feishin + Navidrome"
           },
           {
             "label": "音源ファイル",
-            "value": "mora、CD、ストリーミングプラットフォーム、..."
+            "value": "mora、CD rip、ストリーミングプラットフォーム、..."
           }
         ]
       },

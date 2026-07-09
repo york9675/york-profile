@@ -83,7 +83,7 @@
         "items": [
           {
             "label": "耳罩式耳機",
-            "value": "audio-technica ATH-R50x"
+            "value": "Audio-Technica ATH-R50x"
           },
           {
             "label": "耳機/IEMs",
@@ -106,12 +106,16 @@
             "value": "Snowsky Echo Mini"
           },
           {
-            "label": "播放器",
-            "value": "M4 MacBook Air (搭配 Feishin)"
+            "label": "CD 播放器",
+            "value": "KM5 Instant Disk Audio-CP1"
+          },
+          {
+            "label": "音樂串流",
+            "value": "Feishin + Navidrome"
           },
           {
             "label": "音訊檔案",
-            "value": "mora、CD、串流平台、..."
+            "value": "mora、CD rip、串流平台、..."
           }
         ]
       },

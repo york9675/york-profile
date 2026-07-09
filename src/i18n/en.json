@@ -83,7 +83,7 @@
         "items": [
           {
             "label": "Headphones",
-            "value": "audio-technica ATH-R50x"
+            "value": "Audio-Technica ATH-R50x"
           },
           {
             "label": "Earphones/IEMs",
@@ -106,8 +106,12 @@
             "value": "Snowsky Echo Mini"
           },
           {
-            "label": "Player",
-            "value": "M4 MacBook Air (with Feishin)"
+            "label": "CD Player",
+            "value": "KM5 Instant Disk Audio-CP1"
+          },
+          {
+            "label": "Music Streaming",
+            "value": "Feishin + Navidrome"
           },
           {
             "label": "Audio Files",
