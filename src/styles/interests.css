@@ -65,6 +65,14 @@
   overflow-y: auto;
   max-height: 26rem;
   padding-right: 1px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.interest-panels::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 @media (min-width: 860px) {
