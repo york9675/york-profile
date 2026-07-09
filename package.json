@@ -31,18 +31,18 @@
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
     "@vercel/toolbar": "^0.2.6",
-    "astro": "^7.0.6",
-    "preact": "^10.29.4"
+    "astro": "^7.0.7",
+    "preact": "^10.29.7"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
     "@eslint/js": "^10.0.1",
-    "@typescript-eslint/eslint-plugin": "^8.62.1",
-    "@typescript-eslint/parser": "^8.62.1",
+    "@typescript-eslint/eslint-plugin": "^8.63.0",
+    "@typescript-eslint/parser": "^8.63.0",
     "eslint": "^10.6.0",
     "eslint-plugin-astro": "^2.1.1",
     "sharp": "^0.35.3",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.62.1"
+    "typescript-eslint": "^8.63.0"
   }
 }
