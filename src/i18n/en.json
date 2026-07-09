@@ -77,8 +77,62 @@
     "music": {
       "daw": "In my free time, I sometimes open up my DAW. These days I mainly use Logic Pro, but FL Studio was the first one I used. Whether I’m writing something new, learning a technique, or just experimenting, I just want to keep improving.",
       "guitar": "I recently picked up an electric guitar and have just started learning it.",
-      "recommended": "Recommended Artists",
-      "note": "Note: There are still many other great artists not listed here."
+      "audiophile": "I also like researching audiophile things.",
+      "setup": {
+        "heading": "Audio Setup",
+        "items": [
+          {
+            "label": "Headphones",
+            "value": "audio-technica ATH-R50x"
+          },
+          {
+            "label": "Earphones/IEMs",
+            "value": [
+              "Moondrop Aria 2 (with Tripowin Amber cable and Moondrop Spring Tips ear tips)",
+              "Kiwi Ears Cadenza",
+              "Moondrop Nice Buds"
+            ]
+          },
+          {
+            "label": "DAC",
+            "value": "Moondrop Dawn Pro"
+          },
+          {
+            "label": "Audio Interface",
+            "value": "Arturia Mini Fuse 1"
+          },
+          {
+            "label": "DAP",
+            "value": "Snowsky Echo Mini"
+          },
+          {
+            "label": "Player",
+            "value": "M4 MacBook Air (with Feishin)"
+          },
+          {
+            "label": "Audio Files",
+            "value": "mora, CD rip, streaming platforms, ..."
+          }
+        ]
+      },
+      "artists": {
+        "heading": "Recommended Artists",
+        "items": [
+          "ヨルシカ",
+          "n-buna",
+          "Avicii",
+          "Porter Robinson",
+          "Galilei Galileo",
+          "tayori",
+          "Martin Garrix",
+          "RADWIMPS",
+          "Dabin",
+          "Said the Sky",
+          "ILLENIUM",
+          "Snail's House"
+        ],
+        "note": "Note: There are still many other great artists not listed here."
+      }
     },
     "aviation": {
       "intro": "I'm especially interested in civil aviation and the piloting side of it. I enjoy learning how airliners are operated, how crews manage complex flights, and the decisions behind safe, smooth operations.",

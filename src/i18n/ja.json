@@ -77,8 +77,62 @@
     "music": {
       "daw": "自由時間には、ときどき DAW を開きます。最近は主に Logic Pro を使っていますが、最初に使ったのは FL Studio でした。新しい曲を書いたり、技術を学んだり、ただ実験したりしながら、少しずつ上達していきたいと思っています。",
       "guitar": "最近エレキギターを始めたばかりで、まだ学び始めたところです。",
-      "recommended": "おすすめアーティスト",
-      "note": "注: ここに載せきれていない素晴らしいアーティストもたくさんいます。"
+      "audiophile": "オーディオ関連のことを調べるのも好きです。",
+      "setup": {
+        "heading": "オーディオ環境",
+        "items": [
+          {
+            "label": "ヘッドホン",
+            "value": "audio-technica ATH-R50x"
+          },
+          {
+            "label": "イヤホン/IEMs",
+            "value": [
+              "Moondrop Aria 2 (Tripowin Amber ケーブル、Moondrop Spring Tips イヤーピース)",
+              "Kiwi Ears Cadenza",
+              "Moondrop Nice Buds"
+            ]
+          },
+          {
+            "label": "DAC",
+            "value": "Moondrop Dawn Pro"
+          },
+          {
+            "label": "オーディオインターフェイス",
+            "value": "Arturia Mini Fuse 1"
+          },
+          {
+            "label": "DAP",
+            "value": "Snowsky Echo Mini"
+          },
+          {
+            "label": "プレイヤー",
+            "value": "M4 MacBook Air (Feishin)"
+          },
+          {
+            "label": "音源ファイル",
+            "value": "mora、CD、ストリーミングプラットフォーム、..."
+          }
+        ]
+      },
+      "artists": {
+        "heading": "おすすめアーティスト",
+        "items": [
+          "ヨルシカ",
+          "n-buna",
+          "Avicii",
+          "Porter Robinson",
+          "Galilei Galileo",
+          "tayori",
+          "Martin Garrix",
+          "RADWIMPS",
+          "Dabin",
+          "Said the Sky",
+          "ILLENIUM",
+          "Snail's House"
+        ],
+        "note": "注: ここに載せきれていない素晴らしいアーティストもたくさんいます。"
+      }
     },
     "aviation": {
       "intro": "特に民間航空と操縦の分野に興味があります。旅客機がどのように運航されるのか、クルーが複雑なフライトをどう管理するのか、安全でスムーズな運航の裏にある判断を学ぶのが好きです。",

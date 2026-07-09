@@ -77,8 +77,62 @@
     "music": {
       "daw": "空閒時我有時會打開 DAW。最近主要使用 Logic Pro，不過 FL Studio 是我最先接觸的軟體。不管是在寫新歌、學技巧，還是單純實驗，我都想持續進步。",
       "guitar": "我最近開始接觸電吉他，還在剛起步的階段。",
-      "recommended": "推薦的藝術家",
-      "note": "註：還有很多很棒的藝術家沒有列在這裡。"
+      "audiophile": "我也喜歡研究發燒/音訊設備相關的東西。",
+      "setup": {
+        "heading": "音訊設備",
+        "items": [
+          {
+            "label": "耳罩式耳機",
+            "value": "audio-technica ATH-R50x"
+          },
+          {
+            "label": "耳機/IEMs",
+            "value": [
+              "Moondrop Aria 2 (搭配 Tripowin Amber 升級線與 Moondrop Spring Tips 耳套)",
+              "Kiwi Ears Cadenza",
+              "Moondrop Nice Buds"
+            ]
+          },
+          {
+            "label": "DAC",
+            "value": "Moondrop Dawn Pro"
+          },
+          {
+            "label": "音訊/錄音介面",
+            "value": "Arturia Mini Fuse 1"
+          },
+          {
+            "label": "DAP",
+            "value": "Snowsky Echo Mini"
+          },
+          {
+            "label": "播放器",
+            "value": "M4 MacBook Air (搭配 Feishin)"
+          },
+          {
+            "label": "音訊檔案",
+            "value": "mora、CD、串流平台、..."
+          }
+        ]
+      },
+      "artists": {
+        "heading": "推薦的藝術家",
+        "items": [
+          "ヨルシカ",
+          "n-buna",
+          "Avicii",
+          "Porter Robinson",
+          "Galilei Galileo",
+          "tayori",
+          "Martin Garrix",
+          "RADWIMPS",
+          "Dabin",
+          "Said the Sky",
+          "ILLENIUM",
+          "Snail's House"
+        ],
+        "note": "註：還有很多很棒的藝術家沒有列在這裡。"
+      }
     },
     "aviation": {
       "intro": "我特別對民航與飛行操作感興趣，喜歡了解客機如何運作、機組員如何管理複雜航班，以及安全順暢飛行背後的決策。",

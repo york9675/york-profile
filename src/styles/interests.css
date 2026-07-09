@@ -88,6 +88,72 @@
   text-align: left;
 }
 
+.audio-setup-grid {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+
+.audio-setup-item {
+  display: grid;
+  grid-template-columns: minmax(7.5rem, 0.36fr) 1fr;
+  gap: 0.75rem;
+  align-items: start;
+  min-width: 0;
+  padding: 0.62rem 0;
+  border-bottom: 1px solid var(--line-alt);
+}
+
+.audio-setup-item:first-child {
+  padding-top: 0;
+}
+
+.audio-setup-item:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.audio-setup-item dt {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.7rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.audio-setup-item dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.audio-setup-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.artist-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.artist-list span {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.8rem;
+  color: var(--fg-soft);
+  background: color-mix(in srgb, var(--fg) 4%, transparent);
+}
+
+.artist-list + .subtext {
+  margin-top: 0.75rem;
+}
+
 @keyframes interestFade {
   from {
     opacity: 0;
@@ -108,5 +174,10 @@ html[data-theme="light"] .interest-tabs {
 @media (max-width: 640px) {
   .interest-tabs {
     gap: 0.5rem;
+  }
+
+  .audio-setup-item {
+    grid-template-columns: 1fr;
+    gap: 0.25rem;
   }
 }

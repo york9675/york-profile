@@ -81,11 +81,39 @@ const aviationParts = t.aviation.simTemplate.split(/\{(volanta)\}/g);
         <div class="interest-panel" role="tabpanel" id="panel-music" aria-labelledby="interest-music" data-interest-panel hidden>
           <p>{t.music.daw}</p>
           <p>{t.music.guitar}</p>
-          <p>
-            <strong>{t.music.recommended}</strong>
-            <br>ヨルシカ, n-buna, Avicii, Porter Robinson, Galilei Galileo, tayori, Martin Garrix, RADWIMPS, Dabin, Said the Sky, ILLENIUM, Snail's House, ...
-          </p>
-          <p class="subtext"><em>{t.music.note}</em></p>
+          <p>{t.music.audiophile}</p>
+
+          <details class="expand-section">
+            <summary class="expand-summary">{t.music.setup.heading}</summary>
+            <div class="expand-body">
+              <dl class="audio-setup-grid">
+                {t.music.setup.items.map((item) => (
+                  <div class="audio-setup-item">
+                    <dt>{item.label}</dt>
+                    <dd>
+                      {Array.isArray(item.value) ? (
+                        <ul class="audio-setup-list">
+                          {item.value.map((value) => <li>{value}</li>)}
+                        </ul>
+                      ) : (
+                        item.value
+                      )}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          </details>
+
+          <details class="expand-section">
+            <summary class="expand-summary">{t.music.artists.heading}</summary>
+            <div class="expand-body">
+              <div class="artist-list">
+                {t.music.artists.items.map((artist) => <span>{artist}</span>)}
+              </div>
+              <p class="subtext"><em>{t.music.artists.note}</em></p>
+            </div>
+          </details>
         </div>
 
         <div class="interest-panel" role="tabpanel" id="panel-aviation" aria-labelledby="interest-aviation" data-interest-panel hidden>
