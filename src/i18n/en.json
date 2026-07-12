@@ -88,8 +88,14 @@
           {
             "label": "Earphones/IEMs",
             "value": [
-              "Moondrop Aria 2 (with Tripowin Amber cable and Moondrop Spring Tips ear tips)",
-              "Kiwi Ears Cadenza",
+              {
+                "name": "Moondrop Aria 2",
+                "detail": "(with Tripowin Amber cable and Moondrop Spring Tips ear tips)"
+              },
+              {
+                "name": "Kiwi Ears Cadenza",
+                "detail": "(with Moondrop Line T cable and Moondrop Spring Tips ear tips)"
+              },
               "Moondrop Nice Buds"
             ]
           },
@@ -99,7 +105,7 @@
           },
           {
             "label": "Audio Interface",
-            "value": "Arturia Mini Fuse 1"
+            "value": "Arturia MiniFuse 1"
           },
           {
             "label": "DAP",
@@ -121,20 +127,6 @@
       },
       "artists": {
         "heading": "Recommended Artists",
-        "items": [
-          "ヨルシカ",
-          "n-buna",
-          "Avicii",
-          "Porter Robinson",
-          "Galilei Galileo",
-          "tayori",
-          "Martin Garrix",
-          "RADWIMPS",
-          "Dabin",
-          "Said the Sky",
-          "ILLENIUM",
-          "Snail's House"
-        ],
         "note": "Note: There are still many other great artists not listed here."
       }
     },
@@ -152,7 +144,7 @@
     }
   },
   "nowPlaying": {
-    "heading": "Now Playing",
+    "heading": "Last.fm",
     "refreshTitle": "Refresh now playing",
     "refreshLabel": "Refresh now playing",
     "fullscreenTitle": "View in fullscreen",
@@ -163,7 +155,7 @@
     "lovedTrack": "Loved Track",
     "artistMetaTemplate": "I've listened to {artist} for {count} times.",
     "dataSince": "Data since 11 Jul 2025",
-    "lastFmProfile": "Last.fm Profile"
+    "lastFmProfile": "Profile"
   },
   "links": {
     "label": "Links",

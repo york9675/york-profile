@@ -143,22 +143,57 @@
   padding: 0;
 }
 
+.audio-setup-entry {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.08rem;
+}
+
+.audio-setup-detail {
+  color: var(--muted);
+  font-size: 0.86em;
+  line-height: 1.45;
+}
+
+.artist-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.artist-group-title {
+  margin: 0 0 0.4rem;
+  color: var(--muted);
+  font-size: 0.7rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
 .artist-list {
   display: flex;
   flex-wrap: wrap;
   gap: 0.45rem;
 }
 
-.artist-list span {
+.artist-list a {
   border: 1px solid var(--line);
   border-radius: 999px;
   padding: 0.25rem 0.6rem;
   font-size: 0.8rem;
   color: var(--fg-soft);
+  text-decoration: none;
   background: color-mix(in srgb, var(--fg) 4%, transparent);
+  transition: border-color var(--transition), color var(--transition), background var(--transition);
 }
 
-.artist-list + .subtext {
+.artist-list a:hover,
+.artist-list a:focus {
+  border-color: var(--fg-soft);
+  color: var(--fg);
+  background: color-mix(in srgb, var(--fg) 8%, transparent);
+}
+
+.artist-groups + .subtext {
   margin-top: 0.75rem;
 }
 

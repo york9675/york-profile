@@ -10,6 +10,19 @@ interface Props {
 const { t } = Astro.props;
 const projectParts = t.tech.projectsTemplate.split(/\{(github|yorkDevelopment)\}/g);
 const aviationParts = t.aviation.simTemplate.split(/\{(volanta)\}/g);
+
+const recommendedArtistGroups = [
+  {
+    genre: 'J-Rock/Pop',
+    artists: ['ヨルシカ', 'Galilei Galileo', 'n-buna', 'tayori', 'RADWIMPS', 'ずっと真夜中でいいのに。']
+  },
+  {
+    genre: 'EDM',
+    artists: ['Avicii', 'Porter Robinson', 'Martin Garrix', "Snail's House", 'Dabin', 'Said the Sky', 'ILLENIUM']
+  }
+];
+
+const getLastFmArtistUrl = (artist: string) => `https://www.last.fm/music/${encodeURIComponent(artist)}`;
 ---
 
 <section id="about" class="panel" aria-labelledby="about-heading">
@@ -93,7 +106,18 @@ const aviationParts = t.aviation.simTemplate.split(/\{(volanta)\}/g);
                     <dd>
                       {Array.isArray(item.value) ? (
                         <ul class="audio-setup-list">
-                          {item.value.map((value) => <li>{value}</li>)}
+                          {item.value.map((value) => (
+                            <li>
+                              {typeof value === 'string' ? (
+                                value
+                              ) : (
+                                <span class="audio-setup-entry">
+                                  <span>{value.name}</span>
+                                  <span class="audio-setup-detail">{value.detail}</span>
+                                </span>
+                              )}
+                            </li>
+                          ))}
                         </ul>
                       ) : (
                         item.value
@@ -108,8 +132,19 @@ const aviationParts = t.aviation.simTemplate.split(/\{(volanta)\}/g);
           <details class="expand-section">
             <summary class="expand-summary">{t.music.artists.heading}</summary>
             <div class="expand-body">
-              <div class="artist-list">
-                {t.music.artists.items.map((artist) => <span>{artist}</span>)}
+              <div class="artist-groups">
+                {recommendedArtistGroups.map((group) => (
+                  <section class="artist-group" aria-labelledby={`artist-group-${group.genre.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}>
+                    <h5 class="artist-group-title" id={`artist-group-${group.genre.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}>{group.genre}</h5>
+                    <div class="artist-list">
+                      {group.artists.map((artist) => (
+                        <a href={getLastFmArtistUrl(artist)} target="_blank" rel="noopener noreferrer">
+                          {artist}
+                        </a>
+                      ))}
+                    </div>
+                  </section>
+                ))}
               </div>
               <p class="subtext"><em>{t.music.artists.note}</em></p>
             </div>

@@ -88,8 +88,14 @@
           {
             "label": "イヤホン/IEMs",
             "value": [
-              "Moondrop Aria 2 (Tripowin Amber ケーブル、Moondrop Spring Tips イヤーピース)",
-              "Kiwi Ears Cadenza",
+              {
+                "name": "Moondrop Aria 2",
+                "detail": "(Tripowin Amber ケーブル、Moondrop Spring Tips イヤーピース)"
+              },
+              {
+                "name": "Kiwi Ears Cadenza",
+                "detail": "(Moondrop Line T ケーブル、Moondrop Spring Tips イヤーピース)"
+              },
               "Moondrop Nice Buds"
             ]
           },
@@ -99,7 +105,7 @@
           },
           {
             "label": "オーディオインターフェイス",
-            "value": "Arturia Mini Fuse 1"
+            "value": "Arturia MiniFuse 1"
           },
           {
             "label": "DAP",
@@ -121,20 +127,6 @@
       },
       "artists": {
         "heading": "おすすめアーティスト",
-        "items": [
-          "ヨルシカ",
-          "n-buna",
-          "Avicii",
-          "Porter Robinson",
-          "Galilei Galileo",
-          "tayori",
-          "Martin Garrix",
-          "RADWIMPS",
-          "Dabin",
-          "Said the Sky",
-          "ILLENIUM",
-          "Snail's House"
-        ],
         "note": "注: ここに載せきれていない素晴らしいアーティストもたくさんいます。"
       }
     },
@@ -152,7 +144,7 @@
     }
   },
   "nowPlaying": {
-    "heading": "再生中",
+    "heading": "Last.fm",
     "refreshTitle": "再生中を更新",
     "refreshLabel": "再生中を更新",
     "fullscreenTitle": "全画面で表示",
@@ -163,7 +155,7 @@
     "lovedTrack": "お気に入りの曲",
     "artistMetaTemplate": "{artist} を {count} 回聴きました。",
     "dataSince": "データは 2025年7月11日 から",
-    "lastFmProfile": "Last.fm プロフィール"
+    "lastFmProfile": "プロフィール"
   },
   "links": {
     "label": "リンク",

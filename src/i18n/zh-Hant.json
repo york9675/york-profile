@@ -88,8 +88,14 @@
           {
             "label": "耳機/IEMs",
             "value": [
-              "Moondrop Aria 2 (搭配 Tripowin Amber 升級線與 Moondrop Spring Tips 耳套)",
-              "Kiwi Ears Cadenza",
+              {
+                "name": "Moondrop Aria 2",
+                "detail": "(搭配 Tripowin Amber 升級線與 Moondrop Spring Tips 耳套)"
+              },
+              {
+                "name": "Kiwi Ears Cadenza",
+                "detail": "(搭配 Moondrop Line T 升級線與 Moondrop Spring Tips 耳套)"
+              },
               "Moondrop Nice Buds"
             ]
           },
@@ -99,7 +105,7 @@
           },
           {
             "label": "音訊/錄音介面",
-            "value": "Arturia Mini Fuse 1"
+            "value": "Arturia MiniFuse 1"
           },
           {
             "label": "DAP",
@@ -121,20 +127,6 @@
       },
       "artists": {
         "heading": "推薦的藝術家",
-        "items": [
-          "ヨルシカ",
-          "n-buna",
-          "Avicii",
-          "Porter Robinson",
-          "Galilei Galileo",
-          "tayori",
-          "Martin Garrix",
-          "RADWIMPS",
-          "Dabin",
-          "Said the Sky",
-          "ILLENIUM",
-          "Snail's House"
-        ],
         "note": "註：還有很多很棒的藝術家沒有列在這裡。"
       }
     },
@@ -152,7 +144,7 @@
     }
   },
   "nowPlaying": {
-    "heading": "正在播放",
+    "heading": "Lsst.fm",
     "refreshTitle": "重新整理正在播放",
     "refreshLabel": "重新整理正在播放",
     "fullscreenTitle": "全螢幕檢視",
@@ -163,7 +155,7 @@
     "lovedTrack": "喜愛的歌曲",
     "artistMetaTemplate": "我聽過 {artist} {count} 次。",
     "dataSince": "資料自 2025 年 7 月 11 日起",
-    "lastFmProfile": "Last.fm 個人頁面"
+    "lastFmProfile": "個人頁面"
   },
   "links": {
     "label": "連結",
