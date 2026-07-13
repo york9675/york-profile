@@ -1,0 +1,86 @@
+:root {
+  background: #0078d7;
+}
+
+body {
+  display: block;
+  min-height: 100vh;
+  margin: 0;
+  padding: clamp(5.5rem, 10.5vh, 8rem) clamp(1.5rem, 10.8vw, 13.5rem);
+  background: #0078d7;
+  color: #fff;
+  font-family: "Segoe UI", "Segoe UI Variable", system-ui, sans-serif;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+.container {
+  max-width: 60rem;
+}
+
+h1 {
+  margin: 0 0 clamp(1.5rem, 3.5vh, 2.75rem);
+  font-size: clamp(5.75rem, 10vw, 9.5rem);
+  font-weight: 200;
+  letter-spacing: -0.08em;
+  line-height: 0.7;
+}
+
+.message,
+.percentage {
+  max-width: 50rem;
+  margin: 0 0 1rem;
+  font-size: clamp(1.25rem, 1.65vw, 1.85rem);
+  font-weight: 300;
+  line-height: 1.38;
+}
+
+.percentage {
+  margin-top: clamp(1.25rem, 3.5vh, 2.75rem);
+  margin-bottom: clamp(1.5rem, 3vh, 2.5rem);
+}
+
+.qr-code-container {
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(0.8rem, 1.5vw, 1.4rem);
+}
+
+.qr-code {
+  width: clamp(4.25rem, 6.8vw, 8.5rem);
+  height: clamp(4.25rem, 6.8vw, 8.5rem);
+  flex: 0 0 auto;
+}
+
+.qr-code-container > div {
+  max-width: 35rem;
+  padding-top: 0.05rem;
+}
+
+.info {
+  margin: 0 0 1rem;
+  font-size: clamp(0.72rem, 0.9vw, 0.95rem);
+  font-weight: 400;
+  line-height: 1.38;
+}
+
+.info a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.15em;
+}
+
+.info a:hover {
+  color: inherit;
+}
+
+@media (max-width: 40rem) {
+  body {
+    padding-top: 5rem;
+  }
+
+  .qr-code-container {
+    flex-direction: column;
+  }
+}

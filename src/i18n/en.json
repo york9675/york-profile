@@ -6,6 +6,16 @@
     "siteName": "York Profile",
     "avatarAlt": "York avatar"
   },
+  "notFound": {
+    "pageTitle": "404 - Page Not Found",
+    "problem": "There is a problem with your page and the specified page cannot be found.",
+    "redirect": "We're just collecting some error info, and we'll redirect you to our home page.",
+    "complete": "complete",
+    "qrCodeAlt": "Support information QR code",
+    "contact": "For more information about this issue and possible fixes, visit",
+    "supportInfo": "If you call a support person, give them this info:",
+    "stopCode": "Stop code: PAGE_NOT_FOUND"
+  },
   "header": {
     "bioLabel": "Bio",
     "tagline": "I love music and the sky.",

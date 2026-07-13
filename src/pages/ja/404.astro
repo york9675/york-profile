@@ -1,0 +1,9 @@
+---
+import NotFoundPage from '../../components/NotFoundPage.astro';
+import { getUi } from '../../i18n/ui';
+
+const locale = 'ja';
+const t = getUi(locale);
+---
+
+<NotFoundPage locale={locale} t={t} />

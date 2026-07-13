@@ -1,0 +1,30 @@
+---
+import PageShell from '../layouts/PageShell.astro';
+import { getLocaleUrl, type Locale, type UiStrings } from '../i18n/ui';
+import '../styles/404.css';
+
+interface Props {
+  locale: Locale;
+  t: UiStrings;
+}
+
+const { locale, t } = Astro.props;
+const homeUrl = getLocaleUrl(locale);
+---
+
+<PageShell title={t.notFound.pageTitle} lang={locale}>
+  <div class="container" data-not-found-page data-home-url={homeUrl}>
+    <h1>:(</h1>
+    <p class="message">{t.notFound.problem} {t.notFound.redirect}</p>
+    <p class="percentage"><span id="progress">0</span>% {t.notFound.complete}</p>
+    <div class="qr-code-container">
+      <img class="qr-code" src="/assets/qrcode.png" alt={t.notFound.qrCodeAlt} width="150" height="150" loading="eager" />
+      <div>
+        <p class="info">{t.notFound.contact} <a href="https://github.com/york9675/york-profile/issues">https://github.com/york9675/york-profile/issues</a></p>
+        <p class="info">{t.notFound.supportInfo}<br />{t.notFound.stopCode}</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="../scripts/404.ts"></script>
+</PageShell>

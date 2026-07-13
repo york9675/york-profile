@@ -6,6 +6,16 @@
     "siteName": "York 個人頁面",
     "avatarAlt": "York 頭像"
   },
+  "notFound": {
+    "pageTitle": "404 - 找不到頁面",
+    "problem": "找不到你指定的頁面。",
+    "redirect": "我們剛剛正在收集某些錯誤資訊，接著會將你重新導向首頁。",
+    "complete": "完成",
+    "qrCodeAlt": "支援資訊 QR Code",
+    "contact": "如需此問題與可能修正的詳細資訊，請瀏覽",
+    "supportInfo": "聯絡支援人員時，請提供此資訊: ",
+    "stopCode": "停止代碼: PAGE_NOT_FOUND"
+  },
   "header": {
     "bioLabel": "簡介",
     "tagline": "我喜歡音樂與天空。",
