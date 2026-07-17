@@ -1,10 +1,13 @@
 :root {
   background: #0078d7;
+  overflow: hidden;
 }
 
 body {
   display: block;
-  min-height: 100vh;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100vh;
   margin: 0;
   padding: clamp(5.5rem, 10.5vh, 8rem) clamp(1.5rem, 10.8vw, 13.5rem);
   background: #0078d7;
@@ -12,10 +15,12 @@ body {
   font-family: "Segoe UI", "Segoe UI Variable", system-ui, sans-serif;
   font-weight: 400;
   letter-spacing: 0;
+  overflow: hidden;
 }
 
 .container {
   max-width: 60rem;
+  width: 100%;
 }
 
 h1 {
@@ -78,6 +83,7 @@ h1 {
 @media (max-width: 40rem) {
   body {
     padding-top: 5rem;
+    padding-bottom: 4rem;
   }
 
   .qr-code-container {
