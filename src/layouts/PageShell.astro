@@ -13,6 +13,7 @@ interface Props {
 const { title, description, lang = 'en' } = Astro.props;
 
 const toolbarBranch = import.meta.env.VERCEL_GIT_COMMIT_REF ?? 'main';
+const toolbarSrc = 'https://vercel.live/_next-live/feedback/feedback.js';
 ---
 
 <!DOCTYPE html>
@@ -45,12 +46,32 @@ const toolbarBranch = import.meta.env.VERCEL_GIT_COMMIT_REF ?? 'main';
     {appInfo.appEnv === 'development' && (
       <script
         is:inline
-        src="https://vercel.live/_next-live/feedback/feedback.js"
-        data-explicit-opt-in="true"
-        data-owner-id={vercelToolbarConfig.ownerId}
-        data-project-id={vercelToolbarConfig.projectId}
-        data-branch={toolbarBranch}
-      ></script>
+        define:vars={{
+          toolbarSrc,
+          toolbarBranch,
+          toolbarOwnerId: vercelToolbarConfig.ownerId,
+          toolbarProjectId: vercelToolbarConfig.projectId
+        }}
+      >
+        window.addEventListener('load', () => {
+          const toolbarScript = document.createElement('script');
+          toolbarScript.src = toolbarSrc;
+          toolbarScript.async = true;
+          toolbarScript.dataset.explicitOptIn = 'true';
+          toolbarScript.dataset.ownerId = toolbarOwnerId;
+          toolbarScript.dataset.projectId = toolbarProjectId;
+          toolbarScript.dataset.branch = toolbarBranch;
+
+          const cleanupTimer = window.setTimeout(() => toolbarScript.remove(), 10_000);
+          toolbarScript.addEventListener('load', () => window.clearTimeout(cleanupTimer), { once: true });
+          toolbarScript.addEventListener('error', () => {
+            window.clearTimeout(cleanupTimer);
+            toolbarScript.remove();
+          }, { once: true });
+
+          document.body.append(toolbarScript);
+        }, { once: true });
+      </script>
     )}
   </body>
 </html>
