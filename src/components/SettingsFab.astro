@@ -101,6 +101,15 @@ const { locale, t } = Astro.props;
         ))}
       </select>
     </div>
+    <div class="settings-row">
+      <a class="settings-cli-link" href="/cli">
+        <span class="settings-label">
+          <i class="fas fa-terminal" aria-hidden="true"></i>
+          {t.cli}
+        </span>
+        <span class="settings-cli-action mono" aria-hidden="true">./cli ↗</span>
+      </a>
+    </div>
     <details class="settings-disclosure">
       <summary class="settings-row settings-summary">
         <span class="settings-label">

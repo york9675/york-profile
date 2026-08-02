@@ -219,6 +219,7 @@
     "selectTheme": "Select theme",
     "language": "Language",
     "selectLanguage": "Select language",
+    "cli": "Open web terminal",
     "themes": {
       "system": "System",
       "dark": "Dark",

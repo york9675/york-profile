@@ -1,0 +1,47 @@
+---
+import PageShell from '../layouts/PageShell.astro';
+import { appInfo, profile } from '../data/app';
+import packageJson from '../../package.json';
+import '../styles/cli.css';
+
+const cleanVersion = (version: string) => version.replace(/^[^\d]*/, '');
+---
+
+<PageShell title={`York Profile CLI — ${profile.name}'s web terminal`} description="An interactive web terminal hidden inside York's profile." lang="en">
+  <link slot="head" rel="icon" href={profile.avatar} />
+  <meta slot="head" name="theme-color" content="#07110b" />
+
+  <main
+    class="cli-page"
+    data-cli-root
+    data-app-version={appInfo.version}
+    data-app-environment={appInfo.appEnv}
+    data-astro-version={appInfo.astroVersion}
+    data-preact-version={cleanVersion(packageJson.dependencies.preact)}
+    data-typescript-version={cleanVersion(packageJson.devDependencies.typescript)}
+  >
+    <section class="terminal-screen" data-terminal-screen aria-label="York Profile CLI web terminal">
+      <div class="terminal-output" data-terminal-output role="log" aria-live="polite" aria-relevant="additions"></div>
+      <div class="terminal-input-row" data-terminal-input-row>
+        <span class="terminal-prompt" data-terminal-prompt aria-hidden="true"></span>
+        <div class="terminal-entry">
+          <div class="terminal-input-highlight" data-terminal-input-highlight aria-hidden="true"></div>
+          <label class="sr-only" for="terminal-input">Terminal command</label>
+          <input
+            id="terminal-input"
+            class="terminal-input"
+            data-terminal-input
+            type="text"
+            inputmode="text"
+            autocomplete="off"
+            autocapitalize="none"
+            spellcheck="false"
+          />
+          <span class="terminal-cursor" data-terminal-cursor aria-hidden="true"></span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="../scripts/cli.ts"></script>
+</PageShell>

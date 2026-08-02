@@ -219,6 +219,7 @@
     "selectTheme": "テーマを選択",
     "language": "言語",
     "selectLanguage": "言語を選択",
+    "cli": "ウェブターミナルを開く",
     "themes": {
       "system": "システム",
       "dark": "ダーク",
