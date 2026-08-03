@@ -1,5 +1,7 @@
 import { topTasks } from '../config';
+import { getHeapSummary } from '../system';
 import type { Tone, TopTuiState } from '../types';
+import { appendTuiLine } from './dom';
 
 interface TopTuiOptions {
   root: HTMLElement;
@@ -8,13 +10,6 @@ interface TopTuiOptions {
   appendLine: (content: string, options?: { tone?: Tone }) => HTMLElement;
   updateInput: () => void;
   scrollToBottom: () => void;
-}
-
-function appendTuiLine(container: HTMLElement, text = '', className?: string) {
-  const line = document.createElement('div');
-  line.className = `terminal-settings-line${className ? ` ${className}` : ''}`;
-  line.textContent = text;
-  container.append(line);
 }
 
 function formatTime(totalSeconds: number) {
@@ -34,7 +29,7 @@ export class TopTuiApp {
     const screen = document.createElement('section');
     screen.className = 'terminal-settings-screen terminal-top-screen';
     screen.setAttribute('role', 'dialog');
-    screen.setAttribute('aria-label', 'York task monitor');
+    screen.setAttribute('aria-label', 'Task monitor');
     this.state = {
       screen,
       selected: 0,
@@ -92,13 +87,6 @@ export class TopTuiApp {
     const { screen, paused, selected, showDetails, tick } = this.state;
     const now = new Date();
     const uptime = Math.floor(performance.now() / 1000);
-    const browserPerformance = performance as Performance & {
-      memory?: { usedJSHeapSize: number; jsHeapSizeLimit: number };
-    };
-    const heap = browserPerformance.memory;
-    const heapText = heap
-      ? `${(heap.usedJSHeapSize / 1048576).toFixed(1)} MiB used / ${(heap.jsHeapSizeLimit / 1048576).toFixed(0)} MiB limit`
-      : 'unavailable in this browser';
     const cpuValues = topTasks.map((task, index) => (
       Math.max(0.1, task.cpu * (0.48 + Math.abs(Math.sin((tick + index * 1.7) / 3)))).toFixed(1)
     ));
@@ -106,11 +94,11 @@ export class TopTuiApp {
     screen.replaceChildren();
     appendTuiLine(
       screen,
-      `York top  ${now.toLocaleTimeString()}  up ${formatTime(uptime)}  1 user${paused ? '  [PAUSED]' : ''}`,
+      `Top  ${now.toLocaleTimeString()}  up ${formatTime(uptime)}  1 user${paused ? '  [PAUSED]' : ''}`,
       'terminal-settings-title'
     );
     appendTuiLine(screen, `Tasks: ${topTasks.length} total, 1 running, ${topTasks.length - 1} sleeping`);
-    appendTuiLine(screen, `JS heap: ${heapText}`);
+    appendTuiLine(screen, `JS heap: ${getHeapSummary()}`);
     appendTuiLine(screen, '────────────────────────────────────────────────────────────────────────');
     appendTuiLine(screen, '  PID USER         STATE       CPU%   MEM%   TIME      COMMAND', 'terminal-top-heading');
 

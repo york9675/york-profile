@@ -24,6 +24,16 @@ export default [
       '@typescript-eslint/no-unused-vars': noUnusedVarsRule,
     },
   },
+  {
+    files: ['scripts/**/*.{js,mjs,cjs}'],
+    languageOptions: {
+      globals: {
+        console: 'readonly',
+        process: 'readonly',
+        URL: 'readonly',
+      },
+    },
+  },
   ...astro.configs.recommended,
   {
     files: ['**/*.astro'],

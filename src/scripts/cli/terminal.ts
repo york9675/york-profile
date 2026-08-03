@@ -1,6 +1,6 @@
-import { commandNames } from './config';
 import { VirtualFileSystem } from './filesystem';
-import { cleanToken } from './parser';
+import { cleanToken, tokenize } from './parser';
+import type { ArgumentCompletion } from './commands/types';
 import type { Completion, Segment, Tone } from './types';
 
 interface TerminalElements {
@@ -16,13 +16,41 @@ export function segment(text: string, tone?: Tone, href?: string): Segment {
   return { text, tone, href };
 }
 
+export function boldSegment(text: string, tone?: Tone, href?: string): Segment {
+  return { text, tone, href, bold: true };
+}
+
+export function renderSegments(container: HTMLElement, segments: Segment[]) {
+  container.replaceChildren();
+  for (const item of segments) {
+    const node = item.href ? document.createElement('a') : document.createElement('span');
+    node.textContent = item.text;
+    if (item.tone) node.classList.add(`terminal-${item.tone}`);
+    if (item.bold) node.classList.add('terminal-bold');
+    if (item.href && node instanceof HTMLAnchorElement) {
+      node.href = item.href;
+      if (item.href.startsWith('http')) {
+        node.target = '_blank';
+        node.rel = 'noopener noreferrer';
+      }
+    }
+    container.append(node);
+  }
+}
+
 export class TerminalView {
   private ghostCompletion: { completion: Completion; candidate: string } | null = null;
 
   constructor(
     private readonly elements: TerminalElements,
     private readonly fileSystem: VirtualFileSystem,
-    private readonly isPasswordPrompt: () => boolean
+    private readonly isPasswordPrompt: () => boolean,
+    private readonly isPlainPrompt: () => boolean,
+    private readonly commandNames: readonly string[],
+    private readonly resolveArgumentCompletion: (
+      commandName: string,
+      args: readonly string[]
+    ) => ArgumentCompletion
   ) {}
 
   appendLine = (
@@ -41,30 +69,24 @@ export class TerminalView {
 
   appendSegments = (segments: Segment[], options: { spaced?: boolean } = {}) => {
     const line = this.appendLine('', options);
-    for (const item of segments) {
-      const node = item.href ? document.createElement('a') : document.createElement('span');
-      node.textContent = item.text;
-      if (item.tone) node.classList.add(`terminal-${item.tone}`);
-      if (item.href && node instanceof HTMLAnchorElement) {
-        node.href = item.href;
-        if (item.href.startsWith('http')) {
-          node.target = '_blank';
-          node.rel = 'noopener noreferrer';
-        }
-      }
-      line.append(node);
-    }
+    renderSegments(line, segments);
     return line;
   };
 
   appendCommandLine = (value: string, suffix = '') => {
     const line = this.appendLine('', { command: true });
     const promptNode = document.createElement('span');
-    promptNode.className = 'terminal-accent';
-    promptNode.textContent = this.elements.prompt.textContent;
+    promptNode.append(...Array.from(
+      this.elements.prompt.childNodes,
+      node => node.cloneNode(true)
+    ));
     const commandNode = document.createElement('span');
     this.renderSyntax(commandNode, value);
     line.append(promptNode, commandNode, suffix);
+  };
+
+  clearOutput = () => {
+    this.elements.output.replaceChildren();
   };
 
   getCompletion = (cursor = this.elements.input.selectionStart ?? this.elements.input.value.length): Completion | null => {
@@ -76,17 +98,34 @@ export class TerminalView {
     let candidates: string[];
 
     if (commandPosition) {
-      candidates = commandNames.filter(name => name.startsWith(token));
+      candidates = this.commandNames.filter(name => name.startsWith(token));
     } else {
+      const parsed = tokenize(before.slice(0, start));
+      if ('error' in parsed || !parsed.command) return null;
+      const completionType = this.resolveArgumentCompletion(parsed.command, parsed.args);
+      if (typeof completionType !== 'string') {
+        candidates = completionType.values.filter(value => value.startsWith(cleanToken(token)));
+        return candidates.length ? { start, end: cursor, token, candidates } : null;
+      }
+      if (completionType === 'none') return null;
+      if (completionType === 'command') {
+        candidates = this.commandNames.filter(name => name.startsWith(cleanToken(token)));
+        return candidates.length ? { start, end: cursor, token, candidates } : null;
+      }
+
       const slashIndex = token.lastIndexOf('/');
       const parentInput = slashIndex >= 0 ? token.slice(0, slashIndex + 1) : '';
       const partial = slashIndex >= 0 ? token.slice(slashIndex + 1) : token;
       const parentPath = this.fileSystem.normalize(parentInput || '.');
       candidates = (this.fileSystem.directories[parentPath] ?? [])
         .filter(name => name.startsWith(partial))
+        .filter(name => {
+          if (completionType !== 'directory') return true;
+          return this.fileSystem.kind(this.fileSystem.normalize(`${parentPath}/${name}`)) === 'directory';
+        })
         .map(name => {
           const path = this.fileSystem.normalize(`${parentPath}/${name}`);
-          return `${parentInput}${name}${this.fileSystem.directories[path] ? '/' : ''}`;
+          return `${parentInput}${name}${this.fileSystem.kind(path) === 'directory' ? '/' : ''}`;
         });
     }
 
@@ -111,6 +150,15 @@ export class TerminalView {
       this.ghostCompletion = null;
       highlight.textContent = '⚿';
       highlight.style.transform = 'none';
+      return;
+    }
+    if (this.isPlainPrompt()) {
+      cursor.hidden = false;
+      this.ghostCompletion = null;
+      highlight.textContent = input.value;
+      highlight.style.transform = `translateX(${-input.scrollLeft}px)`;
+      cursor.textContent = input.value[position] ?? ' ';
+      cursor.style.transform = `translateX(calc(${position}ch - ${input.scrollLeft}px))`;
       return;
     }
     cursor.hidden = false;
@@ -155,7 +203,7 @@ export class TerminalView {
       token.textContent = part;
       if (!foundCommand) {
         foundCommand = true;
-        token.className = commandNames.includes(cleanToken(part))
+        token.className = this.commandNames.includes(cleanToken(part))
           ? 'terminal-command-valid'
           : 'terminal-command-invalid';
       } else if (!part.startsWith('-')) {

@@ -1,13 +1,21 @@
-import { defaultSettings, themes } from '../config';
+import {
+  cliConfig,
+  cursorStyles,
+  defaultSettings,
+  themeMetadata,
+  themes,
+  validation
+} from '../config';
+import type { CliTheme, CursorStyle } from '../config';
 import type { SettingsTuiState } from '../types';
+import { appendTuiLine } from './dom';
 
 export interface SettingsSnapshot {
   username: string;
   computerName: string;
-  theme: string;
-  cursorStyle: string;
+  theme: CliTheme;
+  cursorStyle: CursorStyle;
   cursorBlink: boolean;
-  storageEnabled: boolean;
   passwordOnRefresh: boolean;
   passwordEnabled: boolean;
 }
@@ -22,20 +30,24 @@ interface SettingsTuiOptions {
   input: HTMLInputElement;
   version: string;
   getSnapshot: () => SettingsSnapshot;
-  previewTheme: (theme: string) => void;
+  previewTheme: (theme: CliTheme) => void;
   save: (request: SettingsSaveRequest) => Promise<void>;
+  requestDataReset: () => void;
   onClose: (saved: boolean) => void;
 }
 
-const itemCount = 9;
-
-function appendTuiLine(container: HTMLElement, text = '', className?: string) {
-  const line = document.createElement('div');
-  line.className = `terminal-settings-line${className ? ` ${className}` : ''}`;
-  line.textContent = text;
-  container.append(line);
-  return line;
-}
+const item = {
+  username: 0,
+  computerName: 1,
+  theme: 2,
+  cursorStyle: 3,
+  cursorBlink: 4,
+  password: 5,
+  passwordOnRefresh: 6,
+  reset: 7,
+  clearData: 8
+} as const;
+const itemCount = Object.keys(item).length;
 
 function renderEditableValue(container: HTMLElement, value: string, cursor: number) {
   container.append(document.createTextNode(value.slice(0, cursor)));
@@ -57,7 +69,7 @@ export class SettingsTuiApp {
     const screen = document.createElement('section');
     screen.className = 'terminal-settings-screen';
     screen.setAttribute('role', 'dialog');
-    screen.setAttribute('aria-label', 'York Profile CLI settings');
+    screen.setAttribute('aria-label', `${cliConfig.name} settings`);
     this.passwordEnabled = snapshot.passwordEnabled;
     this.state = {
       screen,
@@ -70,7 +82,6 @@ export class SettingsTuiApp {
       originalTheme: snapshot.theme,
       cursorStyle: snapshot.cursorStyle,
       cursorBlink: snapshot.cursorBlink,
-      storageEnabled: snapshot.storageEnabled,
       passwordOnRefresh: snapshot.passwordOnRefresh,
       passwordAction: 'unchanged',
       passwordDraft: '',
@@ -106,7 +117,7 @@ export class SettingsTuiApp {
       this.cycle(1);
     } else if (event.key === 'Enter') {
       this.activateSelected();
-    } else if (event.key === 'Delete' && tui.selected === 6) {
+    } else if (event.key === 'Delete' && tui.selected === item.password) {
       tui.passwordAction = 'disable';
       tui.passwordDraft = '';
       tui.status = 'Password will be disabled when settings are saved.';
@@ -124,8 +135,8 @@ export class SettingsTuiApp {
   private handleEditKey(event: KeyboardEvent) {
     if (!this.state) return;
     const tui = this.state;
-    const passwordField = tui.selected === 6;
-    const field = tui.selected === 0 ? 'username' : 'computerName';
+    const passwordField = tui.selected === item.password;
+    const field = tui.selected === item.username ? 'username' : 'computerName';
     const value = passwordField ? tui.passwordDraft : tui[field];
     const setValue = (nextValue: string) => {
       if (passwordField) tui.passwordDraft = nextValue;
@@ -172,18 +183,22 @@ export class SettingsTuiApp {
   private activateSelected() {
     if (!this.state) return;
     const tui = this.state;
-    if (tui.selected < 2 || tui.selected === 6) {
+    if (tui.selected <= item.computerName || tui.selected === item.password) {
       tui.editing = true;
-      const currentValue = tui.selected === 0
+      const currentValue = tui.selected === item.username
         ? tui.username
-        : tui.selected === 1
+        : tui.selected === item.computerName
           ? tui.computerName
           : tui.passwordDraft;
       tui.editOriginal = currentValue;
-      if (tui.selected === 6) tui.passwordDraft = '';
-      tui.editCursor = tui.selected === 6 ? 0 : currentValue.length;
+      if (tui.selected === item.password) tui.passwordDraft = '';
+      tui.editCursor = tui.selected === item.password ? 0 : currentValue.length;
       tui.status = '';
-    } else if (tui.selected === itemCount - 1) {
+    } else if (tui.selected === item.clearData) {
+      this.close(false);
+      this.options.requestDataReset();
+      return;
+    } else if (tui.selected === item.reset) {
       if (tui.resetArmed) this.resetDraft();
       else {
         tui.resetArmed = true;
@@ -197,19 +212,16 @@ export class SettingsTuiApp {
   private cycle(direction: -1 | 1) {
     if (!this.state) return;
     const tui = this.state;
-    if (tui.selected === 2) {
+    if (tui.selected === item.theme) {
       const index = themes.indexOf(tui.theme);
       tui.theme = themes[(index + direction + themes.length) % themes.length];
       this.options.previewTheme(tui.theme);
-    } else if (tui.selected === 3) {
-      const styles = ['block', 'bar', 'underscore'];
-      const index = styles.indexOf(tui.cursorStyle);
-      tui.cursorStyle = styles[(index + direction + styles.length) % styles.length];
-    } else if (tui.selected === 4) {
+    } else if (tui.selected === item.cursorStyle) {
+      const index = cursorStyles.indexOf(tui.cursorStyle);
+      tui.cursorStyle = cursorStyles[(index + direction + cursorStyles.length) % cursorStyles.length];
+    } else if (tui.selected === item.cursorBlink) {
       tui.cursorBlink = !tui.cursorBlink;
-    } else if (tui.selected === 5) {
-      tui.storageEnabled = !tui.storageEnabled;
-    } else if (tui.selected === 7) {
+    } else if (tui.selected === item.passwordOnRefresh) {
       tui.passwordOnRefresh = !tui.passwordOnRefresh;
     }
   }
@@ -222,7 +234,6 @@ export class SettingsTuiApp {
       theme: defaultSettings.theme,
       cursorStyle: defaultSettings.cursorStyle,
       cursorBlink: defaultSettings.cursorBlink,
-      storageEnabled: defaultSettings.storageEnabled,
       passwordOnRefresh: defaultSettings.passwordOnRefresh,
       passwordAction: 'disable',
       passwordDraft: '',
@@ -235,15 +246,15 @@ export class SettingsTuiApp {
   private async save() {
     if (!this.state) return;
     const tui = this.state;
-    if (!/^[a-zA-Z][a-zA-Z0-9._-]{0,23}$/.test(tui.username)) {
+    if (!validation.username.test(tui.username)) {
       tui.status = 'Invalid user name: use 1–24 safe characters and start with a letter.';
-      tui.selected = 0;
+      tui.selected = item.username;
       this.render();
       return;
     }
-    if (!/^[a-zA-Z][a-zA-Z0-9.-]{0,23}$/.test(tui.computerName)) {
+    if (!validation.computerName.test(tui.computerName)) {
       tui.status = 'Invalid computer name: use 1–24 letters, numbers, dots, or hyphens.';
-      tui.selected = 1;
+      tui.selected = item.computerName;
       this.render();
       return;
     }
@@ -253,7 +264,6 @@ export class SettingsTuiApp {
       theme: tui.theme,
       cursorStyle: tui.cursorStyle,
       cursorBlink: tui.cursorBlink,
-      storageEnabled: tui.storageEnabled,
       passwordOnRefresh: tui.passwordOnRefresh,
       passwordAction: tui.passwordAction,
       passwordDraft: tui.passwordDraft
@@ -273,7 +283,7 @@ export class SettingsTuiApp {
     if (!this.state) return;
     const tui = this.state;
     tui.screen.replaceChildren();
-    appendTuiLine(tui.screen, `York Profile CLI ${this.options.version}`, 'terminal-settings-title');
+    appendTuiLine(tui.screen, `${cliConfig.name} ${this.options.version}`, 'terminal-settings-title');
     appendTuiLine(tui.screen, 'SETTINGS');
     appendTuiLine(tui.screen, '────────────────────────────────────────');
     appendTuiLine(tui.screen);
@@ -281,10 +291,9 @@ export class SettingsTuiApp {
     const values = [
       tui.username,
       tui.computerName,
-      tui.theme,
+      `${themeMetadata[tui.theme].label} (${tui.theme})`,
       tui.cursorStyle === 'bar' ? '|' : tui.cursorStyle === 'underscore' ? '_' : 'block',
       tui.cursorBlink ? 'enabled' : 'disabled',
-      tui.storageEnabled ? 'enabled  (settings, history, and files)' : 'disabled',
       tui.passwordAction === 'disable'
         ? 'will be disabled'
         : tui.passwordAction === 'set'
@@ -293,7 +302,8 @@ export class SettingsTuiApp {
             ? 'enabled'
             : 'disabled',
       tui.passwordOnRefresh ? 'enabled' : 'disabled',
-      'press Enter'
+      'press Enter',
+      'type confirmation required'
     ];
     const labels = [
       'User name',
@@ -301,23 +311,48 @@ export class SettingsTuiApp {
       'Color theme',
       'Cursor style',
       'Cursor blink',
-      'Store data locally',
       'Password',
       'Password on refresh',
-      'Reset to defaults'
+      'Reset to defaults',
+      'Clear all data'
     ];
 
     labels.forEach((label, index) => {
       const selected = tui.selected === index;
       const line = appendTuiLine(tui.screen, '', selected ? 'is-selected' : undefined);
       line.append(document.createTextNode(`${selected ? '>' : ' '} ${label.padEnd(22)} `));
-      if (selected && tui.editing && index === 6) {
+      if (selected && tui.editing && index === item.password) {
         line.append(document.createTextNode('⚿'));
-      } else if (selected && tui.editing && index < 2) {
+      } else if (selected && tui.editing && index <= item.computerName) {
         renderEditableValue(line, values[index], tui.editCursor);
       } else {
         line.append(document.createTextNode(values[index]));
       }
+    });
+
+    appendTuiLine(tui.screen);
+    appendTuiLine(tui.screen, 'Theme preview', 'terminal-muted');
+    const promptPreview = appendTuiLine(tui.screen);
+    const previewSegments: Array<[string, string?]> = [
+      [`${tui.username}@${tui.computerName}`, 'terminal-accent terminal-bold'],
+      [':', 'terminal-bright terminal-bold'],
+      ['~ $ ', 'terminal-blue terminal-bold'],
+      ['ls', 'terminal-command-valid'],
+      [' -la']
+    ];
+    previewSegments.forEach(([text, className]) => {
+      const segment = document.createElement('span');
+      segment.textContent = text;
+      if (className) segment.className = className;
+      promptPreview.append(segment);
+    });
+    const tonePreview = appendTuiLine(tui.screen);
+    const tones = ['muted', 'accent', 'blue', 'yellow', 'error', 'magenta', 'cyan', 'bright'] as const;
+    tones.forEach((tone, index) => {
+      const segment = document.createElement('span');
+      segment.className = `terminal-${tone}`;
+      segment.textContent = `${index ? ' ' : ''}${tone}`;
+      tonePreview.append(segment);
     });
 
     appendTuiLine(tui.screen);

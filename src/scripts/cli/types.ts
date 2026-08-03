@@ -1,9 +1,12 @@
-export type Tone = 'muted' | 'accent' | 'blue' | 'yellow' | 'error' | 'bright' | 'bold';
+import type { CliTheme, CursorStyle } from './config';
+
+export type Tone = 'muted' | 'accent' | 'blue' | 'yellow' | 'error' | 'magenta' | 'cyan' | 'bright' | 'bold';
 
 export interface Segment {
   text: string;
   tone?: Tone;
   href?: string;
+  bold?: boolean;
 }
 
 export interface ParsedCommand {
@@ -32,11 +35,10 @@ export interface SettingsTuiState {
   editCursor: number;
   username: string;
   computerName: string;
-  theme: string;
-  originalTheme: string;
-  cursorStyle: string;
+  theme: CliTheme;
+  originalTheme: CliTheme;
+  cursorStyle: CursorStyle;
   cursorBlink: boolean;
-  storageEnabled: boolean;
   passwordOnRefresh: boolean;
   passwordAction: 'unchanged' | 'set' | 'disable';
   passwordDraft: string;
@@ -49,6 +51,12 @@ export interface PasswordPrompt {
   mode: 'login' | 'verify' | 'new' | 'confirm';
   firstValue?: string;
   onVerified?: () => void;
+}
+
+export interface ConfirmationPrompt {
+  message: string;
+  expected: string;
+  onConfirm: () => void;
 }
 
 export interface TopTuiState {
@@ -66,9 +74,12 @@ export interface AppMetadata {
   astro: string;
   preact: string;
   typescript: string;
+  packageCount: number;
 }
 
 export interface FileSystemSnapshot {
   directories: Record<string, string[]>;
   files: Record<string, string[]>;
+  modifiedAt: Record<string, string>;
+  readOnlyPaths: string[];
 }

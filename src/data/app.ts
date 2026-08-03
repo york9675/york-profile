@@ -16,5 +16,9 @@ export const profile = {
 export const appInfo = {
   version: packageJson.version,
   astroVersion: packageJson.dependencies.astro.replace(/^[^\d]*/, ''),
+  packageCount: new Set([
+    ...Object.keys(packageJson.dependencies),
+    ...Object.keys(packageJson.devDependencies)
+  ]).size,
   appEnv: import.meta.env.MODE
 } as const;

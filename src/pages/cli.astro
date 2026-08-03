@@ -1,13 +1,14 @@
 ---
 import PageShell from '../layouts/PageShell.astro';
 import { appInfo, profile } from '../data/app';
+import { cliConfig } from '../scripts/cli/config';
 import packageJson from '../../package.json';
 import '../styles/cli.css';
 
 const cleanVersion = (version: string) => version.replace(/^[^\d]*/, '');
 ---
 
-<PageShell title={`York Profile CLI — ${profile.name}'s web terminal`} description="An interactive web terminal hidden inside York's profile." lang="en">
+<PageShell title={`${cliConfig.name} — ${profile.name}'s web terminal`} description="An interactive web terminal hidden inside York's profile." lang="en">
   <link slot="head" rel="icon" href={profile.avatar} />
   <meta slot="head" name="theme-color" content="#07110b" />
 
@@ -19,8 +20,9 @@ const cleanVersion = (version: string) => version.replace(/^[^\d]*/, '');
     data-astro-version={appInfo.astroVersion}
     data-preact-version={cleanVersion(packageJson.dependencies.preact)}
     data-typescript-version={cleanVersion(packageJson.devDependencies.typescript)}
+    data-package-count={appInfo.packageCount}
   >
-    <section class="terminal-screen" data-terminal-screen aria-label="York Profile CLI web terminal">
+    <section class="terminal-screen" data-terminal-screen aria-label={`${cliConfig.name} web terminal`}>
       <div class="terminal-output" data-terminal-output role="log" aria-live="polite" aria-relevant="additions"></div>
       <div class="terminal-input-row" data-terminal-input-row>
         <span class="terminal-prompt" data-terminal-prompt aria-hidden="true"></span>

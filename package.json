@@ -23,7 +23,9 @@
     "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview",
     "typecheck": "ASTRO_TELEMETRY_DISABLED=1 astro check",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "verify:cli:themes": "node scripts/verify-cli-themes.mjs",
+    "verify:cli": "pnpm verify:cli:themes && pnpm check && pnpm lint && pnpm build"
   },
   "dependencies": {
     "@astrojs/preact": "^6.0.2",
