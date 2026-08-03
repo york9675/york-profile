@@ -257,6 +257,36 @@
   font-size: 0.75rem;
 }
 
+.settings-cli-link {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.15rem 0;
+}
+
+.settings-cli-link:focus-visible {
+  outline: 1px solid var(--fg);
+  outline-offset: 4px;
+}
+
+.settings-cli-link:hover .settings-label {
+  color: var(--fg);
+}
+
+.settings-cli-action {
+  color: var(--muted);
+  font-size: 0.68rem;
+  letter-spacing: 0.25px;
+  transition: color var(--transition), transform var(--transition);
+}
+
+.settings-cli-link:hover .settings-cli-action {
+  color: var(--fg);
+  transform: translateX(2px);
+}
+
 /* Toggle switch */
 .toggle-btn {
   background: #1a1a1a;

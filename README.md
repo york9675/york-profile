@@ -11,6 +11,8 @@
 
 This is the source code for my personal profile page, which is built using [Astro](https://astro.build) and hosted on [Vercel](https://vercel.com).
 
+The site also includes [York Profile CLI](./src/scripts/cli/README.md), a browser terminal simulation.
+
 **Visit: https://york.qzz.io (or https://york-profile.vercel.app)**
 
 ---

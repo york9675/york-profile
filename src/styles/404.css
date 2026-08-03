@@ -80,6 +80,12 @@ h1 {
   color: inherit;
 }
 
+.info code {
+  color: inherit;
+  font-family: "Cascadia Mono", "Segoe UI Mono", monospace;
+  overflow-wrap: anywhere;
+}
+
 @media (max-width: 40rem) {
   body {
     padding-top: 5rem;

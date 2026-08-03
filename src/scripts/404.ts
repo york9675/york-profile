@@ -2,6 +2,11 @@ import { prefetch } from 'astro:prefetch';
 
 let progress = 0;
 const progressText = document.getElementById('progress');
+const requestedPathText = document.getElementById('requested-path');
+
+if (requestedPathText) {
+  requestedPathText.textContent = window.location.pathname;
+}
 
 const homeUrl = document.querySelector<HTMLElement>('[data-not-found-page]')?.dataset.homeUrl || '/';
 prefetch(homeUrl);

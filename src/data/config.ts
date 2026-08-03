@@ -1,13 +1,19 @@
+import packageJson from '../../package.json';
+
 /**
  * Shared site configuration.
  */
+
+const githubProfile = packageJson.author.url.replace(/\/$/, '');
+const projectRepository = packageJson.homepage;
+const projectDefaultBranch = 'main';
 
 export const profileLinks = {
   /**
    * Main code/profile links.
    */
-  github: 'https://github.com/york9675',
-  projectRepository: 'https://github.com/york9675/york-profile',
+  github: githubProfile,
+  projectRepository,
   organizationSite: 'https://york9675.github.io/website',
 
   /**
@@ -23,6 +29,12 @@ export const profileLinks = {
   bandcamp: 'https://524-hz.bandcamp.com/',
   buyMeACoffee: 'https://www.buymeacoffee.com/york0524',
   volanta: 'https://fly.volanta.app/profile/York'
+} as const;
+
+export const projectLinks = {
+  documentation: `${projectRepository}/blob/${projectDefaultBranch}/src/scripts/cli/docs/cli-development.md`,
+  issues: packageJson.bugs.url,
+  newPullRequest: `${projectRepository}/compare`
 } as const;
 
 export const profileHandles = {

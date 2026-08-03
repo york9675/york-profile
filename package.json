@@ -1,9 +1,9 @@
 {
   "name": "york-profile",
   "type": "module",
-  "version": "1.4.10",
+  "version": "1.5.0",
   "private": true,
-  "packageManager": "pnpm@11.17.0",
+  "packageManager": "pnpm@11.19.0",
   "productName": "York Profile",
   "description": "York's personal profile website.",
   "homepage": "https://github.com/york9675/york-profile",
@@ -23,7 +23,9 @@
     "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview",
     "typecheck": "ASTRO_TELEMETRY_DISABLED=1 astro check",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "verify:cli:themes": "node scripts/verify-cli-themes.mjs",
+    "verify:cli": "pnpm verify:cli:themes && pnpm check && pnpm lint && pnpm build"
   },
   "dependencies": {
     "@astrojs/preact": "^6.0.2",
@@ -32,7 +34,7 @@
     "@vercel/speed-insights": "^2.0.0",
     "@vercel/toolbar": "^0.2.7",
     "astro": "^7.1.6",
-    "preact": "^10.29.7"
+    "preact": "^10.29.8"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",

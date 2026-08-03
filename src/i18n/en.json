@@ -14,7 +14,8 @@
     "qrCodeAlt": "Support information QR code",
     "contact": "For more information about this issue and possible fixes, visit",
     "supportInfo": "If you call a support person, give them this info:",
-    "stopCode": "Stop code: PAGE_NOT_FOUND"
+    "stopCode": "Stop code: PAGE_NOT_FOUND",
+    "requestedPath": "Requested path:"
   },
   "header": {
     "bioLabel": "Bio",
@@ -219,6 +220,7 @@
     "selectTheme": "Select theme",
     "language": "Language",
     "selectLanguage": "Select language",
+    "cli": "Open web terminal",
     "themes": {
       "system": "System",
       "dark": "Dark",
