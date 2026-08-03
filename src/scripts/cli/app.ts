@@ -366,14 +366,17 @@ if (root && terminalScreen && output && input && inputRow && promptElement && in
     }),
     previewTheme: applyTheme,
     save: async settings => {
+      let nextPasswordHash = passwordHash;
+      if (settings.passwordAction === 'set') nextPasswordHash = await hashPassword(settings.passwordDraft);
+      else if (settings.passwordAction === 'disable') nextPasswordHash = null;
+
       fileSystem.migrateHome(settings.username);
       username = settings.username;
       computerName = settings.computerName;
       cursorStyle = settings.cursorStyle;
       cursorBlink = settings.cursorBlink;
       passwordOnRefresh = settings.passwordOnRefresh;
-      if (settings.passwordAction === 'set') passwordHash = await hashPassword(settings.passwordDraft);
-      else if (settings.passwordAction === 'disable') passwordHash = null;
+      passwordHash = nextPasswordHash;
       applyTheme(settings.theme);
       applyCursorSettings();
       persistState();
@@ -740,13 +743,19 @@ if (root && terminalScreen && output && input && inputRow && promptElement && in
   });
 
   root.addEventListener('pointerup', event => {
-    if (event.target instanceof HTMLAnchorElement || !pointerStart) return;
-    const moved = Math.hypot(event.clientX - pointerStart.x, event.clientY - pointerStart.y) > 5;
+    const start = pointerStart;
     pointerStart = null;
+    const link = event.target instanceof Element ? event.target.closest('a') : null;
+    if (link || !start) return;
+    const moved = Math.hypot(event.clientX - start.x, event.clientY - start.y) > 5;
     requestAnimationFrame(() => {
       const selection = window.getSelection();
       if (!moved && (!selection || selection.isCollapsed)) input.focus({ preventScroll: true });
     });
+  });
+
+  root.addEventListener('pointercancel', () => {
+    pointerStart = null;
   });
 
   try {

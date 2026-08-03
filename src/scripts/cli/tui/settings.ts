@@ -60,6 +60,7 @@ function renderEditableValue(container: HTMLElement, value: string, cursor: numb
 export class SettingsTuiApp {
   private state: SettingsTuiState | null = null;
   private passwordEnabled = false;
+  private saving = false;
 
   constructor(private readonly options: SettingsTuiOptions) {}
 
@@ -70,6 +71,7 @@ export class SettingsTuiApp {
     screen.className = 'terminal-settings-screen';
     screen.setAttribute('role', 'dialog');
     screen.setAttribute('aria-label', `${cliConfig.name} settings`);
+    this.saving = false;
     this.passwordEnabled = snapshot.passwordEnabled;
     this.state = {
       screen,
@@ -97,6 +99,7 @@ export class SettingsTuiApp {
   handleKey(event: KeyboardEvent) {
     if (!this.state) return false;
     event.preventDefault();
+    if (this.saving) return true;
     const tui = this.state;
 
     if (tui.editing) {
@@ -244,7 +247,7 @@ export class SettingsTuiApp {
   }
 
   private async save() {
-    if (!this.state) return;
+    if (!this.state || this.saving) return;
     const tui = this.state;
     if (!validation.username.test(tui.username)) {
       tui.status = 'Invalid user name: use 1–24 safe characters and start with a letter.';
@@ -258,17 +261,29 @@ export class SettingsTuiApp {
       this.render();
       return;
     }
-    await this.options.save({
-      username: tui.username,
-      computerName: tui.computerName,
-      theme: tui.theme,
-      cursorStyle: tui.cursorStyle,
-      cursorBlink: tui.cursorBlink,
-      passwordOnRefresh: tui.passwordOnRefresh,
-      passwordAction: tui.passwordAction,
-      passwordDraft: tui.passwordDraft
-    });
-    this.close(true);
+    this.saving = true;
+    tui.status = 'Saving...';
+    this.render();
+    try {
+      await this.options.save({
+        username: tui.username,
+        computerName: tui.computerName,
+        theme: tui.theme,
+        cursorStyle: tui.cursorStyle,
+        cursorBlink: tui.cursorBlink,
+        passwordOnRefresh: tui.passwordOnRefresh,
+        passwordAction: tui.passwordAction,
+        passwordDraft: tui.passwordDraft
+      });
+      this.saving = false;
+      if (this.state === tui) this.close(true);
+    } catch {
+      this.saving = false;
+      if (this.state === tui) {
+        tui.status = 'Unable to save settings. Press S to retry or Q to discard.';
+        this.render();
+      }
+    }
   }
 
   private close(saved: boolean) {
