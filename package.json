@@ -3,7 +3,7 @@
   "type": "module",
   "version": "1.4.10",
   "private": true,
-  "packageManager": "pnpm@11.18.0",
+  "packageManager": "pnpm@11.19.0",
   "productName": "York Profile",
   "description": "York's personal profile website.",
   "homepage": "https://github.com/york9675/york-profile",
