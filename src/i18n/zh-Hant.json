@@ -14,7 +14,8 @@
     "qrCodeAlt": "支援資訊 QR Code",
     "contact": "如需此問題與可能修正的詳細資訊，請瀏覽",
     "supportInfo": "聯絡支援人員時，請提供此資訊: ",
-    "stopCode": "停止代碼: PAGE_NOT_FOUND"
+    "stopCode": "停止代碼: PAGE_NOT_FOUND",
+    "requestedPath": "請求的路徑:"
   },
   "header": {
     "bioLabel": "簡介",

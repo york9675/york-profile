@@ -22,7 +22,11 @@ const homeUrl = getLocaleUrl(locale);
       <img class="qr-code" src="/assets/qrcode.png" alt={t.notFound.qrCodeAlt} width="150" height="150" loading="eager" />
       <div>
         <p class="info">{t.notFound.contact} <a href={projectLinks.issues}>{projectLinks.issues}</a></p>
-        <p class="info">{t.notFound.supportInfo}<br />{t.notFound.stopCode}</p>
+        <p class="info">
+          {t.notFound.supportInfo}<br />
+          {t.notFound.stopCode}<br />
+          {t.notFound.requestedPath} <code id="requested-path"></code>
+        </p>
       </div>
     </div>
   </div>
