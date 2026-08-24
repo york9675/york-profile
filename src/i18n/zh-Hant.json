@@ -281,7 +281,7 @@
     "day": "{count} 天",
     "days": "{count} 天",
     "durationJoin": "{first}{second}",
-    "sinceLabel": "資料自 {date} 起 ({ago}前)",
+    "sinceLabel": "資料自 {date} 起",
     "sinceTooltip": "我的 Last.fm 帳號建立於 {ago}前，播放次數是根據自那時起的所有播放紀錄計算。請注意，實際播放次數可能比這裡顯示的更多。"
   }
 }
