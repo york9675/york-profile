@@ -43,7 +43,7 @@
         "heading": "Development Experience",
         "discordBot": [
           "Discord Bot",
-          "A giveaway bot built with Node.js, currently active in approximately 5,000 servers."
+          "A giveaway bot built with Node.js, currently active in 5,000+ servers."
         ],
         "ios": [
           "iOS App Development",
@@ -281,7 +281,7 @@
     "day": "{count} day",
     "days": "{count} days",
     "durationJoin": "{first} and {second}",
-    "sinceLabel": "Data since {date} ({ago} ago)",
+    "sinceLabel": "Data since {date}",
     "sinceTooltip": "My Last.fm account was created {ago} ago, and the playcount is based on all plays since then. Please note that the actual playcount may be higher than it shows here."
   }
 }

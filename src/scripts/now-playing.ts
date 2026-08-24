@@ -52,7 +52,7 @@ const defaultRuntimeText = {
   day: '{count} day',
   days: '{count} days',
   durationJoin: '{first} and {second}',
-  sinceLabel: 'Data since {date} ({ago} ago)',
+  sinceLabel: 'Data since {date}',
   sinceTooltip: 'My Last.fm account was created {ago} ago, and the playcount is based on all plays since then. Please note that the actual playcount may be higher than it shows here.'
 };
 
@@ -1118,6 +1118,6 @@ function initSinceTooltip() {
       month: 'short',
       year: 'numeric'
     });
-    sinceEl.innerHTML = `${iconHtml}${formatTemplate(text.sinceLabel, { date: formattedDate, ago: agoStr })}`;
+    sinceEl.innerHTML = `${iconHtml}${formatTemplate(text.sinceLabel, { date: formattedDate })}`;
   }
 }

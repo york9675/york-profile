@@ -1,9 +1,9 @@
 {
   "name": "york-profile",
   "type": "module",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "private": true,
-  "packageManager": "pnpm@11.19.0",
+  "packageManager": "pnpm@11.23.0",
   "productName": "York Profile",
   "description": "York's personal profile website.",
   "homepage": "https://github.com/york9675/york-profile",
@@ -28,23 +28,23 @@
     "verify:cli": "pnpm verify:cli:themes && pnpm check && pnpm lint && pnpm build"
   },
   "dependencies": {
-    "@astrojs/preact": "^6.0.2",
+    "@astrojs/preact": "^6.0.4",
     "@astrojs/sitemap": "^3.7.3",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
     "@vercel/toolbar": "^0.2.7",
-    "astro": "^7.1.6",
+    "astro": "^7.2.6",
     "preact": "^10.29.8"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
     "@eslint/js": "^10.0.1",
-    "@typescript-eslint/eslint-plugin": "^8.65.0",
-    "@typescript-eslint/parser": "^8.65.0",
-    "eslint": "^10.8.0",
-    "eslint-plugin-astro": "^3.0.1",
+    "@typescript-eslint/eslint-plugin": "^8.67.0",
+    "@typescript-eslint/parser": "^8.67.0",
+    "eslint": "^10.9.0",
+    "eslint-plugin-astro": "^3.1.0",
     "sharp": "^0.35.3",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.65.0"
+    "typescript-eslint": "^8.67.0"
   }
 }
