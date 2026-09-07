@@ -28,12 +28,12 @@
     "verify:cli": "pnpm verify:cli:themes && pnpm check && pnpm lint && pnpm build"
   },
   "dependencies": {
-    "@astrojs/preact": "^6.0.4",
-    "@astrojs/sitemap": "^3.7.3",
+    "@astrojs/preact": "^6.0.5",
+    "@astrojs/sitemap": "^3.7.4",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
     "@vercel/toolbar": "^0.2.7",
-    "astro": "^7.2.6",
+    "astro": "^7.3.1",
     "preact": "^10.29.8"
   },
   "devDependencies": {
