@@ -1,7 +1,7 @@
 {
   "name": "york-profile",
   "type": "module",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "private": true,
   "packageManager": "pnpm@12.3.4",
   "productName": "York Profile",
