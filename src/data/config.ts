@@ -27,7 +27,7 @@ export const profileLinks = {
    */
   soundcloud: 'https://soundcloud.com/york0524',
   bandcamp: 'https://524-hz.bandcamp.com/',
-  buyMeACoffee: 'https://www.buymeacoffee.com/york0524',
+  koFi: 'https://ko-fi.com/york0524',
   volanta: 'https://fly.volanta.app/profile/York'
 } as const;
 
