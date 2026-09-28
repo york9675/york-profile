@@ -94,7 +94,12 @@
         "items": [
           {
             "label": "ヘッドホン",
-            "value": "Audio-Technica ATH-R50x"
+            "value": [
+              {
+                "name": "Audio-Technica ATH-R50x",
+                "detail": "(mogami 2893 ケーブル)"
+              }
+            ]
           },
           {
             "label": "イヤホン/IEMs",
@@ -111,8 +116,12 @@
             ]
           },
           {
-            "label": "DAC/AMP",
-            "value": "FiiO K11, Moondrop Dawn Pro"
+            "label": "据え置き型 DAC/AMP",
+            "value": "FiiO K11"
+          },
+          {
+            "label": "ドングル DAC",
+            "value": "Moondrop Dawn Pro"
           },
           {
             "label": "オーディオインターフェイス",
@@ -128,11 +137,11 @@
           },
           {
             "label": "音楽ストリーミング",
-            "value": "Feishin + Navidrome"
+            "value": "Feishin + Navidrome, Apple Music, Spotify"
           },
           {
             "label": "音源ファイル",
-            "value": "mora、CD rip、ストリーミングプラットフォーム、..."
+            "value": "CD、mora、ストリーミングプラットフォーム、..."
           }
         ]
       },

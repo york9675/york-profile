@@ -94,7 +94,12 @@
         "items": [
           {
             "label": "Headphones",
-            "value": "Audio-Technica ATH-R50x"
+            "value": [
+              {
+                "name": "Audio-Technica ATH-R50x",
+                "detail": "(with mogami 2893 cable)"
+              }
+            ]
           },
           {
             "label": "Earphones/IEMs",
@@ -111,8 +116,12 @@
             ]
           },
           {
-            "label": "DAC/AMP",
-            "value": "FiiO K11, Moondrop Dawn Pro"
+            "label": "Desktop DAC/AMP",
+            "value": "FiiO K11"
+          },
+          {
+            "label": "Dongle DAC",
+            "value": "Moondrop Dawn Pro"
           },
           {
             "label": "Audio Interface",
@@ -128,11 +137,11 @@
           },
           {
             "label": "Music Streaming",
-            "value": "Feishin + Navidrome"
+            "value": "Feishin + Navidrome, Apple Music, Spotify"
           },
           {
             "label": "Audio Files",
-            "value": "mora, CD rip, streaming platforms, ..."
+            "value": "CD, mora, streaming platforms, ..."
           }
         ]
       },

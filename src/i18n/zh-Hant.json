@@ -94,7 +94,12 @@
         "items": [
           {
             "label": "耳罩式耳機",
-            "value": "Audio-Technica ATH-R50x"
+            "value": [
+              {
+                "name": "Audio-Technica ATH-R50x",
+                "detail": "(搭配 mogami 2893 升級線)"
+              }
+            ]
           },
           {
             "label": "耳機/IEMs",
@@ -111,15 +116,19 @@
             ]
           },
           {
-            "label": "DAC/AMP",
-            "value": "FiiO K11, Moondrop Dawn Pro"
+            "label": "桌面型 DAC/AMP",
+            "value": "FiiO K11"
           },
           {
-            "label": "音訊/錄音介面",
+            "label": "小尾巴",
+            "value": "Moondrop Dawn Pro"
+          },
+          {
+            "label": "錄音介面",
             "value": "Arturia MiniFuse 1"
           },
           {
-            "label": "DAP",
+            "label": "隨身聽",
             "value": "Snowsky Echo Mini"
           },
           {
@@ -128,11 +137,11 @@
           },
           {
             "label": "音樂串流",
-            "value": "Feishin + Navidrome"
+            "value": "Feishin + Navidrome, Apple Music, Spotify"
           },
           {
             "label": "音訊檔案",
-            "value": "mora、CD rip、串流平台、..."
+            "value": "CD、mora、串流平台、..."
           }
         ]
       },
