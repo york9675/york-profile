@@ -2,7 +2,7 @@
 
 <p align="center">
   <a href="https://astro.build" target="_blank">
-    <img alt="Astro" src="https://img.shields.io/badge/Astro-7.0-BC52EE?logo=astro&logoColor=white&style=for-the-badge" />
+    <img alt="Astro" src="https://img.shields.io/badge/Astro-v7-BC52EE?logo=astro&logoColor=white&style=for-the-badge" />
   </a>
   <a href="/LICENSE" target="_blank">
     <img alt="License" src="https://img.shields.io/github/license/york9675/york-profile?logo=github&style=for-the-badge" />
@@ -14,6 +14,10 @@ This is the source code for my personal profile page, which is built using [Astr
 The site also includes [York Profile CLI](./src/scripts/cli/README.md), a browser terminal simulation.
 
 **Visit: https://york.qzz.io (or https://york-profile.vercel.app)**
+
+## Support
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/Q4T226QWSQ)
 
 ---
 
