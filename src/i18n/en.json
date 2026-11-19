@@ -250,6 +250,7 @@
     "closeViewer": "Close viewer",
     "artAlt": "Album artwork",
     "fullSizeArtworkLoading": "Full-size artwork is loading. Please wait…",
+    "fullSizeArtworkSlowLoading": "The original artwork is larger and may take a little longer to load.",
     "fullscreenLabel": "Now Playing Fullscreen",
     "closeFullscreen": "Close fullscreen",
     "viewInMusicBrainz": "View in MusicBrainz"

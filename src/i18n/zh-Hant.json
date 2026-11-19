@@ -250,6 +250,7 @@
     "closeViewer": "關閉檢視器",
     "artAlt": "專輯封面",
     "fullSizeArtworkLoading": "正在載入高解析度封面，請稍候…",
+    "fullSizeArtworkSlowLoading": "原始封面尺寸較大，載入可能需要多一點時間…",
     "fullscreenLabel": "正在播放全螢幕",
     "closeFullscreen": "關閉全螢幕",
     "viewInMusicBrainz": "在 MusicBrainz 檢視"

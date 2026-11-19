@@ -95,6 +95,41 @@ type CachedArtwork = {
 
 const fullSizeArtworkCache = new Map<string, CachedArtwork>();
 const artworkPreviewCache = new Map<string, string>();
+const artworkLoadingTimers = new WeakMap<HTMLElement, number>();
+const ARTWORK_SLOW_MESSAGE_DELAY_MS = 5000;
+
+function showArtworkLoading(element: HTMLElement | null) {
+  if (!element) return;
+
+  const previousTimer = artworkLoadingTimers.get(element);
+  if (previousTimer !== undefined) window.clearTimeout(previousTimer);
+
+  const initialText = element.dataset.initialText || element.textContent || '';
+  element.dataset.initialText = initialText;
+  element.textContent = initialText;
+  element.classList.remove('is-waiting-long');
+  element.hidden = false;
+
+  const timerId = window.setTimeout(() => {
+    if (!element.hidden) {
+      element.textContent = element.dataset.slowText || initialText;
+      element.classList.add('is-waiting-long');
+    }
+    artworkLoadingTimers.delete(element);
+  }, ARTWORK_SLOW_MESSAGE_DELAY_MS);
+  artworkLoadingTimers.set(element, timerId);
+}
+
+function hideArtworkLoading(element: HTMLElement | null) {
+  if (!element) return;
+
+  const timerId = artworkLoadingTimers.get(element);
+  if (timerId !== undefined) window.clearTimeout(timerId);
+  artworkLoadingTimers.delete(element);
+  element.hidden = true;
+  element.classList.remove('is-waiting-long');
+  element.textContent = element.dataset.initialText || element.textContent;
+}
 
 function preloadFullSizeArtwork(url: string) {
   const cached = fullSizeArtworkCache.get(url);
@@ -357,8 +392,8 @@ function setNowPlayingStateMessage(message: string, statusMessage: string, isErr
   const fsAlbumEl = $('#np-fs-album');
   const fsArtEl = $<HTMLImageElement>('#np-fs-art');
   const fsBgEl = $('#np-fs-bg');
-  $('#np-iv-art-loading')?.setAttribute('hidden', '');
-  $('#np-fs-art-loading')?.setAttribute('hidden', '');
+  hideArtworkLoading($('#np-iv-art-loading'));
+  hideArtworkLoading($('#np-fs-art-loading'));
   const widgetEl = $('#now-playing');
 
   updateNowPlayingStatus($('#np-status'), false, statusMessage, 0, isError);
@@ -552,7 +587,8 @@ function renderTrack(state: Extract<NowPlayingState, { kind: 'track' }>) {
       const fullSizeUrl = getFullSizeArtworkUrl(state.art);
       const cachedFullSize = Boolean(getCachedFullSizeArtwork(fullSizeUrl));
       const initialArtworkUrl = cachedFullSize ? fullSizeUrl : getArtworkPreviewUrl(artEl, state.art);
-      if (fsArtLoading) fsArtLoading.hidden = cachedFullSize || fullSizeUrl === state.art;
+      if (cachedFullSize || fullSizeUrl === state.art) hideArtworkLoading(fsArtLoading);
+      else showArtworkLoading(fsArtLoading);
       if (fsArtEl) {
         fsArtEl.dataset.artSource = state.art;
         fsArtEl.dataset.displayArtSource = initialArtworkUrl;
@@ -562,10 +598,10 @@ function renderTrack(state: Extract<NowPlayingState, { kind: 'track' }>) {
             if (!fsViewerEl.hidden && fsArtEl.dataset.artSource === state.art) {
               fsArtEl.dataset.displayArtSource = fullSizeUrl;
               fsArtEl.src = fullSizeUrl;
-              if (fsArtLoading) fsArtLoading.hidden = true;
+              hideArtworkLoading(fsArtLoading);
             }
           }).catch(() => {
-            if (fsArtEl.dataset.artSource === state.art && fsArtLoading) fsArtLoading.hidden = true;
+            if (fsArtEl.dataset.artSource === state.art) hideArtworkLoading(fsArtLoading);
             // Keep showing the low-resolution artwork when the full-size image is unavailable.
           });
         }
@@ -852,7 +888,7 @@ export function initNowPlaying() {
     onClose: () => {
       ivArt?.removeAttribute('src');
       if (ivArt) delete ivArt.dataset.highResTarget;
-      if (ivArtLoading) ivArtLoading.hidden = true;
+      hideArtworkLoading(ivArtLoading);
     }
   });
 
@@ -940,17 +976,18 @@ export function initNowPlaying() {
     const isFullSizePending = !cachedFullSize && fullSizeUrl !== artworkUrl;
     if (ivArt) {
       ivArt.src = cachedFullSize ? fullSizeUrl : getArtworkPreviewUrl(npArtEl, artworkUrl);
-      if (ivArtLoading) ivArtLoading.hidden = !isFullSizePending;
+      if (isFullSizePending) showArtworkLoading(ivArtLoading);
+      else hideArtworkLoading(ivArtLoading);
       if (ivExternal) ivExternal.href = fullSizeUrl;
       if (fullSizeUrl !== artworkUrl) {
         ivArt.dataset.highResTarget = fullSizeUrl;
         void preloadFullSizeArtwork(fullSizeUrl).then(() => {
           if (imageViewer.isOpen && ivArt.dataset.highResTarget === fullSizeUrl) {
             ivArt.src = fullSizeUrl;
-            if (ivArtLoading) ivArtLoading.hidden = true;
+            hideArtworkLoading(ivArtLoading);
           }
         }).catch(() => {
-          if (ivArt.dataset.highResTarget === fullSizeUrl && ivArtLoading) ivArtLoading.hidden = true;
+          if (ivArt.dataset.highResTarget === fullSizeUrl) hideArtworkLoading(ivArtLoading);
           // Keep showing the low-resolution artwork when the full-size image is unavailable.
         });
       } else {
@@ -989,7 +1026,8 @@ export function initNowPlaying() {
     const cachedFullSize = Boolean(getCachedFullSizeArtwork(fullSizeUrl));
     const isFullSizePending = !cachedFullSize && fullSizeUrl !== artworkUrl;
     const initialImageUrl = cachedFullSize ? fullSizeUrl : getArtworkPreviewUrl(npArtEl, artworkUrl);
-    if (fsArtLoading) fsArtLoading.hidden = !isFullSizePending;
+    if (isFullSizePending) showArtworkLoading(fsArtLoading);
+    else hideArtworkLoading(fsArtLoading);
     if (fsArtEl) {
       fsArtEl.dataset.artSource = artworkUrl;
       fsArtEl.dataset.displayArtSource = initialImageUrl;
@@ -1012,9 +1050,9 @@ export function initNowPlaying() {
         fsBgEl.dataset.bg = fullSizeUrl;
         setArtworkBackground(fsBgEl, fullSizeUrl);
       }
-      if (fsArtLoading) fsArtLoading.hidden = true;
+      hideArtworkLoading(fsArtLoading);
     }).catch(() => {
-      if (fsArtEl?.dataset.artSource === artworkUrl && fsArtLoading) fsArtLoading.hidden = true;
+      if (fsArtEl?.dataset.artSource === artworkUrl) hideArtworkLoading(fsArtLoading);
       // Keep showing the low-resolution artwork when the full-size image is unavailable.
     });
   };
@@ -1065,7 +1103,7 @@ export function initNowPlaying() {
     onOpen: enterFullscreenChromeHiddenMode,
     onClose: () => {
       exitFullscreenChromeHiddenMode();
-      if (fsArtLoading) fsArtLoading.hidden = true;
+      hideArtworkLoading(fsArtLoading);
       fsArtEl?.removeAttribute('src');
       if (fsArtEl) {
         delete fsArtEl.dataset.artSource;

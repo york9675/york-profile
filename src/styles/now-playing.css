@@ -681,6 +681,16 @@ html[data-theme="light"] .np-iv-image-wrapper {
   pointer-events: none;
 }
 
+.np-art-loading.is-waiting-long {
+  animation: npArtworkLoadingPulse 1.8s ease-in-out infinite;
+}
+
+@keyframes npArtworkLoadingPulse {
+  50% {
+    opacity: 0.72;
+  }
+}
+
 .np-iv-info {
   padding: 1.5rem;
   text-align: center;

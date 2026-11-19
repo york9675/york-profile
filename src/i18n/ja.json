@@ -250,6 +250,7 @@
     "closeViewer": "ビューアを閉じる",
     "artAlt": "アルバムアート",
     "fullSizeArtworkLoading": "高解像度のアートワークを読み込み中です。お待ちください…",
+    "fullSizeArtworkSlowLoading": "元のアートワークはサイズが大きいため、読み込みに時間がかかる場合があります。",
     "fullscreenLabel": "再生中の全画面表示",
     "closeFullscreen": "全画面を閉じる",
     "viewInMusicBrainz": "MusicBrainz で見る"
