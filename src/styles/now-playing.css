@@ -932,9 +932,9 @@ html[data-theme="light"] .np-fs-close:focus {
 
 .np-fs-art-wrap {
   flex-shrink: 0;
-  width: min(50vh, 70vw, 500px);
+  width: min(60vh, 80vw, 600px);
   aspect-ratio: 1/1;
-  border-radius: 12px;
+  border-radius: 5px;
   overflow: hidden;
   box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
   background: #111;
