@@ -23,7 +23,7 @@ export const serviceUrls = {
 export const openAliases = {
   home: cliConfig.homeRoute,
   github: profileLinks.github,
-  lastfm: nowPlayingConfig.profileUrl,
+  listenbrainz: nowPlayingConfig.profileUrl,
   music: profileLinks.bandcamp
 } as const;
 

@@ -26,43 +26,19 @@ const { t } = Astro.props;
   <div class="np-widget is-loading" aria-live="polite" aria-atomic="true" aria-busy="true">
     <div class="np-inner">
       <button id="np-art-link" class="np-art-link" type="button" aria-label={t.artLabel}>
-        <img id="np-art" class="np-art" alt={t.artLoadingAlt} width="80" height="80" loading="lazy" decoding="async" fetchpriority="low" crossorigin="anonymous" />
+        <img id="np-art" class="np-art" alt={t.artLoadingAlt} width="80" height="80" loading="eager" decoding="async" fetchpriority="high" />
       </button>
       <div class="np-info">
         <p class="np-status" id="np-status">{t.loading}</p>
-        <p class="np-title"><span class="np-title-main"><a id="np-track" href={nowPlayingConfig.profileUrl} target="_blank" rel="noopener noreferrer">—</a></span></p>
-        <p class="np-artist"><a id="np-artist" href={nowPlayingConfig.profileUrl} target="_blank" rel="noopener noreferrer">—</a></p>
+        <p class="np-title"><span class="np-title-main"><a id="np-track" target="_blank" rel="noopener noreferrer">—</a></span></p>
+        <p class="np-artist"><a id="np-artist" target="_blank" rel="noopener noreferrer">—</a></p>
         <p class="np-album"><button id="np-album" type="button">—</button></p>
       </div>
     </div>
   </div>
-  <div class="np-meta" aria-live="polite">
-    <span id="np-playcount" class="np-meta-item np-playcount" hidden>
-      <i class="fas fa-play" aria-hidden="true"></i>
-      <a id="np-playcount-link" href={nowPlayingConfig.profileUrl} target="_blank" rel="noopener noreferrer">
-        <span id="np-playcount-text">—</span>
-      </a>
-    </span>
-    <span id="np-meta-sep" class="np-meta-sep" aria-hidden="true" hidden>·</span>
-    <span id="np-loved-meta" class="np-meta-item" hidden>
-      <i class="fas fa-heart" aria-hidden="true"></i>
-      <span>{t.lovedTrack}</span>
-    </span>
-  </div>
-  <div class="np-meta np-artist-meta" aria-live="polite" id="np-artist-meta" hidden>
-    <span class="np-meta-item">
-      <i class="fas fa-headphones" aria-hidden="true"></i>
-      <span class="np-artist-meta-wrap">
-        <span id="np-artist-meta-text" data-template={t.artistMetaTemplate}>
-          {t.artistMetaTemplate.split('{artist}')[0]}<a id="np-artist-meta-name" href={nowPlayingConfig.profileUrl} target="_blank" rel="noopener noreferrer">—</a>{t.artistMetaTemplate.split('{artist}')[1]?.split('{count}')[0]}<a id="np-artist-meta-count" href={nowPlayingConfig.profileUrl} target="_blank" rel="noopener noreferrer">—</a>{t.artistMetaTemplate.split('{count}')[1]}
-        </span>
-      </span>
-    </span>
-  </div>
   <div class="np-actions">
-    <span class="np-since" id="np-since" data-date={nowPlayingConfig.sinceDateIso}><i class="fas fa-info-circle" aria-hidden="true"></i> {t.dataSince}</span>
     <a href={nowPlayingConfig.profileUrl} target="_blank" rel="noopener noreferrer" class="btn-plain small btn-arrow">
-      <i class="fab fa-lastfm" aria-hidden="true"></i> {t.lastFmProfile} <span class="arrow" aria-hidden="true">→</span>
+      <i class="fas fa-headphones" aria-hidden="true"></i> {t.listenBrainzProfile} <span class="arrow" aria-hidden="true">→</span>
     </a>
   </div>
 </section>

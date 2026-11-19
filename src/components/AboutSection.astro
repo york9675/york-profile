@@ -22,7 +22,6 @@ const recommendedArtistGroups = [
   }
 ];
 
-const getLastFmArtistUrl = (artist: string) => `https://www.last.fm/music/${encodeURIComponent(artist)}`;
 ---
 
 <section id="about" class="panel" aria-labelledby="about-heading">
@@ -138,9 +137,7 @@ const getLastFmArtistUrl = (artist: string) => `https://www.last.fm/music/${enco
                     <h5 class="artist-group-title" id={`artist-group-${group.genre.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}>{group.genre}</h5>
                     <div class="artist-list">
                       {group.artists.map((artist) => (
-                        <a href={getLastFmArtistUrl(artist)} target="_blank" rel="noopener noreferrer">
-                          {artist}
-                        </a>
+                        <span>{artist}</span>
                       ))}
                     </div>
                   </section>

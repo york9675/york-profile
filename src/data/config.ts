@@ -48,31 +48,10 @@ export const profileHandles = {
 
 export const nowPlayingConfig = {
   /**
-   * Last.fm proxy endpoint for the now playing widget.
-   *
-   * Test routes:
-   * - /test/slow (default 6000ms), optional override with ?ms=3000
-   * - /test/missing-artist
-   * - /test/missing-album
-   * - /test/missing-both
+   * ListenBrainz account and API configuration for the now playing widget.
    */
-  apiUrl: 'https://lastfm-proxy.york.qzz.io/',
-
-  /**
-   * Last.fm username for fallback profile/library links when the API does not
-   * include the current account name.
-   */
-  username: 'york0524',
-
-  /**
-   * Primary Last.fm profile URL used across the site.
-   */
-  profileUrl: 'https://www.last.fm/user/york0524',
-
-  /**
-   * Account/library start date shown in the now playing footer.
-   */
-  sinceDateIso: '2025-07-11T00:00:00Z'
+  username: 'York',
+  profileUrl: 'https://listenbrainz.org/user/York/'
 } as const;
 
 export const vercelToolbarConfig = {

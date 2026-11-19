@@ -164,7 +164,7 @@
     }
   },
   "nowPlaying": {
-    "heading": "Last.fm",
+    "heading": "ListenBrainz",
     "refreshTitle": "再生中を更新",
     "refreshLabel": "再生中を更新",
     "fullscreenTitle": "全画面で表示",
@@ -172,10 +172,7 @@
     "artLabel": "アルバムアートビューアを開く",
     "artLoadingAlt": "アルバムアートを読み込み中",
     "loading": "読み込み中...",
-    "lovedTrack": "お気に入りの曲",
-    "artistMetaTemplate": "{artist} を {count} 回聴きました。",
-    "dataSince": "データは 2025年7月11日 から",
-    "lastFmProfile": "プロフィール"
+    "listenBrainzProfile": "ListenBrainz プロフィール"
   },
   "links": {
     "label": "リンク",
@@ -252,17 +249,15 @@
     "close": "閉じる",
     "closeViewer": "ビューアを閉じる",
     "artAlt": "アルバムアート",
-    "albumPlayTemplate": "このアルバムを {count} 回聴きました。",
-    "viewOnLastFm": "Last.fm で見る",
     "fullscreenLabel": "再生中の全画面表示",
-    "closeFullscreen": "全画面を閉じる"
+    "closeFullscreen": "全画面を閉じる",
+    "viewInMusicBrainz": "MusicBrainz で見る"
   },
   "runtime": {
     "justNow": "たった今",
     "minutesAgo": "{count} 分前",
     "hoursAgo": "{count} 時間前",
     "daysAgo": "{count} 日前",
-    "plays": "{count} 回再生",
     "currentlyListening": "現在再生中",
     "lastPlayed": "前回再生",
     "autoRefresh": "{seconds} 秒後に自動更新",
@@ -279,18 +274,7 @@
     "viewAlbum": "アルバムを見る",
     "albumByArtist": "{artist} の『{album}』",
     "trackByArtist": "{artist} の「{track}」",
-    "onLastFm": "Last.fm で {name} を見る",
-    "albumByArtistOnLastFm": "Last.fm で {artist} の『{album}』を見る",
-    "viewMyPlaysForTrack": "Last.fm で {artist} の「{title}」の再生履歴を見る",
-    "viewMyPlays": "Last.fm で再生履歴を見る",
-    "year": "{count} 年",
-    "years": "{count} 年",
-    "month": "{count} か月",
-    "months": "{count} か月",
-    "day": "{count} 日",
-    "days": "{count} 日",
-    "durationJoin": "{first}と{second}",
-    "sinceLabel": "データは {date} から",
-    "sinceTooltip": "私の Last.fm アカウントは {ago}前に作成され、再生回数はその時点以降のすべての再生に基づいています。実際の再生回数はここに表示される数より多い場合があります。"
+    "viewOnMusicBrainz": "MusicBrainz で見る",
+    "noHistory": "再生履歴がありません"
   }
 }

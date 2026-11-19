@@ -175,7 +175,7 @@
   gap: 0.45rem;
 }
 
-.artist-list a {
+.artist-list span {
   border: 1px solid var(--line);
   border-radius: 999px;
   padding: 0.25rem 0.6rem;
@@ -183,14 +183,6 @@
   color: var(--fg-soft);
   text-decoration: none;
   background: color-mix(in srgb, var(--fg) 4%, transparent);
-  transition: border-color var(--transition), color var(--transition), background var(--transition);
-}
-
-.artist-list a:hover,
-.artist-list a:focus {
-  border-color: var(--fg-soft);
-  color: var(--fg);
-  background: color-mix(in srgb, var(--fg) 8%, transparent);
 }
 
 .artist-groups + .subtext {

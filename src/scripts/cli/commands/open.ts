@@ -26,7 +26,7 @@ export const openCommand: CommandDefinition = {
   name: 'open',
   usage: 'open [-h] <alias|domain|http(s)://url>',
   description: 'open a profile alias or validated URL',
-  manual: 'Open home, github, lastfm, music, or a valid HTTP(S) URL. Bare domains must contain a valid dotted hostname; localhost and IP addresses are also accepted.',
+  manual: 'Open home, github, listenbrainz, music, or a valid HTTP(S) URL. Bare domains must contain a valid dotted hostname; localhost and IP addresses are also accepted.',
   execute: ({ terminal }, args) => {
     const target = args[0];
     if (!target) {

@@ -1,36 +1,50 @@
 /**
- * Now Playing widget - displays currently playing/last played track from Last.fm
+ * Now Playing widget - displays the current or most recent ListenBrainz listen.
  */
 
 import { $ } from './utils';
 import { nowPlayingConfig } from '../data/config';
 import { NOW_PLAYING_REFRESH_INTERVAL, NOW_PLAYING_SCROLL_PAUSE_DURATION } from './constants';
 
-const LASTFM_API = nowPlayingConfig.apiUrl;
-const LASTFM_PROFILE = nowPlayingConfig.profileUrl;
-const LASTFM_USERNAME = nowPlayingConfig.username;
+const LISTENBRAINZ_API = 'https://api.listenbrainz.org/1';
 const NP_INTERVAL = NOW_PLAYING_REFRESH_INTERVAL;
 const SCROLL_PAUSE_DURATION = NOW_PLAYING_SCROLL_PAUSE_DURATION;
 
 let npCountdown = NP_INTERVAL;
 let npHasResolvedOnce = false;
-let npLastStateKey = '';
+let currentState: NowPlayingState | null = null;
 let npCountdownTimerId: ReturnType<typeof setInterval> | undefined;
 let npFullscreenIdleTimerId: ReturnType<typeof setTimeout> | undefined;
+let activeListenController: AbortController | undefined;
+let listenRetryTimerId: ReturnType<typeof setTimeout> | undefined;
+let resizeTimerId: ReturnType<typeof setTimeout> | undefined;
 let isNowPlayingInitialized = false;
+let isNowPlayingVisible = false;
+let activeModalCount = 0;
+let savedBodyOverflow = '';
+let savedBodyPaddingRight = '';
+let savedAppInert = false;
+let savedSettingsInert = false;
+
+function cancelListenRequest() {
+  activeListenController?.abort();
+  activeListenController = undefined;
+  if (listenRetryTimerId) clearTimeout(listenRetryTimerId);
+  listenRetryTimerId = undefined;
+}
 
 const defaultRuntimeText = {
   justNow: 'just now',
   minutesAgo: '{count}m ago',
   hoursAgo: '{count}h ago',
   daysAgo: '{count}d ago',
-  plays: '{count} plays',
   currentlyListening: 'Currently Listening',
   lastPlayed: 'Last Played',
   autoRefresh: 'Auto-refresh in {seconds}s',
   failedNowPlaying: 'Failed to load now playing',
   failed: 'Failed to load',
   unavailable: 'Unavailable',
+  noHistory: 'No listening history yet',
   fetchFailed: 'Could not fetch data',
   tryRefreshing: 'Please try refreshing and if the issue persists, report it to me.',
   unknownArtist: 'Unknown Artist',
@@ -39,21 +53,9 @@ const defaultRuntimeText = {
   artUnavailable: 'Now playing unavailable',
   albumArtworkUnavailable: 'Album artwork unavailable',
   viewAlbum: 'View album',
+  viewOnMusicBrainz: 'View in MusicBrainz',
   albumByArtist: '{album} by {artist}',
-  trackByArtist: '{track} by {artist}',
-  onLastFm: '{name} on Last.fm',
-  albumByArtistOnLastFm: '{album} by {artist} on Last.fm',
-  viewMyPlaysForTrack: 'View my plays for {title} by {artist} on Last.fm',
-  viewMyPlays: 'View my plays on Last.fm',
-  year: '{count} year',
-  years: '{count} years',
-  month: '{count} month',
-  months: '{count} months',
-  day: '{count} day',
-  days: '{count} days',
-  durationJoin: '{first} and {second}',
-  sinceLabel: 'Data since {date}',
-  sinceTooltip: 'My Last.fm account was created {ago} ago, and the playcount is based on all plays since then. Please note that the actual playcount may be higher than it shows here.'
+  trackByArtist: '{track} by {artist}'
 };
 
 type RuntimeText = typeof defaultRuntimeText;
@@ -79,93 +81,97 @@ function formatTemplate(template: string, values: Record<string, string | number
   );
 }
 
-function formatInlineTemplate(
-  container: HTMLElement,
-  template: string,
-  replacements: Record<string, Node | string | number>
-) {
-  const fragment = document.createDocumentFragment();
-  const matches = [...template.matchAll(/\{([a-zA-Z0-9_]+)\}/g)];
-  let offset = 0;
-
-  matches.forEach(match => {
-    const index = match.index ?? 0;
-    if (index > offset) fragment.append(template.slice(offset, index));
-
-    const replacement = replacements[match[1]];
-    if (replacement instanceof Node) {
-      fragment.append(replacement);
-    } else if (replacement !== undefined) {
-      fragment.append(String(replacement));
-    } else {
-      fragment.append(match[0]);
-    }
-
-    offset = index + match[0].length;
-  });
-
-  if (offset < template.length) fragment.append(template.slice(offset));
-  container.replaceChildren(fragment);
+function getFullSizeArtworkUrl(artworkUrl: string) {
+  if (!artworkUrl.includes('coverartarchive.org')) return artworkUrl;
+  return artworkUrl
+    .replace(/-\d+\.jpg$/i, '.jpg')
+    .replace('/front-250', '/front');
 }
 
-type NowPlayingState = {
-  type: string;
-  art?: string;
-  album?: string;
-  artist?: string;
-  artistUrl?: string;
-  albumPlayCount?: number;
-  albumLibraryUrl?: string;
-  albumUrl?: string;
-  trackUrl?: string;
+function getMusicBrainzEntityUrl(
+  entity: 'artist' | 'recording' | 'release-group',
+  mbid: string | undefined,
+  query: string
+) {
+  if (mbid) return `https://musicbrainz.org/${entity}/${encodeURIComponent(mbid)}`;
+  const search = new URL('https://musicbrainz.org/search');
+  search.searchParams.set('query', query);
+  search.searchParams.set('type', entity);
+  search.searchParams.set('method', 'indexed');
+  return search.href;
+}
+
+type NowPlayingState =
+  | { kind: 'track'; trackKey: string; isPlaying: boolean; playedAt: number; title: string; artist: string; album: string; art: string; artworkCandidates: string[]; artistUrl: string; trackUrl: string; albumUrl: string }
+  | { kind: 'empty' }
+  | { kind: 'error' };
+
+type ListenBrainzListen = {
+  listened_at?: number;
+  track_metadata?: {
+    track_name?: string;
+    artist_name?: string;
+    release_name?: string;
+    additional_info?: {
+      cover_art?: string;
+      artist_mbids?: string[];
+      artist_names?: string[];
+      recording_mbid?: string;
+      release_mbid?: string;
+      release_group_mbid?: string;
+      track_mbid?: string;
+    };
+    mbid_mapping?: {
+      caa_id?: number;
+      caa_release_mbid?: string;
+      recording_mbid?: string;
+      release_mbid?: string;
+      release_group_mbid?: string;
+      artist_mbids?: string[];
+    };
+  };
 };
 
-/**
- * Create and inject CSS keyframes for scroll animation with pause timing
- */
-function createScrollAnimationWithPauses(totalDuration: number) {
-  const styleId = 'np-scroll-animation-pauses';
-  // Remove existing style if present
-  const existing = document.getElementById(styleId);
-  if (existing) existing.remove();
+type ListenBrainzResponse = {
+  payload?: {
+    playing_now?: boolean;
+    listens?: ListenBrainzListen[];
+  };
+};
 
-  const style = document.createElement('style');
-  style.id = styleId;
-  
-  // Calculate keyframe percentages based on pause duration
-  // pausePercent = (pauseDuration / totalDuration) * 100
-  const pausePercent = (SCROLL_PAUSE_DURATION / totalDuration) * 100;
-  const scrollStart = pausePercent;
-  const scrollEnd = 100 - pausePercent;
-  
-  const keyframes = `
-    @keyframes npTickerWithPauses {
-      0% {
-        transform: translateX(0);
-      }
-      ${scrollStart}% {
-        transform: translateX(0);
-      }
-      ${scrollEnd}% {
-        transform: translateX(calc(-1 * var(--np-scroll-distance, 0px)));
-      }
-      100% {
-        transform: translateX(calc(-1 * var(--np-scroll-distance, 0px)));
-      }
-    }
-  `;
-  style.textContent = keyframes;
-  document.head.appendChild(style);
+const marqueeAnimations = new WeakMap<HTMLElement, Animation>();
+const marqueeFrames = new WeakMap<HTMLElement, number>();
+
+function stopMarquee(textEl: HTMLElement) {
+  marqueeAnimations.get(textEl)?.cancel();
+  marqueeAnimations.delete(textEl);
+  const frame = marqueeFrames.get(textEl);
+  if (frame) cancelAnimationFrame(frame);
+  marqueeFrames.delete(textEl);
+  textEl.classList.remove('is-scrolling');
+  textEl.style.removeProperty('transform');
+}
+
+function stopAllMarquees() {
+  document.querySelectorAll<HTMLElement>('#np-track, #np-artist, #np-album').forEach(stopMarquee);
 }
 
 /**
  * Format now playing status with live dot indicator
  */
-function formatNowPlayingStatus({ isPlaying, statusText }: { isPlaying: boolean; statusText: string }) {
-  const livePrefix = isPlaying
-    ? '<span class="np-live-dot" aria-hidden="true"></span>'
-    : '';
-  return `${livePrefix}${statusText}`;
+function updateNowPlayingStatus(element: HTMLElement | null, isPlaying: boolean, statusText: string, playedAt: number, isError = false) {
+  if (!element) return;
+  const fragment = document.createDocumentFragment();
+  if (isPlaying || isError) {
+    const liveDot = document.createElement('span');
+    liveDot.className = isError ? 'np-error-dot' : 'np-live-dot';
+    liveDot.setAttribute('aria-hidden', 'true');
+    fragment.append(liveDot, ' ');
+  }
+  fragment.append(statusText);
+  element.replaceChildren(fragment);
+  if (!isPlaying && playedAt) element.title = formatFullDateTime(playedAt);
+  else element.removeAttribute('title');
 }
 
 /**
@@ -196,30 +202,17 @@ function formatFullDateTime(epoch: number) {
 }
 
 /**
- * Format play count label
- */
-function formatPlayCount(playCount: number | string) {
-  const text = getRuntimeText();
-  const parsedCount = Number(playCount);
-  if (!Number.isFinite(parsedCount) || parsedCount < 0) {
-    return '';
-  }
-  return formatTemplate(text.plays, {
-    count: parsedCount.toLocaleString(document.documentElement.lang || undefined)
-  });
-}
-
-/**
  * Extract dominant RGB color from an image element
  */
 function extractImageColor(imgEl: HTMLImageElement | null) {
   if (!imgEl || !imgEl.naturalWidth) return null;
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d', { willReadFrequently: true });
-  canvas.width = imgEl.naturalWidth;
-  canvas.height = imgEl.naturalHeight;
+  canvas.width = 16;
+  canvas.height = 16;
   try {
-    ctx.drawImage(imgEl, 0, 0);
+    ctx?.drawImage(imgEl, 0, 0, canvas.width, canvas.height);
+    if (!ctx) return null;
     const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
     let r = 0, g = 0, b = 0, count = 0;
     // sample every 10th pixel for performance
@@ -253,125 +246,64 @@ function setNowPlayingLoading(isLoading: boolean) {
     fsViewerEl.classList.toggle('is-loading', isLoading);
   }
 
-  if (isLoading) {
-    const lovedMetaEl = $('#np-loved-meta');
-    const metaSepEl = $('#np-meta-sep');
-    const playCountEl = $('#np-playcount');
-    const playCountTextEl = $('#np-playcount-text');
-    const playCountLinkEl = $<HTMLAnchorElement>('#np-playcount-link');
-    const artistMetaEl = $('#np-artist-meta');
-    if (lovedMetaEl) lovedMetaEl.hidden = true;
-    if (metaSepEl) metaSepEl.hidden = true;
-    if (playCountEl) playCountEl.hidden = true;
-    if (artistMetaEl) artistMetaEl.hidden = true;
-    if (playCountTextEl) playCountTextEl.textContent = '';
-    if (playCountLinkEl) {
-      playCountLinkEl.setAttribute('href', LASTFM_PROFILE);
-      playCountLinkEl.removeAttribute('aria-label');
-    }
-  }
 }
 
 /**
  * Display error state
  */
-function setNowPlayingError() {
-  const text = getRuntimeText();
-  const nextStateKey = 'error';
-  if (nextStateKey === npLastStateKey) return;
-
-  const statusEl = $('#np-status');
+function setNowPlayingStateMessage(message: string, statusMessage: string, isError = false) {
   const trackEl = $<HTMLAnchorElement>('#np-track');
-  const lovedMetaEl = $('#np-loved-meta');
-  const metaSepEl = $('#np-meta-sep');
   const artistEl = $<HTMLAnchorElement>('#np-artist');
-  const albumEl = $('#np-album');
-  const playCountEl = $('#np-playcount');
-  const playCountTextEl = $('#np-playcount-text');
-  const artistMetaEl = $('#np-artist-meta');
+  const albumEl = $<HTMLButtonElement>('#np-album');
   const artEl = $<HTMLImageElement>('#np-art');
-  const artLinkEl = $<HTMLButtonElement>('#np-art-link');
-  const widgetEl = $('#now-playing');
-
-  // Fullscreen elements
-  const fsStatusEl = $('#np-fs-status');
   const fsTrackEl = $('#np-fs-track');
   const fsArtistEl = $('#np-fs-artist');
   const fsAlbumEl = $('#np-fs-album');
   const fsArtEl = $<HTMLImageElement>('#np-fs-art');
   const fsBgEl = $('#np-fs-bg');
+  const widgetEl = $('#now-playing');
 
-  if (widgetEl) widgetEl.style.removeProperty('--np-color');
-
-  if (statusEl) {
-    statusEl.innerHTML = `<span class="np-error-dot" aria-hidden="true"></span> ${text.failedNowPlaying}`;
-  }
-  if (fsStatusEl) {
-    fsStatusEl.innerHTML = `<span class="np-error-dot" aria-hidden="true"></span> ${text.failed}`;
-  }
-  
+  updateNowPlayingStatus($('#np-status'), false, statusMessage, 0, isError);
+  updateNowPlayingStatus($('#np-fs-status'), false, statusMessage, 0, isError);
   if (trackEl) {
-    trackEl.textContent = text.unavailable;
-    trackEl.href = LASTFM_PROFILE;
+    trackEl.textContent = message;
+    trackEl.removeAttribute('href');
   }
-  if (fsTrackEl) {
-    fsTrackEl.textContent = text.unavailable;
-  }
-  
-  if (lovedMetaEl) {
-    lovedMetaEl.hidden = true;
-  }
-  
   if (artistEl) {
-    artistEl.textContent = text.fetchFailed;
-    artistEl.href = LASTFM_PROFILE;
+    artistEl.textContent = '';
+    artistEl.removeAttribute('href');
   }
-  if (fsArtistEl) {
-    fsArtistEl.textContent = text.fetchFailed;
-  }
-  
-  if (albumEl) {
-    albumEl.textContent = text.tryRefreshing;
-  }
-  if (fsAlbumEl) {
-    fsAlbumEl.textContent = '';
-  }
-  if (playCountEl) {
-    playCountEl.hidden = true;
-  }
-  if (playCountTextEl) {
-    playCountTextEl.textContent = '';
-  }
-  if (artistMetaEl) {
-    artistMetaEl.hidden = true;
-  }
-  const playCountLinkEl = $('#np-playcount-link');
-  if (playCountLinkEl) {
-    playCountLinkEl.setAttribute('href', LASTFM_PROFILE);
-    playCountLinkEl.removeAttribute('aria-label');
-  }
-  if (metaSepEl) {
-    metaSepEl.hidden = true;
-  }
+  if (albumEl) albumEl.textContent = '';
+  if (fsTrackEl) fsTrackEl.textContent = message;
+  if (fsArtistEl) fsArtistEl.textContent = '';
+  if (fsAlbumEl) fsAlbumEl.textContent = '';
   if (artEl) {
     artEl.removeAttribute('src');
-    artEl.alt = text.artUnavailable;
+    delete artEl.dataset.artSource;
+    delete artEl.dataset.fallbackArtworks;
+    artEl.classList.remove('is-loading-art');
+    artEl.alt = message;
   }
-  if (fsArtEl) {
-    fsArtEl.removeAttribute('src');
-    fsArtEl.alt = text.artUnavailable;
-  }
+  fsArtEl?.removeAttribute('src');
   if (fsBgEl) {
     fsBgEl.dataset.bg = '';
     fsBgEl.style.backgroundImage = 'none';
   }
-  
-  if (artLinkEl) {
-    artLinkEl.setAttribute('aria-label', text.artUnavailable);
-  }
-
-  npLastStateKey = nextStateKey;
+  widgetEl?.style.removeProperty('--np-color');
+  stopAllMarquees();
   refreshNowPlayingScroll();
+}
+
+function setNowPlayingError() {
+  const text = getRuntimeText();
+  currentState = { kind: 'error' };
+  setNowPlayingStateMessage(text.unavailable, text.failedNowPlaying, true);
+}
+
+function setNoListeningHistory() {
+  const text = getRuntimeText();
+  currentState = { kind: 'empty' };
+  setNowPlayingStateMessage(text.noHistory, text.noHistory);
 }
 
 /**
@@ -380,30 +312,39 @@ function setNowPlayingError() {
 function applyNowPlayingScroll(textEl: HTMLElement | null, lineEl: Element | null) {
   if (!textEl || !lineEl) return;
 
+  stopMarquee(textEl);
   textEl.classList.add('np-scroll-text');
-  textEl.classList.remove('is-scrolling');
-  textEl.style.removeProperty('--np-scroll-distance');
-  textEl.style.removeProperty('--np-scroll-duration');
-  textEl.style.removeProperty('--np-scroll-pause-duration');
-
-  requestAnimationFrame(() => {
+  const frame = requestAnimationFrame(() => {
+    marqueeFrames.delete(textEl);
     const overflow = textEl.scrollWidth - lineEl.clientWidth;
-    if (overflow <= 8) return;
+    if (overflow <= 8 || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     const distance = overflow + 4;
-    // Calculate scroll duration based on distance (26px per second)
     const scrollDuration = Math.min(24, Math.max(8, distance / 26));
-    // Total duration includes pauses at start and end
     const totalDuration = scrollDuration + (2 * SCROLL_PAUSE_DURATION);
-    
-    // Create animation with pauses
-    createScrollAnimationWithPauses(totalDuration);
-    
-    textEl.style.setProperty('--np-scroll-distance', `${distance}px`);
-    textEl.style.setProperty('--np-scroll-duration', `${totalDuration}s`);
-    textEl.style.setProperty('--np-scroll-pause-duration', `${SCROLL_PAUSE_DURATION}s`);
+    const pauseOffset = SCROLL_PAUSE_DURATION / totalDuration;
+    const animation = textEl.animate([
+      { transform: 'translateX(0)', offset: 0 },
+      { transform: 'translateX(0)', offset: pauseOffset },
+      { transform: `translateX(-${distance}px)`, offset: 1 - pauseOffset },
+      { transform: `translateX(-${distance}px)`, offset: 1 }
+    ], {
+      duration: totalDuration * 1000,
+      iterations: Infinity,
+      direction: 'alternate',
+      easing: 'linear'
+    });
+    marqueeAnimations.set(textEl, animation);
     textEl.classList.add('is-scrolling');
+    if (!textEl.dataset.marqueeEvents) {
+      textEl.dataset.marqueeEvents = 'true';
+      textEl.addEventListener('pointerenter', () => marqueeAnimations.get(textEl)?.pause());
+      textEl.addEventListener('pointerleave', () => marqueeAnimations.get(textEl)?.play());
+      textEl.addEventListener('focusin', () => marqueeAnimations.get(textEl)?.pause());
+      textEl.addEventListener('focusout', () => marqueeAnimations.get(textEl)?.play());
+    }
   });
+  marqueeFrames.set(textEl, frame);
 }
 
 /**
@@ -413,279 +354,215 @@ function refreshNowPlayingScroll() {
   applyNowPlayingScroll($('#np-track'), document.querySelector('.np-title-main'));
   applyNowPlayingScroll($('#np-artist'), document.querySelector('.np-artist'));
   applyNowPlayingScroll($('#np-album'), document.querySelector('.np-album'));
-  applyNowPlayingScroll($('#np-artist-meta-text'), document.querySelector('.np-artist-meta-wrap'));
 }
 
 /**
- * Fetch and display recent track from Last.fm
+ * Fetch and display the current or most recent ListenBrainz listen.
  */
-async function fetchRecentTrack(retryCount = 0) {
-  const text = getRuntimeText();
-  npCountdown = NP_INTERVAL;
-  setNowPlayingLoading(!npHasResolvedOnce);
-
+function validateArtworkUrl(value: string | undefined) {
+  if (!value) return '';
   try {
-    const res = await fetch(LASTFM_API);
-    if (!res.ok) throw new Error('Network response was not ok');
-    const data = await res.json();
-    const track = data.recenttracks?.track?.[0];
-    if (!track) throw new Error('No track data');
+    const url = new URL(value, window.location.href);
+    return url.protocol === 'https:' || url.protocol === 'http:' ? url.href : '';
+  } catch {
+    return '';
+  }
+}
 
-    const isPlaying = track['@attr']?.nowplaying === 'true';
-    const title = track.name;
-    const rawArtist = track.artist['#text'];
-    const rawAlbum = track.album?.['#text'];
-    const artist = rawArtist || text.unknownArtist;
-    const album = rawAlbum || text.unknownAlbum;
-    const art = track.image?.[3]?.['#text'] || '';
-    const isLoved = String(track.userloved ?? '').trim() === '1';
-    const playCount = Number(track.userplaycount ?? 0);
-    const artistPlayCount = Number(track.artistplaycount ?? 0);
-    const albumPlayCount = Number(track.albumplaycount ?? 0);
-    const playedTs = track.date?.uts ? Number(track.date.uts) : 0;
+function setArtworkSource(image: HTMLImageElement, url: string, useCors: boolean) {
+  image.dataset.artSource = url;
+  image.dataset.artLoadMode = useCors ? 'cors' : 'plain';
+  if (useCors) image.crossOrigin = 'anonymous';
+  else image.removeAttribute('crossorigin');
+  image.src = url;
+}
 
-    const apiUsername = data?.recenttracks?.['@attr']?.user;
-    const username = apiUsername || LASTFM_USERNAME;
-    const artistEncoded = encodeURIComponent(rawArtist || '');
-    const trackEncoded = encodeURIComponent(title || '');
-    const albumEncoded = encodeURIComponent(rawAlbum || '');
+function setArtworkBackground(element: HTMLElement, value: string) {
+  const url = validateArtworkUrl(value);
+  element.style.backgroundImage = url ? `url("${url}")` : 'none';
+}
 
-    const trackUrl = `https://www.last.fm/music/${artistEncoded}/_/${trackEncoded}`;
-    const artistUrl = rawArtist ? `https://www.last.fm/music/${artistEncoded}` : null;
-    const albumUrl = rawAlbum
-      ? `https://www.last.fm/music/${artistEncoded}/${albumEncoded}`
-      : artistUrl;
-    
-    let libraryUrl = '';
-    let artistLibraryUrl = '';
-    let albumLibraryUrl = '';
-    if (rawArtist) {
-      artistLibraryUrl = `https://www.last.fm/user/${encodeURIComponent(username)}/library/music/+noredirect/${artistEncoded}`;
-      libraryUrl = artistLibraryUrl;
-      if (title) libraryUrl += `/_/${trackEncoded}`;
-      if (rawAlbum) albumLibraryUrl = `${artistLibraryUrl}/${albumEncoded}`;
-    }
+function renderTrack(state: Extract<NowPlayingState, { kind: 'track' }>) {
+  const previousState = currentState;
+  const trackChanged = previousState?.kind !== 'track' || previousState.trackKey !== state.trackKey;
+  const metadataChanged = trackChanged || previousState?.kind !== 'track'
+    || previousState.art !== state.art
+    || previousState.artworkCandidates.join('|') !== state.artworkCandidates.join('|')
+    || previousState.artistUrl !== state.artistUrl
+    || previousState.trackUrl !== state.trackUrl
+    || previousState.albumUrl !== state.albumUrl;
+  const statusText = state.isPlaying
+    ? getRuntimeText().currentlyListening
+    : `${getRuntimeText().lastPlayed}${state.playedAt ? ` (${timeAgo(state.playedAt)})` : ''}`;
 
-    const statusText = isPlaying
-      ? text.currentlyListening
-      : `${text.lastPlayed}${playedTs ? ` (${timeAgo(playedTs)})` : ''}`;
-    const nextStateKey = JSON.stringify({
-      type: 'ok',
-      isPlaying,
-      statusText,
-      title,
-      artist,
-      album,
-      art,
-      isLoved,
-      playCount,
-      artistPlayCount,
-      albumPlayCount,
-      trackUrl,
-      artistUrl,
-      albumUrl,
-      libraryUrl,
-      artistLibraryUrl,
-      albumLibraryUrl
-    });
+  updateNowPlayingStatus($('#np-status'), state.isPlaying, statusText, state.playedAt);
+  updateNowPlayingStatus($('#np-fs-status'), state.isPlaying, statusText, state.playedAt);
 
-    if (nextStateKey === npLastStateKey) {
-      return;
-    }
-
-    const statusEl = $('#np-status');
+  if (metadataChanged) {
+    const text = getRuntimeText();
     const trackEl = $<HTMLAnchorElement>('#np-track');
-    const lovedMetaEl = $('#np-loved-meta');
-    const metaSepEl = $('#np-meta-sep');
     const artistEl = $<HTMLAnchorElement>('#np-artist');
     const albumEl = $<HTMLButtonElement>('#np-album');
-    const playCountEl = $('#np-playcount');
-    const playCountTextEl = $('#np-playcount-text');
-    const playCountLinkEl = $<HTMLAnchorElement>('#np-playcount-link');
     const artEl = $<HTMLImageElement>('#np-art');
-    const artLinkEl = $<HTMLButtonElement>('#np-art-link');
-    const artistMetaEl = $('#np-artist-meta');
-    const artistMetaNameEl = $<HTMLAnchorElement>('#np-artist-meta-name');
-    const artistMetaCountEl = $<HTMLAnchorElement>('#np-artist-meta-count');
-
-    // Fullscreen elements
-    const fsStatusEl = $('#np-fs-status');
     const fsTrackEl = $('#np-fs-track');
     const fsArtistEl = $('#np-fs-artist');
     const fsAlbumEl = $('#np-fs-album');
     const fsArtEl = $<HTMLImageElement>('#np-fs-art');
     const fsBgEl = $('#np-fs-bg');
-
-    if (statusEl) {
-      statusEl.innerHTML = formatNowPlayingStatus({ isPlaying, statusText });
-      if (!isPlaying && playedTs) {
-        statusEl.title = formatFullDateTime(playedTs);
-      } else {
-        statusEl.removeAttribute('title');
-      }
-    }
-    
-    if (fsStatusEl) {
-      fsStatusEl.innerHTML = formatNowPlayingStatus({ isPlaying, statusText });
-      if (!isPlaying && playedTs) {
-        fsStatusEl.title = formatFullDateTime(playedTs);
-      } else {
-        fsStatusEl.removeAttribute('title');
-      }
-    }
+    const fsViewerEl = $('#np-fullscreen-viewer');
+    const widgetEl = $('#now-playing');
 
     if (trackEl) {
-      trackEl.textContent = title;
-      trackEl.href = trackUrl;
-      trackEl.title = text.viewAlbum;
+      trackEl.textContent = state.title;
+      trackEl.href = state.trackUrl;
+      trackEl.title = text.viewOnMusicBrainz;
     }
-    if (fsTrackEl) {
-      fsTrackEl.textContent = title;
-    }
-
-    if (lovedMetaEl) {
-      lovedMetaEl.hidden = !isLoved;
-    }
-
     if (artistEl) {
-      artistEl.textContent = artist;
-      if (artistUrl) artistEl.href = artistUrl;
-      else artistEl.href = LASTFM_PROFILE;
+      artistEl.textContent = state.artist;
+      artistEl.href = state.artistUrl;
     }
-    if (fsArtistEl) {
-      fsArtistEl.textContent = artist;
-    }
-
     if (albumEl) {
-      albumEl.textContent = album;
+      albumEl.textContent = state.album;
       albumEl.title = text.viewAlbum;
     }
-    if (fsAlbumEl) {
-      fsAlbumEl.textContent = album;
-    }
-    if (playCountEl) {
-      const playCountLabel = formatPlayCount(playCount);
-      playCountEl.hidden = !playCountLabel;
-      
-      if (playCountTextEl) {
-        playCountTextEl.textContent = playCountLabel;
-      }
-      
-      if (playCountLinkEl) {
-        if (playCountLabel && libraryUrl) {
-          playCountLinkEl.href = libraryUrl;
-          const linkLabel = title
-            ? formatTemplate(text.viewMyPlaysForTrack, { title, artist })
-            : text.viewMyPlays;
-          playCountLinkEl.title = linkLabel;
-        } else {
-          playCountLinkEl.href = LASTFM_PROFILE;
-          playCountLinkEl.removeAttribute('aria-label');
-          playCountLinkEl.removeAttribute('title');
-        }
-      }
-      
-      if (metaSepEl) {
-        metaSepEl.hidden = !isLoved;
-      }
-    }
-    
-    if (artistMetaEl) {
-      if (artistPlayCount > 0 && artist) {
-        artistMetaEl.hidden = false;
-        
-        if (artistMetaNameEl) {
-          artistMetaNameEl.textContent = artist;
-          if (artistUrl) {
-            artistMetaNameEl.href = artistUrl;
-          } else {
-            artistMetaNameEl.href = LASTFM_PROFILE;
-          }
-        }
-        
-        if (artistMetaCountEl) {
-          artistMetaCountEl.textContent = artistPlayCount.toLocaleString(document.documentElement.lang || undefined);
-          if (artistLibraryUrl) {
-            artistMetaCountEl.href = artistLibraryUrl;
-          } else {
-            artistMetaCountEl.href = LASTFM_PROFILE;
-          }
-        }
-        const artistMetaTextEl = $('#np-artist-meta-text');
-        if (artistMetaTextEl && artistMetaNameEl && artistMetaCountEl) {
-          formatInlineTemplate(
-            artistMetaTextEl,
-            artistMetaTextEl.dataset.template || "I've listened to {artist} for {count} times.",
-            { artist: artistMetaNameEl, count: artistMetaCountEl }
-          );
-        }
-      } else {
-        artistMetaEl.hidden = true;
-      }
-    }
+    if (fsTrackEl) fsTrackEl.textContent = state.title;
+    if (fsArtistEl) fsArtistEl.textContent = state.artist;
+    if (fsAlbumEl) fsAlbumEl.textContent = state.album;
 
     if (artEl) {
-      const widgetEl = document.getElementById('now-playing');
-      if (art) {
-        const highestResArt = art.replace(/\/[^/]+\/([0-9a-f]{32})/, '/_/$1');
-        
-        if (artEl.src !== art) {
-          artEl.onload = () => {
-            const rgb = extractImageColor(artEl);
-            if (rgb && widgetEl) {
-              widgetEl.style.setProperty('--np-color', rgb);
-            } else if (widgetEl) {
-              widgetEl.style.removeProperty('--np-color');
-            }
-          };
-          artEl.src = art;
-        }
-        
-        if (fsArtEl && fsArtEl.src !== highestResArt) {
-          fsArtEl.src = highestResArt;
-        }
-        if (fsBgEl && fsBgEl.dataset.bg !== highestResArt) {
-          fsBgEl.dataset.bg = highestResArt;
-          fsBgEl.style.backgroundImage = `url('${highestResArt}')`;
-        }
-      } else {
-        artEl.removeAttribute('src');
-        if (widgetEl) widgetEl.style.removeProperty('--np-color');
-        if (fsArtEl) fsArtEl.removeAttribute('src');
-        if (fsBgEl) {
-          fsBgEl.dataset.bg = '';
-          fsBgEl.style.backgroundImage = 'none';
-        }
+      artEl.removeAttribute('src');
+      delete artEl.dataset.artSource;
+      artEl.dataset.artworkCandidates = JSON.stringify(state.artworkCandidates);
+      artEl.dataset.artworkIndex = '0';
+      artEl.classList.toggle('is-loading-art', Boolean(state.art));
+      artEl.alt = state.album
+        ? formatTemplate(text.albumByArtist, { album: state.album, artist: state.artist })
+        : formatTemplate(text.trackByArtist, { track: state.title, artist: state.artist });
+
+      if (state.art) setArtworkSource(artEl, state.art, true);
+      else {
+        delete artEl.dataset.artworkCandidates;
+        delete artEl.dataset.artworkIndex;
+        artEl.classList.remove('is-loading-art');
+        widgetEl?.style.removeProperty('--np-color');
       }
-      artEl.alt = album
-        ? formatTemplate(text.albumByArtist, { album, artist })
-        : formatTemplate(text.trackByArtist, { track: title, artist });
-      if (fsArtEl) fsArtEl.alt = artEl.alt;
-    }
-    if (artLinkEl) {
-      artLinkEl.setAttribute('aria-label', rawAlbum
-        ? formatTemplate(text.albumByArtistOnLastFm, { album, artist })
-        : rawArtist
-          ? formatTemplate(text.onLastFm, { name: artist })
-          : text.unknownTrack);
-      artLinkEl.title = text.viewAlbum;
     }
 
-    npLastStateKey = nextStateKey;
-    refreshNowPlayingScroll();
+    if (fsArtEl) fsArtEl.alt = artEl?.alt || text.artUnavailable;
+    if (fsViewerEl && !fsViewerEl.hidden) {
+      fsArtEl?.removeAttribute('src');
+      if (state.art && fsArtEl) fsArtEl.src = state.art;
+      if (fsBgEl) {
+        fsBgEl.dataset.bg = state.art;
+        setArtworkBackground(fsBgEl, state.art);
+      }
+    }
 
-    npHasResolvedOnce = true;
-    setNowPlayingLoading(false);
-  } catch (_err) {  // eslint-disable-line @typescript-eslint/no-unused-vars
-    if (retryCount === 0) {
-      setTimeout(() => fetchRecentTrack(1), 5000);
-    } else if (retryCount === 1) {
-      setTimeout(() => fetchRecentTrack(2), 15000);
+    const artLinkEl = $<HTMLButtonElement>('#np-art-link');
+    if (artLinkEl) artLinkEl.title = text.viewAlbum;
+    if (trackChanged) refreshNowPlayingScroll();
+  }
+
+  currentState = state;
+  npHasResolvedOnce = true;
+  setNowPlayingLoading(false);
+}
+
+async function fetchListenBrainzListen(options: { manual?: boolean; retryCount?: number } = {}) {
+  const { manual = false, retryCount = 0 } = options;
+  if (!isNowPlayingVisible || document.hidden) return;
+  if (manual) cancelListenRequest();
+  else if (activeListenController) return;
+
+  if (listenRetryTimerId) {
+    clearTimeout(listenRetryTimerId);
+    listenRetryTimerId = undefined;
+  }
+
+  const controller = new AbortController();
+  activeListenController = controller;
+  const text = getRuntimeText();
+  npCountdown = NP_INTERVAL;
+  setNowPlayingLoading(!npHasResolvedOnce);
+
+  try {
+    const username = encodeURIComponent(nowPlayingConfig.username);
+    const playingResponse = await fetch(`${LISTENBRAINZ_API}/user/${username}/playing-now`, { signal: controller.signal });
+    if (!playingResponse.ok) throw new Error('ListenBrainz playing-now request failed');
+    const playingData = await playingResponse.json() as ListenBrainzResponse;
+    let track = playingData.payload?.listens?.[0];
+    let isPlaying = Boolean(track && playingData.payload?.playing_now);
+
+    if (!track) {
+      const listensResponse = await fetch(`${LISTENBRAINZ_API}/user/${username}/listens?count=1`, { signal: controller.signal });
+      if (!listensResponse.ok) throw new Error('ListenBrainz listens request failed');
+      const listensData = await listensResponse.json() as ListenBrainzResponse;
+      if (!Array.isArray(listensData.payload?.listens)) throw new Error('ListenBrainz response has no listen list');
+      track = listensData.payload?.listens?.[0];
+      isPlaying = false;
+      if (listensData.payload.listens.length === 0) {
+        setNoListeningHistory();
+        npHasResolvedOnce = true;
+        setNowPlayingLoading(false);
+        return;
+      }
+    }
+    if (controller.signal.aborted || !isNowPlayingVisible || document.hidden) return;
+    if (!track.track_metadata) throw new Error('Listen has no track metadata');
+
+    const metadata = track.track_metadata;
+    const title = metadata.track_name || text.unknownTrack;
+    const rawArtist = metadata.artist_name || '';
+    const rawAlbum = metadata.release_name || '';
+    const artist = rawArtist || text.unknownArtist;
+    const album = rawAlbum || text.unknownAlbum;
+    const additionalInfo = metadata.additional_info;
+    const mbidMapping = metadata.mbid_mapping;
+    const artistMbid = additionalInfo?.artist_mbids?.[0] || mbidMapping?.artist_mbids?.[0];
+    const recordingMbid = additionalInfo?.recording_mbid || mbidMapping?.recording_mbid;
+    const trackMbid = additionalInfo?.track_mbid;
+    const releaseGroupMbid = additionalInfo?.release_group_mbid || mbidMapping?.release_group_mbid;
+    const releaseMbid = additionalInfo?.release_mbid || mbidMapping?.release_mbid;
+    const artworkCandidates = [
+      mbidMapping?.caa_id && mbidMapping.caa_release_mbid
+        ? `https://coverartarchive.org/release/${mbidMapping.caa_release_mbid}/${mbidMapping.caa_id}-250.jpg`
+        : '',
+      additionalInfo?.cover_art || '',
+      releaseGroupMbid ? `https://coverartarchive.org/release-group/${releaseGroupMbid}/front-250` : ''
+    ].map(validateArtworkUrl).filter((url, index, urls) => Boolean(url) && urls.indexOf(url) === index);
+    const artistUrl = getMusicBrainzEntityUrl('artist', artistMbid, rawArtist);
+    const trackUrl = recordingMbid
+      ? getMusicBrainzEntityUrl('recording', recordingMbid, '')
+      : trackMbid
+        ? `https://musicbrainz.org/track/${encodeURIComponent(trackMbid)}`
+        : getMusicBrainzEntityUrl('recording', undefined, `${title} ${rawArtist}`);
+    const albumUrl = !rawAlbum
+      ? trackUrl
+      : releaseGroupMbid
+        ? `https://musicbrainz.org/release-group/${encodeURIComponent(releaseGroupMbid)}`
+        : releaseMbid
+          ? `https://musicbrainz.org/release/${encodeURIComponent(releaseMbid)}`
+          : getMusicBrainzEntityUrl('release-group', undefined, `${rawAlbum} ${rawArtist}`);
+    const trackKey = [rawArtist, title, rawAlbum].join('\u0000');
+    renderTrack({
+      kind: 'track', trackKey, isPlaying, playedAt: track.listened_at || 0,
+      title, artist, album, art: artworkCandidates[0] || '', artworkCandidates,
+      artistUrl, trackUrl, albumUrl
+    });
+  } catch (error) {
+    if (error instanceof DOMException && error.name === 'AbortError') return;
+    if (controller.signal.aborted) return;
+    if (retryCount < 2) {
+      listenRetryTimerId = setTimeout(() => {
+        void fetchListenBrainzListen({ retryCount: retryCount + 1 });
+      }, retryCount === 0 ? 5000 : 15000);
     } else {
       setNowPlayingError();
       npHasResolvedOnce = true;
       setNowPlayingLoading(false);
     }
+  } finally {
+    if (activeListenController === controller) activeListenController = undefined;
   }
 }
 
@@ -714,14 +591,111 @@ function stopCountdown() {
  */
 function startCountdown() {
   stopCountdown();
+  if (!isNowPlayingVisible || document.hidden) return;
   npCountdownTimerId = setInterval(() => {
     npCountdown--;
     if (npCountdown <= 0) {
       npCountdown = NP_INTERVAL;
-      fetchRecentTrack();
+      fetchListenBrainzListen();
     }
     updateRefreshTooltip();
   }, 1000);
+}
+
+type ModalControllerOptions = {
+  modal: HTMLElement | null;
+  focusTarget: HTMLElement | null;
+  appRoot: HTMLElement | null;
+  settingsFab: Element | null;
+  onOpen?: () => void;
+  onClose?: () => void;
+};
+
+function getAnimationTimeMs(element: Element) {
+  const style = getComputedStyle(element);
+  const names = style.animationName.split(',').map(value => value.trim());
+  if (names.every(name => name === 'none')) return 0;
+  const durations = style.animationDuration.split(',').map(value => parseFloat(value) * (value.includes('ms') ? 1 : 1000));
+  const delays = style.animationDelay.split(',').map(value => parseFloat(value) * (value.includes('ms') ? 1 : 1000));
+  return Math.max(0, ...names.map((_, index) => (durations[index % durations.length] || 0) + (delays[index % delays.length] || 0)));
+}
+
+function createModalController({ modal, focusTarget, appRoot, settingsFab, onOpen, onClose }: ModalControllerOptions) {
+  let previousFocus: HTMLElement | null = null;
+  let closeTimer: ReturnType<typeof setTimeout> | undefined;
+  let isClosing = false;
+  let closingAnimationNames = new Set<string>();
+
+  const restorePage = () => {
+    activeModalCount = Math.max(0, activeModalCount - 1);
+    if (activeModalCount === 0) {
+      document.body.style.overflow = savedBodyOverflow;
+      document.body.style.paddingRight = savedBodyPaddingRight;
+      appRoot?.toggleAttribute('inert', savedAppInert);
+      settingsFab?.toggleAttribute('inert', savedSettingsInert);
+    }
+    previousFocus?.focus({ preventScroll: true });
+    previousFocus = null;
+    isClosing = false;
+    onClose?.();
+  };
+
+  const finishClose = () => {
+    if (!modal || !isClosing) return;
+    if (closeTimer) clearTimeout(closeTimer);
+    closeTimer = undefined;
+    modal.removeEventListener('animationend', handleAnimationEnd);
+    modal.classList.remove('is-closing');
+    modal.hidden = true;
+    closingAnimationNames.clear();
+    restorePage();
+  };
+
+  const handleAnimationEnd = (event: AnimationEvent) => {
+    if (closingAnimationNames.has(event.animationName)) finishClose();
+  };
+
+  return {
+    get isOpen() { return Boolean(modal && !modal.hidden); },
+    open() {
+      if (!modal || !modal.hidden) return;
+      if (activeModalCount === 0) {
+        savedBodyOverflow = document.body.style.overflow;
+        savedBodyPaddingRight = document.body.style.paddingRight;
+        savedAppInert = appRoot?.hasAttribute('inert') || false;
+        savedSettingsInert = settingsFab?.hasAttribute('inert') || false;
+        const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+        document.body.style.paddingRight = `${scrollbarWidth}px`;
+        document.body.style.overflow = 'hidden';
+        appRoot?.setAttribute('inert', '');
+        settingsFab?.setAttribute('inert', '');
+      }
+      activeModalCount++;
+      previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+      modal.hidden = false;
+      onOpen?.();
+      window.requestAnimationFrame(() => focusTarget?.focus({ preventScroll: true }));
+    },
+    close() {
+      if (!modal || modal.hidden || isClosing) return;
+      isClosing = true;
+      modal.classList.add('is-closing');
+      const animatedElements = [modal, ...modal.querySelectorAll('*')];
+      closingAnimationNames = new Set(animatedElements.flatMap((element) =>
+        getComputedStyle(element).animationName
+          .split(',')
+          .map((name) => name.trim())
+          .filter((name) => name !== 'none' && name.endsWith('Out'))
+      ));
+      const animationTime = Math.max(0, ...animatedElements.map(getAnimationTimeMs));
+      if (animationTime === 0) {
+        finishClose();
+        return;
+      }
+      modal.addEventListener('animationend', handleAnimationEnd);
+      closeTimer = setTimeout(finishClose, animationTime + 80);
+    }
+  };
 }
 
 /**
@@ -746,41 +720,80 @@ export function initNowPlaying() {
   const ivArt = $<HTMLImageElement>('#np-iv-art');
   const ivTitle = $('#np-iv-album-title');
   const ivArtist = $<HTMLAnchorElement>('#np-iv-artist');
-  const ivPlayCount = $('#np-iv-album-playcount');
-  const ivPlayCountLink = $<HTMLAnchorElement>('#np-iv-album-library-link');
   const ivLink = $<HTMLAnchorElement>('#np-iv-link');
   const ivExternal = $<HTMLAnchorElement>('#np-iv-external');
   const appRoot = document.getElementById('app');
   const settingsFab = document.querySelector('.settings-fab');
-  let previousFocus: HTMLElement | null = null;
+  const imageViewer = createModalController({
+    modal: ivViewer,
+    focusTarget: ivClose,
+    appRoot,
+    settingsFab,
+    onClose: () => ivArt?.removeAttribute('src')
+  });
 
-  const setBackgroundInert = (isInert: boolean) => {
-    if (appRoot) {
-      appRoot.toggleAttribute('inert', isInert);
+  npArtEl?.addEventListener('load', () => {
+    npArtEl.classList.remove('is-loading-art');
+    const widgetEl = document.getElementById('now-playing');
+    const imageColor = npArtEl.dataset.artLoadMode === 'cors' ? extractImageColor(npArtEl) : null;
+    if (imageColor && widgetEl) widgetEl.style.setProperty('--np-color', imageColor);
+    else widgetEl?.style.removeProperty('--np-color');
+
+    const fsViewerEl = $('#np-fullscreen-viewer');
+    const fsArtEl = $<HTMLImageElement>('#np-fs-art');
+    const fsBgEl = $('#np-fs-bg');
+    const artSource = npArtEl.dataset.artSource || '';
+    if (fsViewerEl && !fsViewerEl.hidden) {
+      if (fsArtEl) fsArtEl.src = artSource;
+      if (fsBgEl) {
+        fsBgEl.dataset.bg = artSource;
+        setArtworkBackground(fsBgEl, artSource);
+      }
     }
-    if (settingsFab) {
-      settingsFab.toggleAttribute('inert', isInert);
-    }
-  };
+  });
 
-  const focusDialogControl = (control: HTMLElement | null) => {
-    if (!control) return;
-    window.requestAnimationFrame(() => {
-      control.focus({ preventScroll: true });
-    });
-  };
-
-  // Handle art loading error
   npArtEl?.addEventListener('error', () => {
+    const currentUrl = npArtEl.dataset.artSource || '';
+    if (npArtEl.dataset.artLoadMode === 'cors' && currentUrl) {
+      setArtworkSource(npArtEl, currentUrl, false);
+      return;
+    }
+
+    let candidates: string[];
+    try {
+      candidates = JSON.parse(npArtEl.dataset.artworkCandidates || '[]') as string[];
+    } catch {
+      candidates = [];
+    }
+    const nextIndex = Number(npArtEl.dataset.artworkIndex || 0) + 1;
+    const nextArtwork = candidates[nextIndex];
+    if (nextArtwork) {
+      npArtEl.dataset.artworkIndex = String(nextIndex);
+      setArtworkSource(npArtEl, nextArtwork, true);
+      return;
+    }
+
     npArtEl.removeAttribute('src');
+    delete npArtEl.dataset.artSource;
+    delete npArtEl.dataset.artworkCandidates;
+    delete npArtEl.dataset.artworkIndex;
+    npArtEl.classList.remove('is-loading-art');
     npArtEl.alt = text.albumArtworkUnavailable;
+    const fsArtEl = $<HTMLImageElement>('#np-fs-art');
+    const fsBgEl = $('#np-fs-bg');
+    fsArtEl?.removeAttribute('src');
+    if (fsBgEl) {
+      fsBgEl.dataset.bg = '';
+      fsBgEl.style.backgroundImage = 'none';
+    }
+    document.getElementById('now-playing')?.style.removeProperty('--np-color');
   });
 
   // Refresh button click handler
   npRefreshBtn?.addEventListener('click', async () => {
     npRefreshBtn.classList.add('is-spinning');
     npRefreshBtn.disabled = true;
-    await fetchRecentTrack();
+    await fetchListenBrainzListen({ manual: true });
     setTimeout(() => {
       npRefreshBtn.classList.remove('is-spinning');
       npRefreshBtn.disabled = false;
@@ -788,45 +801,23 @@ export function initNowPlaying() {
   });
 
   // Open image viewer
-  const openViewer = (e: Event) => {
-    if (!npLastStateKey) return;
-    
-    let state: NowPlayingState;
-    try {
-      state = JSON.parse(npLastStateKey) as NowPlayingState;
-    } catch (_err) {  // eslint-disable-line @typescript-eslint/no-unused-vars
-      return;
-    }
-    
-    if (state.type !== 'ok' || !state.art) return;
-    
-    e.preventDefault();
-    
-    if (ivArt && npArtEl) {
-      // First populate with currently loaded small art for an instant reveal
-      ivArt.src = npArtEl.src;
-      
-      // Bypass Last.fm's CDN resizing by replacing the size directory with /_/
-      // This fetches the original highest-resolution file uploaded to Last.fm
-      const highestResArt = state.art.replace(/\/[^/]+\/([0-9a-f]{32})/, '/_/$1');
-      
-      // Assign the absolute highest-res URL to the new tab button
-      if (ivExternal) {
-        ivExternal.href = highestResArt;
-      }
-      
-      // Preload the highest-res image and switch to it once loaded
-      if (highestResArt !== state.art) {
-        ivArt.dataset.highResTarget = highestResArt; // Guard against race conditions
-        const tempImg = new Image();
-        tempImg.onload = () => {
-          // Seamlessly swap the source only if the user hasn't switched albums
-          if (ivArt.dataset.highResTarget === highestResArt) {
-            ivArt.src = highestResArt; 
-          }
+  const openViewer = (event: Event) => {
+    const state = currentState;
+    if (!state || state.kind !== 'track' || !state.art) return;
+    event.preventDefault();
+
+    const artworkUrl = npArtEl?.currentSrc || npArtEl?.src || state.art;
+    if (ivArt) {
+      ivArt.src = artworkUrl;
+      const fullSizeUrl = getFullSizeArtworkUrl(artworkUrl);
+      if (ivExternal) ivExternal.href = fullSizeUrl;
+      if (fullSizeUrl !== artworkUrl) {
+        ivArt.dataset.highResTarget = fullSizeUrl;
+        const fullSizeImage = new Image();
+        fullSizeImage.onload = () => {
+          if (ivArt.dataset.highResTarget === fullSizeUrl) ivArt.src = fullSizeUrl;
         };
-        
-        tempImg.src = highestResArt;
+        fullSizeImage.src = fullSizeUrl;
       } else {
         delete ivArt.dataset.highResTarget;
       }
@@ -837,78 +828,49 @@ export function initNowPlaying() {
     }
     if (ivArtist) {
       ivArtist.textContent = state.artist;
-      if (state.artistUrl) {
-        ivArtist.href = state.artistUrl;
-      } else {
-        ivArtist.href = LASTFM_PROFILE;
-      }
+      ivArtist.href = state.artistUrl;
     }
-    if (ivPlayCount && ivPlayCountLink) {
-      if (state.albumPlayCount > 0) {
-        ivPlayCountLink.textContent = state.albumPlayCount.toLocaleString(document.documentElement.lang || undefined);
-        if (state.albumLibraryUrl) {
-          ivPlayCountLink.href = state.albumLibraryUrl;
-        } else {
-          ivPlayCountLink.href = LASTFM_PROFILE;
-        }
-        formatInlineTemplate(
-          ivPlayCount,
-          ivPlayCount.dataset.template || "I've listened to this album for {count} times.",
-          { count: ivPlayCountLink }
-        );
-        ivPlayCount.hidden = false;
-      } else {
-        ivPlayCount.hidden = true;
-      }
-    }
-    if (ivLink) {
-      ivLink.href = state.albumUrl || state.trackUrl || state.artistUrl || LASTFM_PROFILE;
-    }
-    
-    if (ivViewer) {
-      // Keep background still but append padding for scrollbar width so content doesn't shift
-      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-      document.body.style.paddingRight = `${scrollbarWidth}px`;
-      
-      previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-      ivViewer.hidden = false;
-      setBackgroundInert(true);
-      document.body.style.overflow = 'hidden'; // Prevent background scrolling
-      focusDialogControl(ivClose);
-    }
+    if (ivLink) ivLink.href = state.albumUrl || state.trackUrl;
+    imageViewer.open();
   };
 
   npArtLinkEl?.addEventListener('click', openViewer);
   npAlbumEl?.addEventListener('click', openViewer);
-
-  // Close image viewer
-  const closeViewer = () => {
-    if (ivViewer && !ivViewer.hidden && !ivViewer.classList.contains('is-closing')) {
-      ivViewer.classList.add('is-closing');
-      const handleClose = () => {
-        ivViewer.classList.remove('is-closing');
-        ivViewer.hidden = true;
-        
-        // Restore standard body styling
-        document.body.style.overflow = '';
-        document.body.style.paddingRight = '';
-        setBackgroundInert(false);
-        previousFocus?.focus({ preventScroll: true });
-        previousFocus = null;
-        
-        if (ivArt) ivArt.removeAttribute('src'); // clear image to avoid flash on next open
-        ivViewer.removeEventListener('animationend', handleClose);
-      };
-      ivViewer.addEventListener('animationend', handleClose);
-    }
-  };
-
-  ivClose?.addEventListener('click', closeViewer);
-  ivBackdrop?.addEventListener('click', closeViewer);
+  ivClose?.addEventListener('click', () => imageViewer.close());
+  ivBackdrop?.addEventListener('click', () => imageViewer.close());
   
   // Fullscreen viewer elements
   const fsViewer = $('#np-fullscreen-viewer');
   const fsClose = $<HTMLButtonElement>('#np-fs-close');
+  const fsArtEl = $<HTMLImageElement>('#np-fs-art');
+  const fsBgEl = $('#np-fs-bg');
+
+  const loadFullscreenArtwork = (state: NowPlayingState) => {
+    if (state.kind !== 'track' || !state.art) return;
+
+    const artworkUrl = npArtEl?.currentSrc || npArtEl?.src || state.art;
+    const fullSizeUrl = getFullSizeArtworkUrl(artworkUrl);
+    if (fsArtEl) {
+      fsArtEl.dataset.artSource = artworkUrl;
+      fsArtEl.src = artworkUrl;
+    }
+    if (fsBgEl) {
+      fsBgEl.dataset.bg = artworkUrl;
+      setArtworkBackground(fsBgEl, artworkUrl);
+    }
+
+    if (fullSizeUrl === artworkUrl) return;
+    const fullSizeImage = new Image();
+    fullSizeImage.onload = () => {
+      if (fsViewer?.hidden || fsArtEl?.dataset.artSource !== artworkUrl) return;
+      if (fsArtEl) fsArtEl.src = fullSizeUrl;
+      if (fsBgEl) {
+        fsBgEl.dataset.bg = fullSizeUrl;
+        setArtworkBackground(fsBgEl, fullSizeUrl);
+      }
+    };
+    fullSizeImage.src = fullSizeUrl;
+  };
 
   const clearFullscreenIdleTimer = () => {
     if (npFullscreenIdleTimerId) {
@@ -948,74 +910,54 @@ export function initNowPlaying() {
   fsViewer?.addEventListener('touchstart', showFullscreenControls, { passive: true });
   fsViewer?.addEventListener('touchmove', showFullscreenControls, { passive: true });
   
-  const openFullscreen = async () => {
-    if (fsViewer) {
-      if (!npLastStateKey) return;
-      
-      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-      document.body.style.paddingRight = `${scrollbarWidth}px`;
-      
-      previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-      fsViewer.hidden = false;
-      setBackgroundInert(true);
-      document.body.style.overflow = 'hidden';
-      enterFullscreenChromeHiddenMode();
-      showFullscreenControls();
-      focusDialogControl(fsClose);
-      
-      try {
-        if (document.documentElement.requestFullscreen) {
-          await document.documentElement.requestFullscreen();
-        } else if (document.documentElement.webkitRequestFullscreen) {
-          await document.documentElement.webkitRequestFullscreen();
-        }
-      } catch (_e) {  // eslint-disable-line @typescript-eslint/no-unused-vars
-        // Silently ignore if fullscreen is denied
+  const fullscreenModal = createModalController({
+    modal: fsViewer,
+    focusTarget: fsClose,
+    appRoot,
+    settingsFab,
+    onOpen: enterFullscreenChromeHiddenMode,
+    onClose: () => {
+      exitFullscreenChromeHiddenMode();
+      fsArtEl?.removeAttribute('src');
+      if (fsBgEl) {
+        fsBgEl.dataset.bg = '';
+        fsBgEl.style.backgroundImage = 'none';
       }
-    }
-  };
-  
-  const closeFullscreen = () => {
-    if (fsViewer && !fsViewer.hidden && !fsViewer.classList.contains('is-closing')) {
-      fsViewer.classList.add('is-closing');
-      
-      const handleClose = () => {
-        fsViewer.classList.remove('is-closing');
-        fsViewer.hidden = true;
-        
-        document.body.style.overflow = '';
-        document.body.style.paddingRight = '';
-        setBackgroundInert(false);
-        exitFullscreenChromeHiddenMode();
-        previousFocus?.focus({ preventScroll: true });
-        previousFocus = null;
-        
-        fsViewer.removeEventListener('animationend', handleClose);
-      };
-      fsViewer.addEventListener('animationend', handleClose);
-
       try {
         if (document.fullscreenElement || document.webkitFullscreenElement) {
-          if (document.exitFullscreen) {
-            document.exitFullscreen();
-          } else if (document.webkitExitFullscreen) {
-            document.webkitExitFullscreen();
-          }
+          if (document.exitFullscreen) void document.exitFullscreen();
+          else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
         }
-      } catch (_e) {  // eslint-disable-line @typescript-eslint/no-unused-vars
-        // Silently ignore
+      } catch {
+        // Ignore fullscreen API failures during cleanup.
       }
     }
+  });
+
+  const openFullscreen = async () => {
+    const state = currentState;
+    if (!state || state.kind !== 'track') return;
+    fullscreenModal.open();
+    loadFullscreenArtwork(state);
+    showFullscreenControls();
+
+    try {
+      if (document.documentElement.requestFullscreen) {
+        await document.documentElement.requestFullscreen();
+      } else if (document.documentElement.webkitRequestFullscreen) {
+        await document.documentElement.webkitRequestFullscreen();
+      }
+    } catch {
+      // Keep the in-page viewer open when native fullscreen is unavailable.
+    }
   };
+
+  const closeFullscreen = () => fullscreenModal.close();
 
   const handleFullscreenChange = () => {
     if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-      if (fsViewer && !fsViewer.hidden && !fsViewer.classList.contains('is-closing')) {
-        closeFullscreen();
-      } else if (!fsViewer || fsViewer.hidden) {
-        exitFullscreenChromeHiddenMode();
-        setBackgroundInert(false);
-      }
+      if (fullscreenModal.isOpen) closeFullscreen();
+      else exitFullscreenChromeHiddenMode();
     }
   };
   document.addEventListener('fullscreenchange', handleFullscreenChange);
@@ -1026,98 +968,62 @@ export function initNowPlaying() {
 
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
-      if (ivViewer && !ivViewer.hidden) {
-        closeViewer();
-      }
-      if (fsViewer && !fsViewer.hidden) {
-        closeFullscreen();
-      }
+      if (imageViewer.isOpen) imageViewer.close();
+      if (fullscreenModal.isOpen) fullscreenModal.close();
     }
   });
 
-  // Initial fetch and setup
-  fetchRecentTrack();
-  window.addEventListener('resize', refreshNowPlayingScroll);
+  // Start requests only when the widget is near the viewport.
+  const nowPlayingSection = document.getElementById('now-playing');
+  let visibilityObserver: IntersectionObserver | undefined;
+  const handleResize = () => {
+    if (resizeTimerId) clearTimeout(resizeTimerId);
+    resizeTimerId = setTimeout(() => {
+      resizeTimerId = undefined;
+      refreshNowPlayingScroll();
+    }, 150);
+  };
+  if ('IntersectionObserver' in window && nowPlayingSection) {
+    visibilityObserver = new IntersectionObserver(([entry]) => {
+      isNowPlayingVisible = entry.isIntersecting;
+      if (isNowPlayingVisible && !document.hidden) {
+        fetchListenBrainzListen();
+        startCountdown();
+      } else {
+        stopCountdown();
+        cancelListenRequest();
+      }
+    }, { rootMargin: '100px' });
+    visibilityObserver.observe(nowPlayingSection);
+  } else {
+    isNowPlayingVisible = true;
+    fetchListenBrainzListen();
+    startCountdown();
+  }
+  window.addEventListener('resize', handleResize);
   updateRefreshTooltip();
-  startCountdown();
-  initSinceTooltip();
 
   // Handle visibility changes
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
       stopCountdown();
+      cancelListenRequest();
       return;
     }
     updateRefreshTooltip();
-    startCountdown();
-    fetchRecentTrack();
+    if (isNowPlayingVisible) {
+      startCountdown();
+      fetchListenBrainzListen();
+    }
   });
 
   // Cleanup on page hide
   window.addEventListener('pagehide', () => {
     stopCountdown();
-    window.removeEventListener('resize', refreshNowPlayingScroll);
+    cancelListenRequest();
+    if (resizeTimerId) clearTimeout(resizeTimerId);
+    visibilityObserver?.disconnect();
+    window.removeEventListener('resize', handleResize);
     clearFullscreenIdleTimer();
   });
-}
-
-/**
- * Initializes the 'Since' tooltip time difference
- */
-function initSinceTooltip() {
-  const text = getRuntimeText();
-  const sinceEl = document.querySelector<HTMLElement>('#np-since');
-  if (!sinceEl) return;
-  
-  const dateStr = sinceEl.getAttribute('data-date');
-  if (!dateStr) return;
-  
-  const date = new Date(dateStr);
-  if (isNaN(date.getTime())) return;
-  
-  const now = new Date();
-  
-  let years = now.getFullYear() - date.getFullYear();
-  let months = now.getMonth() - date.getMonth();
-  let days = now.getDate() - date.getDate();
-  
-  if (days < 0) {
-    months--;
-    const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
-    days += prevMonth.getDate();
-  }
-  
-  if (months < 0) {
-    years--;
-    months += 12;
-  }
-  
-  const labelParts: string[] = [];
-  if (years > 0) {
-    labelParts.push(formatTemplate(years === 1 ? text.year : text.years, { count: years }));
-  }
-  if (months > 0) {
-    labelParts.push(formatTemplate(months === 1 ? text.month : text.months, { count: months }));
-  }
-  
-  if (years === 0 && months === 0) {
-    const dayCount = Math.max(1, days);
-    labelParts.push(formatTemplate(dayCount === 1 ? text.day : text.days, { count: dayCount }));
-  }
-
-  const agoStr = labelParts.length > 1
-    ? formatTemplate(text.durationJoin, { first: labelParts[0], second: labelParts[1] })
-    : labelParts[0];
-  
-  sinceEl.title = formatTemplate(text.sinceTooltip, { ago: agoStr });
-
-  if (agoStr) {
-    const iconHtml = '<i class="fas fa-info-circle" aria-hidden="true"></i> ';
-    const formattedDate = date.toLocaleDateString(document.documentElement.lang || undefined, {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric'
-    });
-    sinceEl.innerHTML = `${iconHtml}${formatTemplate(text.sinceLabel, { date: formattedDate })}`;
-  }
 }

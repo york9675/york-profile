@@ -164,7 +164,7 @@
     }
   },
   "nowPlaying": {
-    "heading": "Lsst.fm",
+    "heading": "ListenBrainz",
     "refreshTitle": "重新整理正在播放",
     "refreshLabel": "重新整理正在播放",
     "fullscreenTitle": "全螢幕檢視",
@@ -172,10 +172,7 @@
     "artLabel": "開啟專輯封面檢視器",
     "artLoadingAlt": "專輯封面載入中",
     "loading": "載入中...",
-    "lovedTrack": "喜愛的歌曲",
-    "artistMetaTemplate": "我聽過 {artist} {count} 次。",
-    "dataSince": "資料自 2025 年 7 月 11 日起",
-    "lastFmProfile": "個人頁面"
+    "listenBrainzProfile": "ListenBrainz 個人頁面"
   },
   "links": {
     "label": "連結",
@@ -252,17 +249,15 @@
     "close": "關閉",
     "closeViewer": "關閉檢視器",
     "artAlt": "專輯封面",
-    "albumPlayTemplate": "我聽過這張專輯 {count} 次。",
-    "viewOnLastFm": "在 Last.fm 檢視",
     "fullscreenLabel": "正在播放全螢幕",
-    "closeFullscreen": "關閉全螢幕"
+    "closeFullscreen": "關閉全螢幕",
+    "viewInMusicBrainz": "在 MusicBrainz 檢視"
   },
   "runtime": {
     "justNow": "剛剛",
     "minutesAgo": "{count} 分鐘前",
     "hoursAgo": "{count} 小時前",
     "daysAgo": "{count} 天前",
-    "plays": "{count} 次播放",
     "currentlyListening": "目前正在聽",
     "lastPlayed": "上次播放",
     "autoRefresh": "{seconds} 秒後自動重新整理",
@@ -279,18 +274,7 @@
     "viewAlbum": "檢視專輯",
     "albumByArtist": "{artist} 的《{album}》",
     "trackByArtist": "{artist} 的「{track}」",
-    "onLastFm": "在 Last.fm 檢視 {name}",
-    "albumByArtistOnLastFm": "在 Last.fm 檢視 {artist} 的《{album}》",
-    "viewMyPlaysForTrack": "在 Last.fm 檢視我播放 {artist}「{title}」的紀錄",
-    "viewMyPlays": "在 Last.fm 檢視我的播放紀錄",
-    "year": "{count} 年",
-    "years": "{count} 年",
-    "month": "{count} 個月",
-    "months": "{count} 個月",
-    "day": "{count} 天",
-    "days": "{count} 天",
-    "durationJoin": "{first}{second}",
-    "sinceLabel": "資料自 {date} 起",
-    "sinceTooltip": "我的 Last.fm 帳號建立於 {ago}前，播放次數是根據自那時起的所有播放紀錄計算。請注意，實際播放次數可能比這裡顯示的更多。"
+    "viewOnMusicBrainz": "在 MusicBrainz 檢視",
+    "noHistory": "目前沒有播放紀錄"
   }
 }

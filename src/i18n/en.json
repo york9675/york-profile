@@ -164,7 +164,7 @@
     }
   },
   "nowPlaying": {
-    "heading": "Last.fm",
+    "heading": "ListenBrainz",
     "refreshTitle": "Refresh now playing",
     "refreshLabel": "Refresh now playing",
     "fullscreenTitle": "View in fullscreen",
@@ -172,10 +172,7 @@
     "artLabel": "Open album artwork viewer",
     "artLoadingAlt": "Album artwork loading",
     "loading": "Loading...",
-    "lovedTrack": "Loved Track",
-    "artistMetaTemplate": "I've listened to {artist} for {count} times.",
-    "dataSince": "Data since 11 Jul 2025",
-    "lastFmProfile": "Profile"
+    "listenBrainzProfile": "ListenBrainz Profile"
   },
   "links": {
     "label": "Links",
@@ -252,17 +249,15 @@
     "close": "Close",
     "closeViewer": "Close viewer",
     "artAlt": "Album artwork",
-    "albumPlayTemplate": "I've listened to this album for {count} times.",
-    "viewOnLastFm": "View on Last.fm",
     "fullscreenLabel": "Now Playing Fullscreen",
-    "closeFullscreen": "Close fullscreen"
+    "closeFullscreen": "Close fullscreen",
+    "viewInMusicBrainz": "View in MusicBrainz"
   },
   "runtime": {
     "justNow": "just now",
     "minutesAgo": "{count}m ago",
     "hoursAgo": "{count}h ago",
     "daysAgo": "{count}d ago",
-    "plays": "{count} plays",
     "currentlyListening": "Currently Listening",
     "lastPlayed": "Last Played",
     "autoRefresh": "Auto-refresh in {seconds}s",
@@ -279,18 +274,7 @@
     "viewAlbum": "View album",
     "albumByArtist": "{album} by {artist}",
     "trackByArtist": "{track} by {artist}",
-    "onLastFm": "{name} on Last.fm",
-    "albumByArtistOnLastFm": "{album} by {artist} on Last.fm",
-    "viewMyPlaysForTrack": "View my plays for {title} by {artist} on Last.fm",
-    "viewMyPlays": "View my plays on Last.fm",
-    "year": "{count} year",
-    "years": "{count} years",
-    "month": "{count} month",
-    "months": "{count} months",
-    "day": "{count} day",
-    "days": "{count} days",
-    "durationJoin": "{first} and {second}",
-    "sinceLabel": "Data since {date}",
-    "sinceTooltip": "My Last.fm account was created {ago} ago, and the playcount is based on all plays since then. Please note that the actual playcount may be higher than it shows here."
+    "viewOnMusicBrainz": "View in MusicBrainz",
+    "noHistory": "No listening history yet"
   }
 }
