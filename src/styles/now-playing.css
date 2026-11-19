@@ -180,7 +180,7 @@
 .np-widget.is-loading .np-status::after,
 .np-widget.is-loading .np-title a::after,
 .np-widget.is-loading .np-artist a::after,
-.np-widget.is-loading .np-album button::after {
+.np-widget.is-loading .np-album a::after {
   content: "";
   position: absolute;
   left: 0;
@@ -222,7 +222,7 @@
 .np-widget.is-loading .np-status,
 .np-widget.is-loading .np-title a,
 .np-widget.is-loading .np-artist a,
-.np-widget.is-loading .np-album button {
+.np-widget.is-loading .np-album a {
   color: transparent;
   text-decoration-color: transparent;
 }
@@ -333,7 +333,7 @@
 }
 
 .np-artist a,
-.np-album button {
+.np-album a {
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -358,8 +358,8 @@
 
 .np-artist a:hover,
 .np-artist a:focus,
-.np-album button:hover,
-.np-album button:focus {
+.np-album a:hover,
+.np-album a:focus {
   text-decoration-color: var(--fg-soft);
   outline: none;
 }
@@ -378,7 +378,7 @@
 
 .np-widget.is-loading .np-title a::after,
 .np-widget.is-loading .np-artist a::after,
-.np-widget.is-loading .np-album button::after {
+.np-widget.is-loading .np-album a::after {
   top: 50%;
   transform: translateY(-50%);
   height: 0.82em;
@@ -396,11 +396,11 @@
   width: min(100%, 14ch);
 }
 
-.np-widget.is-loading .np-album button {
+.np-widget.is-loading .np-album a {
   min-width: min(100%, 16ch);
 }
 
-.np-widget.is-loading .np-album button::after {
+.np-widget.is-loading .np-album a::after {
   width: min(100%, 16ch);
 }
 
@@ -503,7 +503,7 @@ html[data-theme="light"] .np-widget.is-loading .np-art-link::after,
 html[data-theme="light"] .np-widget.is-loading .np-status::after,
 html[data-theme="light"] .np-widget.is-loading .np-title a::after,
 html[data-theme="light"] .np-widget.is-loading .np-artist a::after,
-html[data-theme="light"] .np-widget.is-loading .np-album button::after {
+html[data-theme="light"] .np-widget.is-loading .np-album a::after {
   background: linear-gradient(100deg, #d8d8d8 18%, #c8c8c8 42%, #d8d8d8 64%);
 }
 

@@ -227,7 +227,8 @@ function getMusicBrainzEntityUrl(
   if (mbid) return `https://musicbrainz.org/${entity}/${encodeURIComponent(mbid)}`;
   const search = new URL('https://musicbrainz.org/search');
   search.searchParams.set('query', query);
-  search.searchParams.set('type', entity);
+  // The website search form uses an underscore here, unlike entity URLs and API types.
+  search.searchParams.set('type', entity === 'release-group' ? 'release_group' : entity);
   search.searchParams.set('method', 'indexed');
   return search.href;
 }
@@ -385,7 +386,7 @@ function setNowPlayingLoading(isLoading: boolean) {
 function setNowPlayingStateMessage(message: string, statusMessage: string, isError = false) {
   const trackEl = $<HTMLAnchorElement>('#np-track');
   const artistEl = $<HTMLAnchorElement>('#np-artist');
-  const albumEl = $<HTMLButtonElement>('#np-album');
+  const albumEl = $<HTMLAnchorElement>('#np-album');
   const artEl = $<HTMLImageElement>('#np-art');
   const fsTrackEl = $('#np-fs-track');
   const fsArtistEl = $('#np-fs-artist');
@@ -406,7 +407,10 @@ function setNowPlayingStateMessage(message: string, statusMessage: string, isErr
     artistEl.textContent = '';
     artistEl.removeAttribute('href');
   }
-  if (albumEl) albumEl.textContent = '';
+  if (albumEl) {
+    albumEl.textContent = '';
+    albumEl.removeAttribute('href');
+  }
   if (fsTrackEl) fsTrackEl.textContent = message;
   if (fsArtistEl) fsArtistEl.textContent = '';
   if (fsAlbumEl) fsAlbumEl.textContent = '';
@@ -535,7 +539,7 @@ function renderTrack(state: Extract<NowPlayingState, { kind: 'track' }>) {
     const text = getRuntimeText();
     const trackEl = $<HTMLAnchorElement>('#np-track');
     const artistEl = $<HTMLAnchorElement>('#np-artist');
-    const albumEl = $<HTMLButtonElement>('#np-album');
+    const albumEl = $<HTMLAnchorElement>('#np-album');
     const artEl = $<HTMLImageElement>('#np-art');
     const fsTrackEl = $('#np-fs-track');
     const fsArtistEl = $('#np-fs-artist');
@@ -557,7 +561,8 @@ function renderTrack(state: Extract<NowPlayingState, { kind: 'track' }>) {
     }
     if (albumEl) {
       albumEl.textContent = state.album;
-      albumEl.title = text.viewAlbum;
+      albumEl.href = state.albumUrl;
+      albumEl.title = state.art ? text.viewAlbum : text.viewOnMusicBrainz;
     }
     if (fsTrackEl) fsTrackEl.textContent = state.title;
     if (fsArtistEl) fsArtistEl.textContent = state.artist;
@@ -866,7 +871,7 @@ export function initNowPlaying() {
   const npFullscreenBtn = $<HTMLButtonElement>('#np-fullscreen-btn');
   const npArtEl = $<HTMLImageElement>('#np-art');
   const npArtLinkEl = $<HTMLButtonElement>('#np-art-link');
-  const npAlbumEl = $<HTMLButtonElement>('#np-album');
+  const npAlbumEl = $<HTMLAnchorElement>('#np-album');
   
   // Image viewer elements
   const ivViewer = $('#np-image-viewer');
@@ -967,7 +972,9 @@ export function initNowPlaying() {
   // Open image viewer
   const openViewer = (event: Event) => {
     const state = currentState;
-    if (!state || state.kind !== 'track' || !state.art) return;
+    if (!state || state.kind !== 'track') return;
+    // Keep the album's MusicBrainz link usable when no artwork is available.
+    if (!state.art) return;
     event.preventDefault();
 
     const artworkUrl = getVisibleArtworkUrl(npArtEl, state.art);
