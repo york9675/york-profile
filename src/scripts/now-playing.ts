@@ -88,6 +88,86 @@ function getFullSizeArtworkUrl(artworkUrl: string) {
     .replace('/front-250', '/front');
 }
 
+const fullSizeArtworkCache = new Map<string, Promise<HTMLImageElement>>();
+const loadedFullSizeArtwork = new Map<string, HTMLImageElement>();
+const artworkPreviewCache = new Map<string, string>();
+
+function preloadFullSizeArtwork(url: string) {
+  const cached = fullSizeArtworkCache.get(url);
+  if (cached) {
+    fullSizeArtworkCache.delete(url);
+    fullSizeArtworkCache.set(url, cached);
+    return cached;
+  }
+
+  const imagePromise = new Promise<HTMLImageElement>((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => {
+      const cacheImage = () => {
+        loadedFullSizeArtwork.set(url, image);
+        resolve(image);
+      };
+      if (typeof image.decode === 'function') void image.decode().then(cacheImage, cacheImage);
+      else cacheImage();
+    };
+    image.onerror = () => reject(new Error('Could not load full-size artwork'));
+    image.src = url;
+  });
+  fullSizeArtworkCache.set(url, imagePromise);
+
+  // Keep only a few recent full-size images in memory.
+  if (fullSizeArtworkCache.size > 4) {
+    const oldestUrl = fullSizeArtworkCache.keys().next().value;
+    if (oldestUrl) {
+      fullSizeArtworkCache.delete(oldestUrl);
+      loadedFullSizeArtwork.delete(oldestUrl);
+    }
+  }
+
+  void imagePromise.catch(() => {
+    if (fullSizeArtworkCache.get(url) === imagePromise) fullSizeArtworkCache.delete(url);
+  });
+  return imagePromise;
+}
+
+function getArtworkPreviewUrl(image: HTMLImageElement | null, fallback: string) {
+  if (!image?.complete || image.naturalWidth === 0 || image.dataset.artLoadMode !== 'cors') {
+    return getVisibleArtworkUrl(image, fallback);
+  }
+
+  const source = image.dataset.artSource || image.currentSrc || image.src;
+  const cachedPreview = artworkPreviewCache.get(source);
+  if (cachedPreview) return cachedPreview;
+
+  const canvas = document.createElement('canvas');
+  const maxSize = 400;
+  const scale = Math.min(1, maxSize / Math.max(image.naturalWidth, image.naturalHeight));
+  canvas.width = Math.round(image.naturalWidth * scale);
+  canvas.height = Math.round(image.naturalHeight * scale);
+
+  try {
+    const context = canvas.getContext('2d');
+    if (!context) return source;
+    context.drawImage(image, 0, 0, canvas.width, canvas.height);
+    const previewUrl = canvas.toDataURL('image/jpeg', 0.92);
+    artworkPreviewCache.set(source, previewUrl);
+    if (artworkPreviewCache.size > 4) {
+      const oldestSource = artworkPreviewCache.keys().next().value;
+      if (oldestSource) artworkPreviewCache.delete(oldestSource);
+    }
+    return previewUrl;
+  } catch {
+    return source;
+  }
+}
+
+function getVisibleArtworkUrl(image: HTMLImageElement | null, fallback: string) {
+  if (image?.complete && image.naturalWidth > 0) {
+    return image.currentSrc || image.dataset.artSource || image.src || fallback;
+  }
+  return fallback;
+}
+
 function getMusicBrainzEntityUrl(
   entity: 'artist' | 'recording' | 'release-group',
   mbid: string | undefined,
@@ -261,6 +341,8 @@ function setNowPlayingStateMessage(message: string, statusMessage: string, isErr
   const fsAlbumEl = $('#np-fs-album');
   const fsArtEl = $<HTMLImageElement>('#np-fs-art');
   const fsBgEl = $('#np-fs-bg');
+  $('#np-iv-art-loading')?.setAttribute('hidden', '');
+  $('#np-fs-art-loading')?.setAttribute('hidden', '');
   const widgetEl = $('#now-playing');
 
   updateNowPlayingStatus($('#np-status'), false, statusMessage, 0, isError);
@@ -410,6 +492,7 @@ function renderTrack(state: Extract<NowPlayingState, { kind: 'track' }>) {
     const fsArtEl = $<HTMLImageElement>('#np-fs-art');
     const fsBgEl = $('#np-fs-bg');
     const fsViewerEl = $('#np-fullscreen-viewer');
+    const fsArtLoading = $('#np-fs-art-loading');
     const widgetEl = $('#now-playing');
 
     if (trackEl) {
@@ -450,11 +533,31 @@ function renderTrack(state: Extract<NowPlayingState, { kind: 'track' }>) {
 
     if (fsArtEl) fsArtEl.alt = artEl?.alt || text.artUnavailable;
     if (fsViewerEl && !fsViewerEl.hidden) {
-      fsArtEl?.removeAttribute('src');
-      if (state.art && fsArtEl) fsArtEl.src = state.art;
+      const fullSizeUrl = getFullSizeArtworkUrl(state.art);
+      const cachedFullSize = loadedFullSizeArtwork.has(fullSizeUrl);
+      const initialArtworkUrl = cachedFullSize ? fullSizeUrl : getArtworkPreviewUrl(artEl, state.art);
+      if (fsArtLoading) fsArtLoading.hidden = cachedFullSize || fullSizeUrl === state.art;
+      if (fsArtEl) {
+        fsArtEl.dataset.artSource = state.art;
+        fsArtEl.dataset.displayArtSource = initialArtworkUrl;
+        fsArtEl.src = initialArtworkUrl;
+        if (!cachedFullSize && fullSizeUrl !== state.art) {
+          void preloadFullSizeArtwork(fullSizeUrl).then(() => {
+            if (!fsViewerEl.hidden && fsArtEl.dataset.artSource === state.art) {
+              fsArtEl.dataset.displayArtSource = fullSizeUrl;
+              fsArtEl.src = fullSizeUrl;
+              if (fsArtLoading) fsArtLoading.hidden = true;
+            }
+          }).catch(() => {
+            if (fsArtEl.dataset.artSource === state.art && fsArtLoading) fsArtLoading.hidden = true;
+            // Keep showing the low-resolution artwork when the full-size image is unavailable.
+          });
+        }
+      }
       if (fsBgEl) {
-        fsBgEl.dataset.bg = state.art;
-        setArtworkBackground(fsBgEl, state.art);
+        const backgroundUrl = cachedFullSize ? fullSizeUrl : state.art;
+        fsBgEl.dataset.bg = backgroundUrl;
+        setArtworkBackground(fsBgEl, backgroundUrl);
       }
     }
 
@@ -718,6 +821,7 @@ export function initNowPlaying() {
   const ivBackdrop = $('#np-iv-backdrop');
   const ivClose = $<HTMLButtonElement>('#np-iv-close');
   const ivArt = $<HTMLImageElement>('#np-iv-art');
+  const ivArtLoading = $('#np-iv-art-loading');
   const ivTitle = $('#np-iv-album-title');
   const ivArtist = $<HTMLAnchorElement>('#np-iv-artist');
   const ivLink = $<HTMLAnchorElement>('#np-iv-link');
@@ -729,7 +833,11 @@ export function initNowPlaying() {
     focusTarget: ivClose,
     appRoot,
     settingsFab,
-    onClose: () => ivArt?.removeAttribute('src')
+    onClose: () => {
+      ivArt?.removeAttribute('src');
+      if (ivArt) delete ivArt.dataset.highResTarget;
+      if (ivArtLoading) ivArtLoading.hidden = true;
+    }
   });
 
   npArtEl?.addEventListener('load', () => {
@@ -744,7 +852,11 @@ export function initNowPlaying() {
     const fsBgEl = $('#np-fs-bg');
     const artSource = npArtEl.dataset.artSource || '';
     if (fsViewerEl && !fsViewerEl.hidden) {
-      if (fsArtEl) fsArtEl.src = artSource;
+      if (fsArtEl?.dataset.displayArtSource !== getFullSizeArtworkUrl(artSource) && fsArtEl) {
+        fsArtEl.dataset.artSource = artSource;
+        fsArtEl.dataset.displayArtSource = artSource;
+        fsArtEl.src = artSource;
+      }
       if (fsBgEl) {
         fsBgEl.dataset.bg = artSource;
         setArtworkBackground(fsBgEl, artSource);
@@ -806,18 +918,25 @@ export function initNowPlaying() {
     if (!state || state.kind !== 'track' || !state.art) return;
     event.preventDefault();
 
-    const artworkUrl = npArtEl?.currentSrc || npArtEl?.src || state.art;
+    const artworkUrl = getVisibleArtworkUrl(npArtEl, state.art);
+    const fullSizeUrl = getFullSizeArtworkUrl(artworkUrl);
+    const cachedFullSize = loadedFullSizeArtwork.has(fullSizeUrl);
+    const isFullSizePending = !cachedFullSize && fullSizeUrl !== artworkUrl;
     if (ivArt) {
-      ivArt.src = artworkUrl;
-      const fullSizeUrl = getFullSizeArtworkUrl(artworkUrl);
+      ivArt.src = cachedFullSize ? fullSizeUrl : getArtworkPreviewUrl(npArtEl, artworkUrl);
+      if (ivArtLoading) ivArtLoading.hidden = !isFullSizePending;
       if (ivExternal) ivExternal.href = fullSizeUrl;
       if (fullSizeUrl !== artworkUrl) {
         ivArt.dataset.highResTarget = fullSizeUrl;
-        const fullSizeImage = new Image();
-        fullSizeImage.onload = () => {
-          if (ivArt.dataset.highResTarget === fullSizeUrl) ivArt.src = fullSizeUrl;
-        };
-        fullSizeImage.src = fullSizeUrl;
+        void preloadFullSizeArtwork(fullSizeUrl).then(() => {
+          if (imageViewer.isOpen && ivArt.dataset.highResTarget === fullSizeUrl) {
+            ivArt.src = fullSizeUrl;
+            if (ivArtLoading) ivArtLoading.hidden = true;
+          }
+        }).catch(() => {
+          if (ivArt.dataset.highResTarget === fullSizeUrl && ivArtLoading) ivArtLoading.hidden = true;
+          // Keep showing the low-resolution artwork when the full-size image is unavailable.
+        });
       } else {
         delete ivArt.dataset.highResTarget;
       }
@@ -843,33 +962,45 @@ export function initNowPlaying() {
   const fsViewer = $('#np-fullscreen-viewer');
   const fsClose = $<HTMLButtonElement>('#np-fs-close');
   const fsArtEl = $<HTMLImageElement>('#np-fs-art');
+  const fsArtLoading = $('#np-fs-art-loading');
   const fsBgEl = $('#np-fs-bg');
 
   const loadFullscreenArtwork = (state: NowPlayingState) => {
     if (state.kind !== 'track' || !state.art) return;
 
-    const artworkUrl = npArtEl?.currentSrc || npArtEl?.src || state.art;
+    const artworkUrl = getVisibleArtworkUrl(npArtEl, state.art);
     const fullSizeUrl = getFullSizeArtworkUrl(artworkUrl);
+    const cachedFullSize = loadedFullSizeArtwork.has(fullSizeUrl);
+    const isFullSizePending = !cachedFullSize && fullSizeUrl !== artworkUrl;
+    const initialImageUrl = cachedFullSize ? fullSizeUrl : getArtworkPreviewUrl(npArtEl, artworkUrl);
+    if (fsArtLoading) fsArtLoading.hidden = !isFullSizePending;
     if (fsArtEl) {
       fsArtEl.dataset.artSource = artworkUrl;
-      fsArtEl.src = artworkUrl;
+      fsArtEl.dataset.displayArtSource = initialImageUrl;
+      fsArtEl.src = initialImageUrl;
     }
     if (fsBgEl) {
-      fsBgEl.dataset.bg = artworkUrl;
-      setArtworkBackground(fsBgEl, artworkUrl);
+      const backgroundUrl = cachedFullSize ? fullSizeUrl : artworkUrl;
+      fsBgEl.dataset.bg = backgroundUrl;
+      setArtworkBackground(fsBgEl, backgroundUrl);
     }
 
-    if (fullSizeUrl === artworkUrl) return;
-    const fullSizeImage = new Image();
-    fullSizeImage.onload = () => {
+    if (cachedFullSize || fullSizeUrl === artworkUrl) return;
+    void preloadFullSizeArtwork(fullSizeUrl).then(() => {
       if (fsViewer?.hidden || fsArtEl?.dataset.artSource !== artworkUrl) return;
-      if (fsArtEl) fsArtEl.src = fullSizeUrl;
+      if (fsArtEl) {
+        fsArtEl.dataset.displayArtSource = fullSizeUrl;
+        fsArtEl.src = fullSizeUrl;
+      }
       if (fsBgEl) {
         fsBgEl.dataset.bg = fullSizeUrl;
         setArtworkBackground(fsBgEl, fullSizeUrl);
       }
-    };
-    fullSizeImage.src = fullSizeUrl;
+      if (fsArtLoading) fsArtLoading.hidden = true;
+    }).catch(() => {
+      if (fsArtEl?.dataset.artSource === artworkUrl && fsArtLoading) fsArtLoading.hidden = true;
+      // Keep showing the low-resolution artwork when the full-size image is unavailable.
+    });
   };
 
   const clearFullscreenIdleTimer = () => {
@@ -918,7 +1049,12 @@ export function initNowPlaying() {
     onOpen: enterFullscreenChromeHiddenMode,
     onClose: () => {
       exitFullscreenChromeHiddenMode();
+      if (fsArtLoading) fsArtLoading.hidden = true;
       fsArtEl?.removeAttribute('src');
+      if (fsArtEl) {
+        delete fsArtEl.dataset.artSource;
+        delete fsArtEl.dataset.displayArtSource;
+      }
       if (fsBgEl) {
         fsBgEl.dataset.bg = '';
         fsBgEl.style.backgroundImage = 'none';
@@ -937,8 +1073,8 @@ export function initNowPlaying() {
   const openFullscreen = async () => {
     const state = currentState;
     if (!state || state.kind !== 'track') return;
-    fullscreenModal.open();
     loadFullscreenArtwork(state);
+    fullscreenModal.open();
     showFullscreenControls();
 
     try {

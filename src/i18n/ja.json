@@ -249,6 +249,7 @@
     "close": "閉じる",
     "closeViewer": "ビューアを閉じる",
     "artAlt": "アルバムアート",
+    "fullSizeArtworkLoading": "高解像度のアートワークを読み込み中です。お待ちください…",
     "fullscreenLabel": "再生中の全画面表示",
     "closeFullscreen": "全画面を閉じる",
     "viewInMusicBrainz": "MusicBrainz で見る"

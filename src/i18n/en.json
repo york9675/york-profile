@@ -249,6 +249,7 @@
     "close": "Close",
     "closeViewer": "Close viewer",
     "artAlt": "Album artwork",
+    "fullSizeArtworkLoading": "Full-size artwork is loading. Please wait…",
     "fullscreenLabel": "Now Playing Fullscreen",
     "closeFullscreen": "Close fullscreen",
     "viewInMusicBrainz": "View in MusicBrainz"

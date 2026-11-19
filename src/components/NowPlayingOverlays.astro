@@ -19,6 +19,7 @@ const { t } = Astro.props;
     </button>
     <div class="np-iv-image-wrapper">
       <img id="np-iv-art" src="" alt={t.artAlt} decoding="async" />
+      <p class="np-art-loading" id="np-iv-art-loading" role="status" aria-live="polite" hidden>{t.fullSizeArtworkLoading}</p>
     </div>
     <div class="np-iv-info">
       <p class="np-iv-title" id="np-iv-album-title">—</p>
@@ -38,6 +39,7 @@ const { t } = Astro.props;
   <div class="np-fs-content">
     <div class="np-fs-art-wrap">
       <img id="np-fs-art" class="np-fs-art" src="" alt={t.artAlt} decoding="async" />
+      <p class="np-art-loading" id="np-fs-art-loading" role="status" aria-live="polite" hidden>{t.fullSizeArtworkLoading}</p>
     </div>
     <div class="np-fs-info">
       <p class="np-fs-status" id="np-fs-status">Loading…</p>
