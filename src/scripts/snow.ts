@@ -51,9 +51,11 @@ export function initSnow() {
 
   let flakes: SnowFlake[] = [];
   let snowBanks: number[] = [];
+  let smoothedSnowBanks: number[] = [];
   let animId: number | null = null;
   let clearAnim: ClearAnimation | null = null;
-  let enabled = localStorage.getItem(STORAGE_KEYS.snowEnabled) === 'true';
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let enabled = localStorage.getItem(STORAGE_KEYS.snowEnabled) === 'true' && !prefersReducedMotion;
   let intensity = Number(localStorage.getItem(STORAGE_KEYS.snowIntensity) || SNOW_DEFAULT_INTENSITY);
   const CLEAR_DURATION = 900;
 
@@ -74,8 +76,10 @@ export function initSnow() {
         return prev[src] || 0;
       });
     }
+    smoothedSnowBanks = new Array(columns).fill(0);
 
-    spawnFlakes();
+    if (enabled) spawnFlakes();
+    else flakes = [];
   }
 
   function createFlake() {
@@ -154,11 +158,15 @@ export function initSnow() {
 
   function smoothSnowBanks() {
     if (snowBanks.length < 3) return;
-    const next = snowBanks.slice();
+    const last = snowBanks.length - 1;
+    smoothedSnowBanks[0] = snowBanks[0];
+    smoothedSnowBanks[last] = snowBanks[last];
     for (let i = 1; i < snowBanks.length - 1; i++) {
-      next[i] = snowBanks[i] * 0.7 + (snowBanks[i - 1] + snowBanks[i + 1]) * 0.15;
+      smoothedSnowBanks[i] = snowBanks[i] * 0.7 + (snowBanks[i - 1] + snowBanks[i + 1]) * 0.15;
     }
-    snowBanks = next;
+    const previous = snowBanks;
+    snowBanks = smoothedSnowBanks;
+    smoothedSnowBanks = previous;
   }
 
   function drawSnowBank() {
@@ -224,7 +232,7 @@ export function initSnow() {
 
     for (const flake of flakes) {
       flake.y += flake.speed * (0.62 + intensity / 180);
-      flake.x += Math.sin(performance.now() * flake.swayFreq + flake.phase) * flake.driftAmp;
+      flake.x += Math.sin(now * flake.swayFreq + flake.phase) * flake.driftAmp;
 
       if (flake.x < -8) flake.x = canvas.width + 8;
       if (flake.x > canvas.width + 8) flake.x = -8;
@@ -250,7 +258,9 @@ export function initSnow() {
   }
 
   function start() {
-    if (animId) return;
+    if (animId !== null || document.hidden) return;
+    if (canvas.width !== window.innerWidth || canvas.height !== window.innerHeight) resize();
+    if (!flakes.length) spawnFlakes();
     canvas.style.opacity = '1';
     function loop() {
       draw();
@@ -260,7 +270,7 @@ export function initSnow() {
   }
 
   function stop() {
-    if (animId) window.cancelAnimationFrame(animId);
+    if (animId !== null) window.cancelAnimationFrame(animId);
     animId = null;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     canvas.style.opacity = '0';
@@ -275,7 +285,22 @@ export function initSnow() {
     updateIntensityUI();
   }
 
-  window.addEventListener('resize', resize);
+  let resizeFrameId: number | null = null;
+  window.addEventListener('resize', () => {
+    if (!enabled || resizeFrameId !== null) return;
+    resizeFrameId = window.requestAnimationFrame(() => {
+      resizeFrameId = null;
+      resize();
+    });
+  });
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden && animId !== null) {
+      window.cancelAnimationFrame(animId);
+      animId = null;
+    } else if (!document.hidden && enabled) {
+      start();
+    }
+  });
   resize();
   applyState();
 

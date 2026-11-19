@@ -275,8 +275,7 @@
   line-height: 1.24;
 }
 
-.np-title-main,
-.np-loved-icon {
+.np-title-main {
   flex-shrink: 0;
 }
 
@@ -315,30 +314,6 @@
 
 .np-widget.is-loading .np-title a {
   min-width: min(100%, 18ch);
-}
-
-.np-loved-icon {
-  flex-shrink: 0;
-  align-self: center;
-  color: #ff7373;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 0.95rem;
-  height: 0.95rem;
-  opacity: 0.9;
-}
-
-.np-loved-icon i {
-  font-size: 0.72rem;
-}
-
-.np-loved-icon[hidden] {
-  display: none !important;
-}
-
-.np-widget.is-loading .np-loved-icon {
-  opacity: 0;
 }
 
 .np-title a:hover,
@@ -999,27 +974,10 @@ html[data-theme="light"] .np-fs-info {
   background: transparent;
 }
 
-.np-fs-meta {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  font-size: clamp(1.2rem, 2.5vw, 2.2rem);
-  font-weight: 500;
-  opacity: 0.85;
-  color: inherit;
-  flex-wrap: wrap;
-}
-
 .np-fs-artist {
   margin: 0;
   color: inherit;
   font-weight: 500;
-}
-
-.np-fs-meta-sep {
-  opacity: 0.8;
-  font-weight: 800;
 }
 
 .np-fs-album {
@@ -1070,11 +1028,6 @@ html.np-now-playing-fullscreen .settings-fab {
     font-size: clamp(1.5rem, 3.4vw, 3rem);
   }
 
-  .np-fs-meta {
-    justify-content: flex-start;
-    font-size: clamp(1rem, 2vw, 1.5rem);
-  }
-
   .np-fs-close {
     top: 1rem;
     right: 1rem;
@@ -1106,8 +1059,7 @@ html.np-now-playing-fullscreen .settings-fab {
 .np-fullscreen-viewer.is-loading .np-fs-status,
 .np-fullscreen-viewer.is-loading .np-fs-track,
 .np-fullscreen-viewer.is-loading .np-fs-artist,
-.np-fullscreen-viewer.is-loading .np-fs-album,
-.np-fullscreen-viewer.is-loading .np-fs-meta-sep {
+.np-fullscreen-viewer.is-loading .np-fs-album {
   color: transparent !important;
   text-shadow: none !important;
   position: relative;

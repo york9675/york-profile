@@ -62,7 +62,7 @@ export function initRain() {
   let animId: number | null = null;
   let thunderTimerId: number | null = null;
   let thunderAudioCtx: AudioContext | null = null;
-  let unlockListenersBound = false;
+  let audioUnlockController: AbortController | null = null;
 
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const rainPref = localStorage.getItem(STORAGE_KEYS.rainEnabled);
@@ -75,9 +75,9 @@ export function initRain() {
   intensity = Math.min(RAIN_MAX_INTENSITY, Math.max(RAIN_MIN_INTENSITY, intensity));
 
   function bindAudioUnlockListeners() {
-    if (unlockListenersBound || !enabled || soundMuted) return;
-    unlockListenersBound = true;
+    if (audioUnlockController || !enabled || soundMuted) return;
 
+    audioUnlockController = new AbortController();
     const retry = () => {
       syncRainAudio();
       if (thunderAudioCtx && thunderAudioCtx.state === 'suspended') {
@@ -85,16 +85,25 @@ export function initRain() {
       }
     };
 
-    const onceOpts = { once: true, capture: true };
+    const onceOpts = { once: true, capture: true, signal: audioUnlockController.signal };
     document.addEventListener('pointerdown', retry, onceOpts);
     document.addEventListener('keydown', retry, onceOpts);
     document.addEventListener('touchstart', retry, onceOpts);
   }
 
+  function clearAudioUnlockListeners() {
+    audioUnlockController?.abort();
+    audioUnlockController = null;
+  }
+
   function resize() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    spawnDrops();
+    if (enabled) spawnDrops();
+    else {
+      drops = [];
+      splashes = [];
+    }
   }
 
   function spawnDrops() {
@@ -137,7 +146,7 @@ export function initRain() {
     if (enabled && !soundMuted) {
       try {
         await rainAudio.play();
-        unlockListenersBound = false;
+        clearAudioUnlockListeners();
       } catch {
         // Autoplay may be blocked until user interacts
         bindAudioUnlockListeners();
@@ -145,6 +154,7 @@ export function initRain() {
       syncThunder();
       return;
     }
+    clearAudioUnlockListeners();
     rainAudio.pause();
     rainAudio.currentTime = 0;
     syncThunder();
@@ -157,7 +167,7 @@ export function initRain() {
   }
 
   function playThunderRumble() {
-    if (!enabled || soundMuted) return;
+    if (!enabled || soundMuted || document.hidden) return;
     const AudioCtx = window.AudioContext || window.webkitAudioContext;
     if (!AudioCtx) return;
     if (!thunderAudioCtx) thunderAudioCtx = new AudioCtx();
@@ -193,7 +203,7 @@ export function initRain() {
 
   function scheduleThunder() {
     clearThunderTimer();
-    if (!enabled || soundMuted) return;
+    if (!enabled || soundMuted || document.hidden) return;
     const nextInMs = THUNDER_MIN_INTERVAL + Math.random() * (THUNDER_MAX_INTERVAL - THUNDER_MIN_INTERVAL);
     thunderTimerId = window.setTimeout(() => {
       playThunderRumble();
@@ -257,7 +267,9 @@ export function initRain() {
   }
 
   function start() {
-    if (animId) return;
+    if (animId !== null || document.hidden) return;
+    if (canvas.width !== window.innerWidth || canvas.height !== window.innerHeight) resize();
+    if (!drops.length) spawnDrops();
     canvas.style.opacity = '1';
     function loop() {
       draw();
@@ -267,7 +279,7 @@ export function initRain() {
   }
 
   function stop() {
-    if (animId) window.cancelAnimationFrame(animId);
+    if (animId !== null) window.cancelAnimationFrame(animId);
     animId = null;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     canvas.style.opacity = '0';
@@ -286,7 +298,27 @@ export function initRain() {
     syncRainAudio();
   }
 
-  window.addEventListener('resize', resize);
+  let resizeFrameId: number | null = null;
+  window.addEventListener('resize', () => {
+    if (!enabled || resizeFrameId !== null) return;
+    resizeFrameId = window.requestAnimationFrame(() => {
+      resizeFrameId = null;
+      resize();
+    });
+  });
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      if (animId !== null) window.cancelAnimationFrame(animId);
+      animId = null;
+      clearThunderTimer();
+      return;
+    }
+
+    if (enabled) {
+      start();
+      syncThunder();
+    }
+  });
   resize();
   applyState();
 

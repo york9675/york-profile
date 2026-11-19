@@ -10,11 +10,10 @@ type Particle = {
   y: number;
   vx: number;
   vy: number;
-  baseVx: number;
-  baseVy: number;
   size: number;
 };
 
+const NO_MOUSE_POSITION = -9999;
 let isParticlesInitialized = false;
 
 export function initParticles() {
@@ -29,10 +28,10 @@ export function initParticles() {
 
   let particles: Particle[] = [];
   let animId: number | null = null;
-  // Default is off
   const pref = localStorage.getItem(STORAGE_KEYS.particlesEnabled);
-  let enabled = pref === 'true';
-  const mouse = { x: -9999, y: -9999, radius: 150 };
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let enabled = pref === 'true' && !prefersReducedMotion;
+  const mouse = { x: NO_MOUSE_POSITION, y: NO_MOUSE_POSITION, radius: 150 };
 
   function resize() {
     canvas.width = window.innerWidth;
@@ -49,8 +48,6 @@ export function initParticles() {
         y: Math.random() * canvas.height,
         vx: (Math.random() - 0.5) * 0.4,
         vy: (Math.random() - 0.5) * 0.4,
-        baseVx: (Math.random() - 0.5) * 0.4,
-        baseVy: (Math.random() - 0.5) * 0.4,
         size: Math.random() * 2 + 1
       });
     }
@@ -66,39 +63,35 @@ export function initParticles() {
         : '255, 255, 255';
 
     ctx.fillStyle = `rgba(${colorRGB}, 0.8)`;
-    
-    for (let i = 0; i < particles.length; i++) {
-        const p = particles[i];
-        
-        p.x += p.vx;
-        p.y += p.vy;
+    for (const particle of particles) {
+      particle.x += particle.vx;
+      particle.y += particle.vy;
 
-        if (p.x < 0) { p.x = 0; p.vx *= -1; }
-        if (p.x > canvas.width) { p.x = canvas.width; p.vx *= -1; }
-        if (p.y < 0) { p.y = 0; p.vy *= -1; }
-        if (p.y > canvas.height) { p.y = canvas.height; p.vy *= -1; }
+      if (particle.x < 0) { particle.x = 0; particle.vx *= -1; }
+      if (particle.x > canvas.width) { particle.x = canvas.width; particle.vx *= -1; }
+      if (particle.y < 0) { particle.y = 0; particle.vy *= -1; }
+      if (particle.y > canvas.height) { particle.y = canvas.height; particle.vy *= -1; }
 
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fill();
+      ctx.beginPath();
+      ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+      ctx.fill();
     }
-    
-    // Connect to mouse
-    if (mouse.x !== -9999) {
-      for (let i = 0; i < particles.length; i++) {
-          const p = particles[i];
-          const dx = p.x - mouse.x;
-          const dy = p.y - mouse.y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-          if (distance < mouse.radius) {
-             // Connect to mouse
-             ctx.beginPath();
-             ctx.strokeStyle = `rgba(${colorRGB}, ${0.4 - distance/mouse.radius * 0.4})`;
-             ctx.lineWidth = 1;
-             ctx.moveTo(p.x, p.y);
-             ctx.lineTo(mouse.x, mouse.y);
-             ctx.stroke();
-          }
+
+    if (mouse.x !== NO_MOUSE_POSITION) {
+      const radiusSquared = mouse.radius * mouse.radius;
+      ctx.lineWidth = 1;
+      for (const particle of particles) {
+        const dx = particle.x - mouse.x;
+        const dy = particle.y - mouse.y;
+        const distanceSquared = dx * dx + dy * dy;
+        if (distanceSquared >= radiusSquared) continue;
+
+        const distance = Math.sqrt(distanceSquared);
+        ctx.beginPath();
+        ctx.strokeStyle = `rgba(${colorRGB}, ${0.4 - distance / mouse.radius * 0.4})`;
+        ctx.moveTo(particle.x, particle.y);
+        ctx.lineTo(mouse.x, mouse.y);
+        ctx.stroke();
       }
     }
 
@@ -107,12 +100,12 @@ export function initParticles() {
     }
   }
 
-  let clearAnim: ReturnType<typeof setTimeout> | null = null;
+  let clearAnim: number | null = null;
 
   function start() {
-    if (animId) return;
-    if (clearAnim) {
-      clearTimeout(clearAnim);
+    if (animId !== null || document.hidden) return;
+    if (clearAnim !== null) {
+      window.clearTimeout(clearAnim);
       clearAnim = null;
     }
     canvas.style.opacity = '1';
@@ -123,13 +116,13 @@ export function initParticles() {
   }
 
   function stop() {
-    if (animId) {
+    if (animId !== null) {
       cancelAnimationFrame(animId);
       animId = null;
     }
     canvas.style.opacity = '0';
-    if (clearAnim) clearTimeout(clearAnim);
-    clearAnim = setTimeout(() => {
+    if (clearAnim !== null) window.clearTimeout(clearAnim);
+    clearAnim = window.setTimeout(() => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
     }, 1300); // Wait for transition
   }
@@ -137,15 +130,11 @@ export function initParticles() {
   function updateToggle() {
     const toggleBtn = $<HTMLButtonElement>(SELECTORS.particlesToggle);
     if (!toggleBtn) return;
-    
-    if (enabled) {
-      toggleBtn.setAttribute('aria-checked', 'true');
-    } else {
-      toggleBtn.setAttribute('aria-checked', 'false');
-    }
+
+    toggleBtn.setAttribute('aria-checked', String(enabled));
   }
 
-  window._toggleParticles = function() {
+  window._toggleParticles = function () {
     enabled = !enabled;
     localStorage.setItem(STORAGE_KEYS.particlesEnabled, enabled ? 'true' : 'false');
     updateToggle();
@@ -153,23 +142,32 @@ export function initParticles() {
     else stop();
   };
 
-  let resizeTimeout: ReturnType<typeof setTimeout> | undefined;
+  let resizeFrameId: number | null = null;
   window.addEventListener('resize', () => {
-    clearTimeout(resizeTimeout);
-    resizeTimeout = setTimeout(() => {
+    if (!enabled || resizeFrameId !== null) return;
+    resizeFrameId = window.requestAnimationFrame(() => {
+      resizeFrameId = null;
       if (enabled) resize();
-    }, 200);
+    });
   });
-  
   window.addEventListener('mousemove', event => {
+    if (!enabled) return;
     const rect = canvas.getBoundingClientRect();
     mouse.x = (event.clientX - rect.left) * (canvas.width / rect.width);
     mouse.y = (event.clientY - rect.top) * (canvas.height / rect.height);
   });
-  
   window.addEventListener('mouseout', () => {
-    mouse.x = -9999;
-    mouse.y = -9999;
+    mouse.x = NO_MOUSE_POSITION;
+    mouse.y = NO_MOUSE_POSITION;
+  });
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden && animId !== null) {
+      cancelAnimationFrame(animId);
+      animId = null;
+    } else if (!document.hidden && enabled) {
+      start();
+    }
   });
 
   updateToggle();

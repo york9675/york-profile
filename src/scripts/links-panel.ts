@@ -8,9 +8,9 @@ import { SELECTORS } from './constants';
  * Initialize Discord links panel with view switching
  */
 export function initDiscordLinksPanelView() {
-  const linksPanel = document.getElementById('links');
-  const mainView = document.getElementById('links-main-view');
-  const discordView = document.getElementById('discord-before-dm-view');
+  const linksPanel = document.querySelector<HTMLElement>(SELECTORS.linksPanel);
+  const mainView = document.querySelector<HTMLElement>(SELECTORS.linksMainView);
+  const discordView = document.querySelector<HTMLElement>(SELECTORS.discordView);
   const discordTrigger = document.querySelector<HTMLButtonElement>(SELECTORS.discordTrigger);
   const backButton = document.querySelector<HTMLButtonElement>(SELECTORS.discordBack);
 

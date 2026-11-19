@@ -72,7 +72,6 @@ export const RAIN_COLORS = {
 
 // Selectors
 export const SELECTORS = {
-  document: '#app',
   rainCanvas: '#rain-canvas',
   snowCanvas: '#snow-canvas',
   particlesCanvas: '#particles-canvas',
