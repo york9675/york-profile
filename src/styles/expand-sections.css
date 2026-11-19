@@ -46,7 +46,7 @@
 }
 
 .expand-summary:hover {
-  background: #111;
+  background: var(--surface-hover);
   color: var(--fg);
 }
 
@@ -87,9 +87,4 @@
   font-size: 0.82rem;
   color: var(--muted);
   line-height: 1.5;
-}
-
-/* Light mode */
-html[data-theme="light"] .expand-summary:hover { 
-  background: #e0e0e0; 
 }

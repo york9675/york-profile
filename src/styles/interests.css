@@ -27,7 +27,7 @@
 
 .interest-tabs {
   --interest-tab-bg: #101010;
-  --interest-tab-hover-bg: #111;
+  --interest-tab-hover-bg: var(--surface-hover);
   --interest-tab-active-bg: #151515;
 
   display: flex;
@@ -202,7 +202,6 @@
 
 html[data-theme="light"] .interest-tabs {
   --interest-tab-bg: #e2e2e2;
-  --interest-tab-hover-bg: #d8d8d8;
   --interest-tab-active-bg: #d4d4d4;
 }
 

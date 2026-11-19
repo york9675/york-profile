@@ -88,8 +88,12 @@ function getFullSizeArtworkUrl(artworkUrl: string) {
     .replace('/front-250', '/front');
 }
 
-const fullSizeArtworkCache = new Map<string, Promise<HTMLImageElement>>();
-const loadedFullSizeArtwork = new Map<string, HTMLImageElement>();
+type CachedArtwork = {
+  promise: Promise<HTMLImageElement>;
+  image?: HTMLImageElement;
+};
+
+const fullSizeArtworkCache = new Map<string, CachedArtwork>();
 const artworkPreviewCache = new Map<string, string>();
 
 function preloadFullSizeArtwork(url: string) {
@@ -97,40 +101,52 @@ function preloadFullSizeArtwork(url: string) {
   if (cached) {
     fullSizeArtworkCache.delete(url);
     fullSizeArtworkCache.set(url, cached);
-    return cached;
+    return cached.promise;
   }
 
-  const imagePromise = new Promise<HTMLImageElement>((resolve, reject) => {
-    const image = new Image();
-    image.onload = () => {
-      const cacheImage = () => {
-        loadedFullSizeArtwork.set(url, image);
-        resolve(image);
-      };
-      if (typeof image.decode === 'function') void image.decode().then(cacheImage, cacheImage);
-      else cacheImage();
-    };
-    image.onerror = () => reject(new Error('Could not load full-size artwork'));
-    image.src = url;
+  const image = new Image();
+  let resolveImage!: (loadedImage: HTMLImageElement) => void;
+  let rejectImage!: (error: Error) => void;
+  const promise = new Promise<HTMLImageElement>((resolve, reject) => {
+    resolveImage = resolve;
+    rejectImage = reject;
   });
-  fullSizeArtworkCache.set(url, imagePromise);
+  const cacheEntry: CachedArtwork = { promise };
+  image.onload = () => {
+    const cacheImage = () => {
+      cacheEntry.image = image;
+      resolveImage(image);
+    };
+    if (typeof image.decode === 'function') void image.decode().then(cacheImage, cacheImage);
+    else cacheImage();
+  };
+  image.onerror = () => rejectImage(new Error('Could not load full-size artwork'));
+  fullSizeArtworkCache.set(url, cacheEntry);
 
   // Keep only a few recent full-size images in memory.
   if (fullSizeArtworkCache.size > 4) {
     const oldestUrl = fullSizeArtworkCache.keys().next().value;
-    if (oldestUrl) {
-      fullSizeArtworkCache.delete(oldestUrl);
-      loadedFullSizeArtwork.delete(oldestUrl);
-    }
+    if (oldestUrl) fullSizeArtworkCache.delete(oldestUrl);
   }
 
-  void imagePromise.catch(() => {
-    if (fullSizeArtworkCache.get(url) === imagePromise) fullSizeArtworkCache.delete(url);
+  void promise.catch(() => {
+    if (fullSizeArtworkCache.get(url) === cacheEntry) fullSizeArtworkCache.delete(url);
   });
-  return imagePromise;
+  image.src = url;
+  return promise;
+}
+
+function getCachedFullSizeArtwork(url: string) {
+  const cached = fullSizeArtworkCache.get(url);
+  if (!cached) return null;
+
+  fullSizeArtworkCache.delete(url);
+  fullSizeArtworkCache.set(url, cached);
+  return cached.image || null;
 }
 
 function getArtworkPreviewUrl(image: HTMLImageElement | null, fallback: string) {
+  // Snapshot only CORS-enabled images; plain cross-origin images taint canvases.
   if (!image?.complete || image.naturalWidth === 0 || image.dataset.artLoadMode !== 'cors') {
     return getVisibleArtworkUrl(image, fallback);
   }
@@ -534,7 +550,7 @@ function renderTrack(state: Extract<NowPlayingState, { kind: 'track' }>) {
     if (fsArtEl) fsArtEl.alt = artEl?.alt || text.artUnavailable;
     if (fsViewerEl && !fsViewerEl.hidden) {
       const fullSizeUrl = getFullSizeArtworkUrl(state.art);
-      const cachedFullSize = loadedFullSizeArtwork.has(fullSizeUrl);
+      const cachedFullSize = Boolean(getCachedFullSizeArtwork(fullSizeUrl));
       const initialArtworkUrl = cachedFullSize ? fullSizeUrl : getArtworkPreviewUrl(artEl, state.art);
       if (fsArtLoading) fsArtLoading.hidden = cachedFullSize || fullSizeUrl === state.art;
       if (fsArtEl) {
@@ -920,7 +936,7 @@ export function initNowPlaying() {
 
     const artworkUrl = getVisibleArtworkUrl(npArtEl, state.art);
     const fullSizeUrl = getFullSizeArtworkUrl(artworkUrl);
-    const cachedFullSize = loadedFullSizeArtwork.has(fullSizeUrl);
+    const cachedFullSize = Boolean(getCachedFullSizeArtwork(fullSizeUrl));
     const isFullSizePending = !cachedFullSize && fullSizeUrl !== artworkUrl;
     if (ivArt) {
       ivArt.src = cachedFullSize ? fullSizeUrl : getArtworkPreviewUrl(npArtEl, artworkUrl);
@@ -970,7 +986,7 @@ export function initNowPlaying() {
 
     const artworkUrl = getVisibleArtworkUrl(npArtEl, state.art);
     const fullSizeUrl = getFullSizeArtworkUrl(artworkUrl);
-    const cachedFullSize = loadedFullSizeArtwork.has(fullSizeUrl);
+    const cachedFullSize = Boolean(getCachedFullSizeArtwork(fullSizeUrl));
     const isFullSizePending = !cachedFullSize && fullSizeUrl !== artworkUrl;
     const initialImageUrl = cachedFullSize ? fullSizeUrl : getArtworkPreviewUrl(npArtEl, artworkUrl);
     if (fsArtLoading) fsArtLoading.hidden = !isFullSizePending;

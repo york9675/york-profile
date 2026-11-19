@@ -14,6 +14,7 @@
   --accent: #ffffff;
   --focus-ring: #ffffff;
   --danger: #ff5555;
+  --surface-hover: #111111;
 
   /* Typography */
   --mono: "SFMono-Regular", ui-monospace, "JetBrains Mono", "Fira Code", Menlo, Consolas, monospace;

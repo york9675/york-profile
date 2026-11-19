@@ -12,6 +12,7 @@ html[data-theme="light"] {
   --line-alt: #c8c8c8;
   --accent: #000;
   --focus-ring: #000;
+  --surface-hover: #e0e0e0;
   color-scheme: light;
 }
 

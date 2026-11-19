@@ -20,7 +20,7 @@
 }
 
 .btn-plain:hover, .btn-plain:focus {
-  background: #111;
+  background: var(--surface-hover);
   border-color: var(--fg);
   outline: none;
 }
@@ -42,7 +42,3 @@
 .btn-plain.small {
   padding: 0.4rem 0.7rem;
 }
-
-/* Light mode */
-html[data-theme="light"] .btn-plain:hover,
-html[data-theme="light"] .btn-plain:focus { background: #e0e0e0; }

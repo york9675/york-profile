@@ -624,71 +624,46 @@ html[data-theme="light"] .np-iv-backdrop {
   animation: npIvFadeOut 0.2s ease forwards;
 }
 
-.np-iv-close {
-  position: absolute;
-  top: 0.75rem;
-  right: 0.75rem;
+.np-viewer-control {
   background: rgba(102, 113, 115, 0.5);
   border: none;
   color: #fff;
-  width: 2.5rem;
-  height: 2.5rem;
-  font-size: 1rem;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 2;
-  transition:
-    background var(--transition),
-    outline-color var(--transition);
-  outline: none;
-  padding: 0;
+  transition: background var(--transition), outline-color var(--transition);
 }
 
-.np-iv-close:hover {
+.np-viewer-control:hover {
   background: rgba(32, 38, 39, 0.9);
 }
 
-.np-iv-close:focus-visible {
+.np-viewer-control:focus-visible {
   outline: 2px solid #fff;
   outline-offset: 2px;
 }
 
+.np-iv-close,
 .np-iv-external {
   position: absolute;
   top: 0.75rem;
-  right: 3.75rem; /* Shifted slightly more to the left to account for the larger width */
-  background: rgba(102, 113, 115, 0.5);
-  border: none;
-  color: #fff;
   width: 2.5rem;
   height: 2.5rem;
-  font-size: 0.8rem;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   z-index: 2;
-  transition:
-    background var(--transition),
-    outline-color var(--transition);
+  font-size: 1rem;
   outline: none;
-  text-decoration: none;
   padding: 0;
 }
 
-.np-iv-external:hover {
-  background: rgba(32, 38, 39, 0.9);
-  color: #fff;
+.np-iv-close {
+  right: 0.75rem;
 }
 
-.np-iv-external:focus-visible {
-  outline: 2px solid #fff;
-  outline-offset: 2px;
-  color: #fff;
+.np-iv-external {
+  right: 3.75rem;
+  text-decoration: none;
 }
 
 .np-iv-image-wrapper {
@@ -724,8 +699,6 @@ html[data-theme="light"] .np-iv-image-wrapper {
   margin: 0;
   padding: 0.4rem 0.65rem;
   border-radius: 999px;
-  background: rgba(102, 113, 115, 0.5);
-  color: #fff;
   font-size: 0.75rem;
   line-height: 1.3;
   text-align: center;
@@ -778,12 +751,6 @@ html[data-theme="light"] .np-iv-image-wrapper {
   outline: none;
 }
 
-
-.np-iv-playcount-link:hover,
-.np-iv-playcount-link:focus {
-  border-bottom-style: solid;
-  text-decoration: none;
-}
 
 .np-iv-btn {
   margin-top: 0.75rem;

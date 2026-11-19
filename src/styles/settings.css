@@ -31,7 +31,7 @@
 
 .settings-btn:hover,
 .settings-btn:focus {
-  background: #111;
+  background: var(--surface-hover);
   border-color: var(--fg);
   color: var(--fg);
   outline: none;
@@ -336,8 +336,6 @@ html[data-theme="light"] .theme-select { background: #f4f4f4; color: #111; borde
 }
 
 /* Light mode */
-html[data-theme="light"] .settings-btn:hover,
-html[data-theme="light"] .settings-btn:focus { background: #e0e0e0; }
 html[data-theme="light"] .settings-btn { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
 html[data-theme="light"] .settings-panel { box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12); }
 

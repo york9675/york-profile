@@ -107,7 +107,7 @@
 }
 
 .line-link:hover {
-  background: #111;
+  background: var(--surface-hover);
 }
 
 .line-link .icon {
@@ -166,6 +166,3 @@
   color: #000000;
   border-color: #efefef;
 }
-
-/* Light mode */
-html[data-theme="light"] .line-link:hover { background: #e0e0e0; }

@@ -151,7 +151,9 @@ html[data-theme="newspaper"] .btn-plain {
 }
 
 html[data-theme="newspaper"] a.line-link:hover,
-html[data-theme="newspaper"] a.line-link:focus {
+html[data-theme="newspaper"] a.line-link:focus,
+html[data-theme="newspaper"] button.line-link:hover,
+html[data-theme="newspaper"] button.line-link:focus-visible {
   background: rgba(0,0,0,0.05) !important;
   color: #000 !important;
   opacity: 1 !important;
@@ -159,8 +161,15 @@ html[data-theme="newspaper"] a.line-link:focus {
 
 /* Overrides for line-link internal text on hover */
 html[data-theme="newspaper"] a.line-link:hover .text,
-html[data-theme="newspaper"] a.line-link:hover .subtext {
+html[data-theme="newspaper"] a.line-link:hover .subtext,
+html[data-theme="newspaper"] button.line-link:hover .text,
+html[data-theme="newspaper"] button.line-link:hover .subtext {
   color: #000 !important;
+}
+
+html[data-theme="newspaper"] button.line-link:hover::after,
+html[data-theme="newspaper"] button.line-link:focus-visible::after {
+  color: #000;
 }
 
 /* Buttons and Tabs - Broadside Print Look */
@@ -287,43 +296,23 @@ html[data-theme="newspaper"] .np-fs-album {
   color: #fff !important;
 }
 
-/* Album viewer controls should keep strong contrast in newspaper mode */
-html[data-theme="newspaper"] .np-iv-external {
-  background: rgba(102, 113, 115, 0.5) !important;
-  color: #fff !important;
-  border: none !important;
-  width: 2.5rem !important;
-  height: 2.5rem !important;
-  border-radius: 50% !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  font-size: 1rem !important;
-  top: 0.75rem !important;
-  right: 3.75rem !important;
-  line-height: 1 !important;
-  padding: 0 !important;
-  text-decoration: none !important;
-  box-sizing: border-box;
+/* Keep viewer controls consistent with their shared style in every theme. */
+html[data-theme="newspaper"] .np-viewer-control {
+  background: rgba(102, 113, 115, 0.5);
+  color: #fff;
+  border: none;
+  text-decoration: none;
 }
 
-html[data-theme="newspaper"] .np-iv-external:hover {
-  background: rgba(32, 38, 39, 0.9) !important;
-  color: #fff !important;
-  text-decoration: none !important;
+html[data-theme="newspaper"] .np-viewer-control:hover {
+  background: rgba(32, 38, 39, 0.9);
+  color: #fff;
+  opacity: 1;
 }
 
-html[data-theme="newspaper"] .np-iv-external:focus-visible {
-  outline: 2px solid #fff !important;
-  outline-offset: 2px !important;
-  color: #fff !important;
-  text-decoration: none !important;
-}
-
-html[data-theme="newspaper"] .np-iv-external i {
-  color: inherit !important;
-  line-height: 1 !important;
-  font-size: 1rem !important;
+html[data-theme="newspaper"] .np-viewer-control:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
 }
 
 /* Masthead (Header) */
