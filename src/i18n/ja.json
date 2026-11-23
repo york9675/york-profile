@@ -47,11 +47,7 @@
         ],
         "ios": [
           "iOS アプリ開発",
-          "Swift と SwiftUI を使って開発したメモアプリです。"
-        ],
-        "web": [
-          "Web アプリケーション",
-          "個人ポートフォリオサイト、歌詞検索サイト、メトロノームなど。"
+          "Swift と SwiftUI を使って開発したアプリです。"
         ],
         "oss": [
           "オープンソース",
@@ -59,13 +55,28 @@
         ],
         "more": "ほかにも..."
       },
-      "languages": {
-        "heading": "プログラミング言語",
-        "learning": [
-          "学習中",
-          "Java、C、C++、Python、JavaScript (Node.js)、TypeScript、Swift。"
+      "stack": {
+        "heading": "経験 / 学習中",
+        "languages": [
+          "言語",
+          "JavaScript、TypeScript、Swift、Python、Java、C、C++。"
         ],
-        "more": "ほかにも..."
+        "frameworks": [
+          "フレームワーク",
+          "SwiftUI、Electron、Astro。"
+        ],
+        "databases": [
+          "データベース",
+          "PostgreSQL、MongoDB。"
+        ],
+        "cloud": [
+          "クラウド / インフラ",
+          "Amazon Web Services (AWS)、Cloudflare。"
+        ],
+        "operatingSystems": [
+          "オペレーティングシステム",
+          "macOS、Ubuntu、Debian、Windows、Rocky Linux。"
+        ]
       },
       "hardware": {
         "heading": "ハードウェアとものづくり経験",
@@ -172,8 +183,7 @@
     "artLabel": "アルバムアートビューアを開く",
     "artLoadingAlt": "アルバムアートを読み込み中",
     "loading": "読み込み中...",
-    "listenBrainzProfile": "ListenBrainz プロフィール",
-    "albumSearchNote": "MusicBrainz にこのアルバムがまだ登録されていないか、私の音楽ファイルにアルバム情報をタグ付けしていない可能性があります。MusicBrainz への追加は自由にどうぞ。または、私に追加を頼んでください。"
+    "listenBrainzProfile": "ListenBrainz プロフィール"
   },
   "links": {
     "label": "リンク",

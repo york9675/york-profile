@@ -47,11 +47,7 @@
         ],
         "ios": [
           "iOS App Development",
-          "A memo application developed using Swift and SwiftUI."
-        ],
-        "web": [
-          "Web Applications",
-          "Personal portfolio website, lyrics search website, metronome, etc."
+          "A notify application developed using Swift and SwiftUI."
         ],
         "oss": [
           "Open Source",
@@ -59,13 +55,28 @@
         ],
         "more": "And more..."
       },
-      "languages": {
-        "heading": "Programming Languages",
-        "learning": [
-          "Learning",
-          "Java, C, C++, Python, JavaScript (Node.js), TypeScript, and Swift."
+      "stack": {
+        "heading": "Experience / Learning",
+        "languages": [
+          "Languages",
+          "JavaScript, TypeScript, Swift, Python, Java, C, and C++."
         ],
-        "more": "And more..."
+        "frameworks": [
+          "Frameworks",
+          "SwiftUI, Electron, and Astro."
+        ],
+        "databases": [
+          "Databases",
+          "PostgreSQL and MongoDB."
+        ],
+        "cloud": [
+          "Cloud / Infrastructure",
+          "Amazon Web Services (AWS) and Cloudflare."
+        ],
+        "operatingSystems": [
+          "Operating Systems",
+          "macOS, Ubuntu, Debian, Windows, and Rocky Linux."
+        ]
       },
       "hardware": {
         "heading": "Hardware & Tinkering (Hands-on Experience)",
@@ -172,8 +183,7 @@
     "artLabel": "Open album artwork viewer",
     "artLoadingAlt": "Album artwork loading",
     "loading": "Loading...",
-    "listenBrainzProfile": "ListenBrainz Profile",
-    "albumSearchNote": "MusicBrainz may not have this album yet, or I may not have tagged my music file with its details. Feel free to add it to MusicBrainz or ask me to add it."
+    "listenBrainzProfile": "ListenBrainz Profile"
   },
   "links": {
     "label": "Links",

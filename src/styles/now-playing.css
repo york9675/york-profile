@@ -114,7 +114,11 @@
 
 .np-widget {
   display: flex;
-  align-items: flex-start;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.4rem;
+  width: 100%;
+  min-width: 0;
 }
 
 .np-widget.is-loading a {
@@ -161,7 +165,12 @@
 }
 
 .np-art-link:disabled {
-  cursor: default;
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.np-art-link:disabled * {
+  cursor: not-allowed;
 }
 
 .np-art {
@@ -377,12 +386,6 @@
   overflow: hidden;
   text-overflow: ellipsis;
   line-height: 1.24;
-}
-
-.np-album-note {
-  color: var(--muted);
-  font-size: 0.65rem;
-  line-height: 1.3;
 }
 
 .np-widget.is-loading .np-title a::after,

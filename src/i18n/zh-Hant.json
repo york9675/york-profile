@@ -47,11 +47,7 @@
         ],
         "ios": [
           "iOS App 開發",
-          "使用 Swift 與 SwiftUI 開發的應用程式。"
-        ],
-        "web": [
-          "網頁應用",
-          "個人網站、歌詞搜尋網站、節拍器等。"
+          "使用 Swift 與 SwiftUI 開發的通知應用程式。"
         ],
         "oss": [
           "開源",
@@ -59,13 +55,28 @@
         ],
         "more": "還有更多..."
       },
-      "languages": {
-        "heading": "程式語言",
-        "learning": [
-          "正在學習",
-          "Java、C、C++、Python、JavaScript (Node.js)、TypeScript 與 Swift。"
+      "stack": {
+        "heading": "經驗 / 學習",
+        "languages": [
+          "程式語言",
+          "JavaScript、TypeScript、Swift、Python、Java、C、C++。"
         ],
-        "more": "還有更多..."
+        "frameworks": [
+          "框架",
+          "SwiftUI、Electron、Astro。"
+        ],
+        "databases": [
+          "資料庫",
+          "PostgreSQL、MongoDB。"
+        ],
+        "cloud": [
+          "雲端 / 基礎架構",
+          "Amazon Web Services (AWS)、Cloudflare。"
+        ],
+        "operatingSystems": [
+          "作業系統",
+          "macOS、Ubuntu、Debian、Windows、Rocky Linux。"
+        ]
       },
       "hardware": {
         "heading": "硬體與動手實作經驗",
@@ -172,8 +183,7 @@
     "artLabel": "開啟專輯封面檢視器",
     "artLoadingAlt": "專輯封面載入中",
     "loading": "載入中...",
-    "listenBrainzProfile": "ListenBrainz 個人頁面",
-    "albumSearchNote": "MusicBrainz 可能尚未收錄這張專輯，或我尚未在音樂檔案中標註專輯資訊。歡迎協助新增至 MusicBrainz，也可以請我代為新增。"
+    "listenBrainzProfile": "ListenBrainz 個人頁面"
   },
   "links": {
     "label": "連結",
