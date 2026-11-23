@@ -388,6 +388,7 @@ function setNowPlayingStateMessage(message: string, statusMessage: string, isErr
   const artistEl = $<HTMLAnchorElement>('#np-artist');
   const albumEl = $<HTMLAnchorElement>('#np-album');
   const artEl = $<HTMLImageElement>('#np-art');
+  const artLinkEl = $<HTMLButtonElement>('#np-art-link');
   const fsTrackEl = $('#np-fs-track');
   const fsArtistEl = $('#np-fs-artist');
   const fsAlbumEl = $('#np-fs-album');
@@ -411,6 +412,7 @@ function setNowPlayingStateMessage(message: string, statusMessage: string, isErr
     albumEl.textContent = '';
     albumEl.removeAttribute('href');
   }
+  if (artLinkEl) artLinkEl.disabled = true;
   if (fsTrackEl) fsTrackEl.textContent = message;
   if (fsArtistEl) fsArtistEl.textContent = '';
   if (fsAlbumEl) fsAlbumEl.textContent = '';
@@ -541,6 +543,7 @@ function renderTrack(state: Extract<NowPlayingState, { kind: 'track' }>) {
     const artistEl = $<HTMLAnchorElement>('#np-artist');
     const albumEl = $<HTMLAnchorElement>('#np-album');
     const artEl = $<HTMLImageElement>('#np-art');
+    const artLinkEl = $<HTMLButtonElement>('#np-art-link');
     const fsTrackEl = $('#np-fs-track');
     const fsArtistEl = $('#np-fs-artist');
     const fsAlbumEl = $('#np-fs-album');
@@ -586,6 +589,10 @@ function renderTrack(state: Extract<NowPlayingState, { kind: 'track' }>) {
         widgetEl?.style.removeProperty('--np-color');
       }
     }
+    if (artLinkEl) {
+      artLinkEl.disabled = !state.art;
+      delete artLinkEl.dataset.artUnavailable;
+    }
 
     if (fsArtEl) fsArtEl.alt = artEl?.alt || text.artUnavailable;
     if (fsViewerEl && !fsViewerEl.hidden) {
@@ -618,7 +625,6 @@ function renderTrack(state: Extract<NowPlayingState, { kind: 'track' }>) {
       }
     }
 
-    const artLinkEl = $<HTMLButtonElement>('#np-art-link');
     if (artLinkEl) artLinkEl.title = text.viewAlbum;
     if (trackChanged) refreshNowPlayingScroll();
   }
@@ -948,6 +954,8 @@ export function initNowPlaying() {
     delete npArtEl.dataset.artworkIndex;
     npArtEl.classList.remove('is-loading-art');
     npArtEl.alt = text.albumArtworkUnavailable;
+    npArtEl.dataset.artUnavailable = 'true';
+    if (npArtLinkEl) npArtLinkEl.disabled = true;
     const fsArtEl = $<HTMLImageElement>('#np-fs-art');
     const fsBgEl = $('#np-fs-bg');
     fsArtEl?.removeAttribute('src');
@@ -974,7 +982,7 @@ export function initNowPlaying() {
     const state = currentState;
     if (!state || state.kind !== 'track') return;
     // Keep the album's MusicBrainz link usable when no artwork is available.
-    if (!state.art) return;
+    if (!state.art || npArtEl?.dataset.artUnavailable === 'true') return;
     event.preventDefault();
 
     const artworkUrl = getVisibleArtworkUrl(npArtEl, state.art);

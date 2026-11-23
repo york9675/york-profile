@@ -154,10 +154,14 @@
   color: inherit;
 }
 
-.np-art-link:hover,
-.np-art-link:focus {
+.np-art-link:not(:disabled):hover,
+.np-art-link:focus-visible {
   border-color: var(--fg);
   outline: none;
+}
+
+.np-art-link:disabled {
+  cursor: default;
 }
 
 .np-art {

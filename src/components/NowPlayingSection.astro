@@ -25,7 +25,7 @@ const { t } = Astro.props;
   </div>
   <div class="np-widget is-loading" aria-live="polite" aria-atomic="true" aria-busy="true">
     <div class="np-inner">
-      <button id="np-art-link" class="np-art-link" type="button" aria-label={t.artLabel}>
+      <button id="np-art-link" class="np-art-link" type="button" aria-label={t.artLabel} disabled>
         <img id="np-art" class="np-art" alt={t.artLoadingAlt} width="80" height="80" loading="eager" decoding="async" fetchpriority="high" />
       </button>
       <div class="np-info">
