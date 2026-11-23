@@ -234,7 +234,7 @@ function getMusicBrainzEntityUrl(
 }
 
 type NowPlayingState =
-  | { kind: 'track'; trackKey: string; isPlaying: boolean; playedAt: number; title: string; artist: string; album: string; art: string; artworkCandidates: string[]; artistUrl: string; trackUrl: string; albumUrl: string }
+  | { kind: 'track'; trackKey: string; isPlaying: boolean; playedAt: number; title: string; artist: string; album: string; art: string; artworkCandidates: string[]; artistUrl: string; trackUrl: string; albumUrl: string; albumUsesSearch: boolean }
   | { kind: 'empty' }
   | { kind: 'error' };
 
@@ -387,6 +387,7 @@ function setNowPlayingStateMessage(message: string, statusMessage: string, isErr
   const trackEl = $<HTMLAnchorElement>('#np-track');
   const artistEl = $<HTMLAnchorElement>('#np-artist');
   const albumEl = $<HTMLAnchorElement>('#np-album');
+  const albumSearchNoteEl = $('#np-album-search-note');
   const artEl = $<HTMLImageElement>('#np-art');
   const artLinkEl = $<HTMLButtonElement>('#np-art-link');
   const fsTrackEl = $('#np-fs-track');
@@ -412,6 +413,7 @@ function setNowPlayingStateMessage(message: string, statusMessage: string, isErr
     albumEl.textContent = '';
     albumEl.removeAttribute('href');
   }
+  if (albumSearchNoteEl) albumSearchNoteEl.hidden = true;
   if (artLinkEl) artLinkEl.disabled = true;
   if (fsTrackEl) fsTrackEl.textContent = message;
   if (fsArtistEl) fsArtistEl.textContent = '';
@@ -542,6 +544,7 @@ function renderTrack(state: Extract<NowPlayingState, { kind: 'track' }>) {
     const trackEl = $<HTMLAnchorElement>('#np-track');
     const artistEl = $<HTMLAnchorElement>('#np-artist');
     const albumEl = $<HTMLAnchorElement>('#np-album');
+    const albumSearchNoteEl = $('#np-album-search-note');
     const artEl = $<HTMLImageElement>('#np-art');
     const artLinkEl = $<HTMLButtonElement>('#np-art-link');
     const fsTrackEl = $('#np-fs-track');
@@ -567,6 +570,7 @@ function renderTrack(state: Extract<NowPlayingState, { kind: 'track' }>) {
       albumEl.href = state.albumUrl;
       albumEl.title = state.art ? text.viewAlbum : text.viewOnMusicBrainz;
     }
+    if (albumSearchNoteEl) albumSearchNoteEl.hidden = !state.albumUsesSearch;
     if (fsTrackEl) fsTrackEl.textContent = state.title;
     if (fsArtistEl) fsArtistEl.textContent = state.artist;
     if (fsAlbumEl) fsAlbumEl.textContent = state.album;
@@ -713,7 +717,7 @@ async function fetchListenBrainzListen(options: { manual?: boolean; retryCount?:
     renderTrack({
       kind: 'track', trackKey, isPlaying, playedAt: track.listened_at || 0,
       title, artist, album, art: artworkCandidates[0] || '', artworkCandidates,
-      artistUrl, trackUrl, albumUrl
+      artistUrl, trackUrl, albumUrl, albumUsesSearch: albumUrl.includes('/search?')
     });
   } catch (error) {
     if (error instanceof DOMException && error.name === 'AbortError') return;

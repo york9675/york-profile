@@ -172,7 +172,8 @@
     "artLabel": "アルバムアートビューアを開く",
     "artLoadingAlt": "アルバムアートを読み込み中",
     "loading": "読み込み中...",
-    "listenBrainzProfile": "ListenBrainz プロフィール"
+    "listenBrainzProfile": "ListenBrainz プロフィール",
+    "albumSearchNote": "MusicBrainz にこのアルバムがまだ登録されていないか、私の音楽ファイルにアルバム情報をタグ付けしていない可能性があります。MusicBrainz への追加は自由にどうぞ。または、私に追加を頼んでください。"
   },
   "links": {
     "label": "リンク",

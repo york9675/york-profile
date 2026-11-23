@@ -172,7 +172,8 @@
     "artLabel": "開啟專輯封面檢視器",
     "artLoadingAlt": "專輯封面載入中",
     "loading": "載入中...",
-    "listenBrainzProfile": "ListenBrainz 個人頁面"
+    "listenBrainzProfile": "ListenBrainz 個人頁面",
+    "albumSearchNote": "MusicBrainz 可能尚未收錄這張專輯，或我尚未在音樂檔案中標註專輯資訊。歡迎協助新增至 MusicBrainz，也可以請我代為新增。"
   },
   "links": {
     "label": "連結",

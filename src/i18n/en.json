@@ -172,7 +172,8 @@
     "artLabel": "Open album artwork viewer",
     "artLoadingAlt": "Album artwork loading",
     "loading": "Loading...",
-    "listenBrainzProfile": "ListenBrainz Profile"
+    "listenBrainzProfile": "ListenBrainz Profile",
+    "albumSearchNote": "MusicBrainz may not have this album yet, or I may not have tagged my music file with its details. Feel free to add it to MusicBrainz or ask me to add it."
   },
   "links": {
     "label": "Links",
