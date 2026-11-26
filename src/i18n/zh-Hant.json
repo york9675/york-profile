@@ -35,8 +35,10 @@
       "tech": "科技",
       "music": "音樂",
       "aviation": "航空",
-      "photo": "攝影"
+      "photo": "攝影",
+      "travel": "旅行"
     },
+    "travel": "我非常喜歡瑞典和日本，尤其最喜歡日本。",
     "tech": {
       "intro": "我是個業餘開發者，喜歡製作應用程式，也會參與開源專案。",
       "experience": {

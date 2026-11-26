@@ -38,6 +38,7 @@ const recommendedArtistGroups = [
         <button type="button" class="interest-tab" role="tab" aria-selected="false" aria-controls="panel-music" id="interest-music" tabindex="-1" data-interest-tab><i class="fas fa-music" aria-hidden="true"></i> {t.tabs.music}</button>
         <button type="button" class="interest-tab" role="tab" aria-selected="false" aria-controls="panel-aviation" id="interest-aviation" tabindex="-1" data-interest-tab><i class="fas fa-plane" aria-hidden="true"></i> {t.tabs.aviation}</button>
         <button type="button" class="interest-tab" role="tab" aria-selected="false" aria-controls="panel-photo" id="interest-photo" tabindex="-1" data-interest-tab><i class="fas fa-camera" aria-hidden="true"></i> {t.tabs.photo}</button>
+        <button type="button" class="interest-tab" role="tab" aria-selected="false" aria-controls="panel-travel" id="interest-travel" tabindex="-1" data-interest-tab><i class="fas fa-globe" aria-hidden="true"></i> {t.tabs.travel}</button>
       </div>
 
       <div class="interest-panels">
@@ -166,6 +167,10 @@ const recommendedArtistGroups = [
         <div class="interest-panel" role="tabpanel" id="panel-photo" aria-labelledby="interest-photo" data-interest-panel hidden>
           <p>{t.photo.intro}</p>
           <p>{t.photo.craft}</p>
+        </div>
+
+        <div class="interest-panel" role="tabpanel" id="panel-travel" aria-labelledby="interest-travel" data-interest-panel hidden>
+          <p>{t.travel}</p>
         </div>
       </div>
     </div>

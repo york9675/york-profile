@@ -35,8 +35,10 @@
       "tech": "Tech",
       "music": "Music",
       "aviation": "Aviation",
-      "photo": "Photography"
+      "photo": "Photography",
+      "travel": "Travel"
     },
+    "travel": "Big fan of Sweden and Japan—with Japan being my absolute favorite.",
     "tech": {
       "intro": "I’m a hobby developer passionate about building apps and contributing to open-source projects.",
       "experience": {
