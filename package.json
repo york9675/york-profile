@@ -3,7 +3,7 @@
   "type": "module",
   "version": "1.6.1",
   "private": true,
-  "packageManager": "pnpm@12.3.4",
+  "packageManager": "pnpm@12.23.0",
   "productName": "York Profile",
   "description": "York's personal profile website.",
   "homepage": "https://github.com/york9675/york-profile",
@@ -31,7 +31,7 @@
     "@astrojs/preact": "^6.1.6",
     "@astrojs/sitemap": "^3.7.6",
     "@vercel/analytics": "^2.0.1",
-    "@vercel/speed-insights": "^2.1.0",
+    "@vercel/speed-insights": "^2.1.1",
     "@vercel/toolbar": "^0.2.7",
     "astro": "^7.4.13",
     "preact": "^11.2.0"
@@ -39,12 +39,12 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.12",
     "@eslint/js": "^10.0.1",
-    "@typescript-eslint/eslint-plugin": "^8.73.0",
-    "@typescript-eslint/parser": "^8.73.0",
+    "@typescript-eslint/eslint-plugin": "^8.74.0",
+    "@typescript-eslint/parser": "^8.74.0",
     "eslint": "^10.15.0",
-    "eslint-plugin-astro": "^3.2.1",
+    "eslint-plugin-astro": "^3.2.2",
     "sharp": "^0.35.5",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.73.0"
+    "typescript-eslint": "^8.74.0"
   }
 }
