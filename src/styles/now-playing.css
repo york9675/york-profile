@@ -934,7 +934,7 @@ html[data-theme="light"] .np-fs-close:focus {
 .np-fs-info {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.55rem;
   color: #fff;
   flex: 0 0 auto;
   min-width: 0;
@@ -949,8 +949,8 @@ html[data-theme="light"] .np-fs-info {
 }
 
 .np-fs-status {
-  font-size: 1.25rem;
-  letter-spacing: 2.5px;
+  font-size: 1rem;
+  letter-spacing: 2px;
   text-transform: uppercase;
   font-weight: 700;
   margin: 0;
@@ -982,10 +982,10 @@ html[data-theme="light"] .np-fs-info {
 }
 
 .np-fs-track {
-  font-size: clamp(2rem, 5vw, 4.5rem);
+  font-size: clamp(1.8rem, 4vw, 3.8rem);
   font-weight: 800;
   margin: 0;
-  line-height: 1.1;
+  line-height: 1.12;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2;
@@ -999,13 +999,17 @@ html[data-theme="light"] .np-fs-info {
 .np-fs-artist {
   margin: 0;
   color: inherit;
-  font-weight: 500;
+  font-size: clamp(1.35rem, 2vw, 2rem);
+  font-weight: 600;
+  line-height: 1.25;
 }
 
 .np-fs-album {
   margin: 0;
   color: inherit;
-  opacity: 0.85;
+  font-size: clamp(1.1rem, 1.45vw, 1.4rem);
+  line-height: 1.35;
+  opacity: 0.9;
   font-weight: 400;
 }
 
@@ -1037,7 +1041,7 @@ html.np-now-playing-fullscreen .settings-fab {
     align-items: flex-start;
     text-align: left;
     max-width: min(48vw, 560px);
-    gap: 0.45rem;
+    gap: 0.4rem;
   }
 
   .np-fs-status {
@@ -1047,7 +1051,15 @@ html.np-now-playing-fullscreen .settings-fab {
   }
 
   .np-fs-track {
-    font-size: clamp(1.5rem, 3.4vw, 3rem);
+    font-size: clamp(1.4rem, 3vw, 2.5rem);
+  }
+
+  .np-fs-artist {
+    font-size: clamp(1.15rem, 2vw, 1.6rem);
+  }
+
+  .np-fs-album {
+    font-size: clamp(1rem, 1.5vw, 1.2rem);
   }
 
   .np-fs-close {
